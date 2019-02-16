@@ -297,6 +297,60 @@ LOCK TABLES `t_customer` WRITE;
 /*!40000 ALTER TABLE `t_customer` DISABLE KEYS */;
 /*!40000 ALTER TABLE `t_customer` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `t_lottery`
+--
+
+DROP TABLE IF EXISTS `t_lottery`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `t_lottery` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `customerId` int(11) NOT NULL,
+  `no` int(11) NOT NULL,
+  `status` varchar(16) NOT NULL,
+  `mCount` tinyint(4) NOT NULL,
+  `createTime` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_lottery`
+--
+
+LOCK TABLES `t_lottery` WRITE;
+/*!40000 ALTER TABLE `t_lottery` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_lottery` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_lottery_prize`
+--
+
+DROP TABLE IF EXISTS `t_lottery_prize`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `t_lottery_prize` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `lotteryId` int(11) NOT NULL,
+  `name` varchar(128) NOT NULL,
+  `total` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `weight` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_lottery_prize`
+--
+
+LOCK TABLES `t_lottery_prize` WRITE;
+/*!40000 ALTER TABLE `t_lottery_prize` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_lottery_prize` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
