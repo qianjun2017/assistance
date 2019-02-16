@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import com.cc.common.orm.BaseOrm;
 import com.cc.common.orm.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * @author Administrator
@@ -51,6 +52,7 @@ public class CustomerBean extends BaseOrm<CustomerBean> implements BaseEntity {
 	/**
 	 * 创建时间
 	 */
+	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
 	
 	/**

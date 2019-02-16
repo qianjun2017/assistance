@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import com.cc.common.orm.BaseOrm;
 import com.cc.common.orm.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * @author ws_yu
@@ -57,6 +58,7 @@ public class InterfaceBean extends BaseOrm<InterfaceBean> implements BaseEntity 
 	/**
 	 * 接口调用时间
 	 */
+	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
 
 	/**
