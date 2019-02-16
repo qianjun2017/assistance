@@ -213,6 +213,62 @@ LOCK TABLES `t_system_user_role` WRITE;
 INSERT INTO `t_system_user_role` VALUES (1,1,1);
 /*!40000 ALTER TABLE `t_system_user_role` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `t_carousel`
+--
+
+DROP TABLE IF EXISTS `t_carousel`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `t_carousel` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) DEFAULT NULL,
+  `imageUrl` varchar(128) DEFAULT NULL,
+  `status` varchar(16) DEFAULT NULL,
+  `createTime` datetime DEFAULT NULL,
+  `path` varchar(16) DEFAULT NULL,
+  `clicked` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_carousel`
+--
+
+LOCK TABLES `t_carousel` WRITE;
+/*!40000 ALTER TABLE `t_carousel` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_carousel` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_interface`
+--
+
+DROP TABLE IF EXISTS `t_interface`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `t_interface` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL,
+  `code` varchar(64) NOT NULL,
+  `type` varchar(8) NOT NULL,
+  `request` blob,
+  `response` blob,
+  `createTime` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_interface`
+--
+
+LOCK TABLES `t_interface` WRITE;
+/*!40000 ALTER TABLE `t_interface` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_interface` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
