@@ -23,16 +23,6 @@ public class CarouselQueryForm {
 	private String status;
 	
 	/**
-	 * 频道
-	 */
-	private String channelCode;
-	
-	/**
-	 * 频道
-	 */
-	private Long channelId;
-	
-	/**
 	 * 页码
 	 */
 	private String page = "1";
@@ -148,31 +138,4 @@ public class CarouselQueryForm {
 		this.status = status;
 	}
 
-	/**
-	 * @return the channelCode
-	 */
-	public String getChannelCode() {
-		return channelCode;
-	}
-
-	/**
-	 * @param channelCode the channelCode to set
-	 */
-	public void setChannelCode(String channelCode) {
-		this.channelCode = channelCode;
-	}
-
-	/**
-	 * @return the channelId
-	 */
-	public Long getChannelId() {
-		return channelId;
-	}
-
-	/**
-	 * @param channelId the channelId to set
-	 */
-	public void setChannelId(Long channelId) {
-		this.channelId = channelId;
-	}
 }

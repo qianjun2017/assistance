@@ -8,13 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cc.carousel.bean.CarouselBean;
-import com.cc.carousel.dao.CarouselDao;
 import com.cc.carousel.enums.CarouselStatusEnum;
 import com.cc.carousel.form.CarouselForm;
 import com.cc.carousel.form.CarouselQueryForm;
@@ -22,9 +20,13 @@ import com.cc.carousel.service.CarouselService;
 import com.cc.common.exception.LogicException;
 import com.cc.common.tools.DateTools;
 import com.cc.common.tools.ListTools;
+import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
+import com.cc.system.log.bean.OperationLogBean;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+
+import tk.mybatis.mapper.entity.Example;
 
 /**
  * @author Administrator
@@ -32,9 +34,6 @@ import com.github.pagehelper.PageInfo;
  */
 @Service
 public class CarouselServiceImpl implements CarouselService {
-	
-	@Autowired
-	private CarouselDao carouselDao;
 
 	@Override
 	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
@@ -74,9 +73,17 @@ public class CarouselServiceImpl implements CarouselService {
 	@Override
 	public Page<Map<String, Object>> queryCarouselPage(CarouselQueryForm form) {
 		Page<Map<String, Object>> page = new Page<Map<String,Object>>();
-		PageHelper.orderBy(String.format("c.%s %s", form.getSort(), form.getOrder()));
+		Example example = new Example(OperationLogBean.class);
+		Example.Criteria criteria = example.createCriteria();
+		if(!StringTools.isNullOrNone(form.getName())){
+			criteria.andLike("name", "%"+form.getName()+"%");
+		}
+		if (!StringTools.isNullOrNone(form.getStatus())) {
+			criteria.andEqualTo("status", form.getStatus());
+		}
+		PageHelper.orderBy(String.format("%s %s", form.getSort(), form.getOrder()));
 		PageHelper.startPage(form.getPage(), form.getPageSize());
-		List<CarouselBean> carouselBeanList = carouselDao.queryCarouselList(form);
+		List<CarouselBean> carouselBeanList = CarouselBean.findByExample(CarouselBean.class, example);
 		PageInfo<CarouselBean> pageInfo = new PageInfo<CarouselBean>(carouselBeanList);
 		if (ListTools.isEmptyOrNull(carouselBeanList)) {
 			page.setMessage("没有查询到相关轮播图数据");
