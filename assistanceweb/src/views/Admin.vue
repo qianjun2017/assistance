@@ -21,7 +21,7 @@
       <el-aside class="asider" :width="asideWidth">
         <el-menu default-active="$route.path" class="el-menu-vertical-demo" unique-opened router
         @open="handleOpen" @close="handleClose" @select="handleSelect" :collapse="collapsed">
-          <template v-for="(item,index) in $router.options.routes">
+          <template v-for="(item, index) in $router.options.routes">
             <template v-if="item.meta.isMenu">
               <el-submenu :index="item.path" v-if="!item.meta.isLeaf" :key="index"  v-hasPermission="item.meta.permission">
                 <template slot="title">{{item.meta.title}}</template>
@@ -37,9 +37,6 @@
       <el-main class="content-container">
         <el-col :span="24" class="breadcrumb-container">
           <strong class="title">{{$route.meta.title}}</strong>
-          <el-breadcrumb separator="/" class="breadcrumb-inner">
-            <el-breadcrumb-item v-for="(item) in $route.matched" :key="item.path">{{item.meta.title}}</el-breadcrumb-item>
-          </el-breadcrumb>
         </el-col>
         <el-col :span="24" class="content-wrapper">
           <transition name="fade" mode="out-in">

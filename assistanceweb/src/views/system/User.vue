@@ -151,7 +151,7 @@
         total: 0,
         pages: 0,
         page: 1,
-        pageSize: 10,
+        pageSize: 8,
         sort: 'createTime',
         order: 'desc',
         message: '',

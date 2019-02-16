@@ -11,6 +11,7 @@ import SysRole from '@/views/system/Role'
 import SysLocation from '@/views/system/Location'
 import SysOperLog from '@/views/log/Operation'
 import Setting from '@/views/system/Setting'
+import Carousel from '@/views/carousel/Carousel'
 
 Vue.use(Router)
 
@@ -147,6 +148,30 @@ export default new Router({
                     }
                 }
             ]
+        },
+        {
+            path: '/carousel',
+            name: 'carousel',
+            redirect: '/carousel/index',
+            component: Admin,
+            meta: {
+                title: '轮播管理',
+                isMenu: true,
+                isLeaf: true,
+                isLogin: true,
+                permission: 'carousel'
+            },
+            children: [{
+                path: '/carousel/index',
+                name: 'carouselPage',
+                component: Carousel,
+                meta: {
+                    title: '轮播管理',
+                    isMenu: false,
+                    isLeaf: true,
+                    permission: 'carousel'
+                }
+            }]
         },
         {
             path: '/setting',
