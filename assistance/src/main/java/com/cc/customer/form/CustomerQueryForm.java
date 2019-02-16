@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.cc.system.role.form;
+package com.cc.customer.form;
 
 import com.cc.common.tools.StringTools;
 
@@ -9,12 +9,22 @@ import com.cc.common.tools.StringTools;
  * @author Administrator
  *
  */
-public class RoleQueryForm {
-
+public class CustomerQueryForm {
+	
 	/**
-	 * 角色名称
+	 * 客户微信opernid
 	 */
-	private String roleName;
+	private String openid;
+	
+	/**
+	 * 客户微信昵称
+	 */
+	private String nickName;
+	
+	/**
+	 * 客户状态
+	 */
+	private String status;
 
 	/**
 	 * 页码
@@ -35,19 +45,47 @@ public class RoleQueryForm {
 	 * 排序方向
 	 */
 	private String order;
-
+	
 	/**
-	 * @return the roleName
+	 * @return the openid
 	 */
-	public String getRoleName() {
-		return roleName;
+	public String getOpenid() {
+		return openid;
 	}
 
 	/**
-	 * @param roleName the roleName to set
+	 * @param openid the openid to set
 	 */
-	public void setRoleName(String roleName) {
-		this.roleName = roleName;
+	public void setOpenid(String openid) {
+		this.openid = openid;
+	}
+
+	/**
+	 * @return the nickName
+	 */
+	public String getNickName() {
+		return nickName;
+	}
+
+	/**
+	 * @param nickName the nickName to set
+	 */
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public String getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	/**

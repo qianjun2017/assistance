@@ -25,7 +25,8 @@ public enum ModuleEnum {
 	AUTHMANAGEMENT("auth", "权限管理"),
 	LOGINMANAGEMENT("shrio", "登陆管理"),
 	LOCATIONMANAGEMENT("location", "地区管理"),
-	CAROUSELMANAGEMENT("carousel", "轮播图管理");
+	CAROUSELMANAGEMENT("carousel", "轮播图管理"),
+	CUSTOMERMANAGEMENT("customer", "客户管理");
 	
 	/**
 	 * 编码

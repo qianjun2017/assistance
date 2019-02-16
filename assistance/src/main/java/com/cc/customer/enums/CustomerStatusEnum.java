@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.cc.system.auth.enums;
+package com.cc.customer.enums;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,15 +12,14 @@ import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 
 /**
- * 权限类型
  * @author Administrator
  *
  */
-public enum AuthTypeEnum {
-
-	MENU("menu", "菜单权限"),
-	OPERATION("oper", "功能权限");
+public enum CustomerStatusEnum {
 	
+	NORMAL("normal", "正常"),
+	LOCKED("locked", "锁定");
+
 	/**
 	 * 编码
 	 */
@@ -35,7 +34,7 @@ public enum AuthTypeEnum {
 	 * @param code
 	 * @param name
 	 */
-	private AuthTypeEnum(String code, String name) {
+	private CustomerStatusEnum(String code, String name) {
 		this.code = code;
 		this.name = name;
 	}
@@ -69,35 +68,35 @@ public enum AuthTypeEnum {
 	}
 
 	/**
-	 * 获取权限类型
+	 * 获取客户状态
 	 * @param code
 	 * @return
 	 */
-	public static AuthTypeEnum getAuthTypeEnumByCode(String code) {
+	public static CustomerStatusEnum getCustomerStatusEnumByCode(String code) {
 		if (StringTools.isNullOrNone(code)) {
 			return null;
 		}
-		AuthTypeEnum[] authTypeEnums = AuthTypeEnum.values();
-		List<AuthTypeEnum> authTypeEnumList = ArrayTools.toList(authTypeEnums).stream().filter(authTypeEnum->code.equals(authTypeEnum.getCode())).collect(Collectors.toList());
-		if(ListTools.isEmptyOrNull(authTypeEnumList)){
+		CustomerStatusEnum[] customerStatusEnums = CustomerStatusEnum.values();
+		List<CustomerStatusEnum> customerStatusEnumList = ArrayTools.toList(customerStatusEnums).stream().filter(customerStatusEnum->code.equals(customerStatusEnum.getCode())).collect(Collectors.toList());
+		if(ListTools.isEmptyOrNull(customerStatusEnumList)){
 			return null;
 		}
-		if (authTypeEnumList.size()>1) {
-			throw new LogicException("E001", "权限类型不唯一,权限类型编码["+code+"]");
+		if (customerStatusEnumList.size()>1) {
+			throw new LogicException("E001", "客户状态不唯一,客户状态编码["+code+"]");
 		}
-		return authTypeEnumList.get(0);
+		return customerStatusEnumList.get(0);
 	}
 	
 	/**
-	 * 获取权限类型说明
+	 * 获取客户状态说明
 	 * @param code
 	 * @return
 	 */
 	public static String getNameByCode(String code){
-		AuthTypeEnum authTypeEnum = AuthTypeEnum.getAuthTypeEnumByCode(code);
-		if (authTypeEnum==null) {
+		CustomerStatusEnum customerStatusEnum = CustomerStatusEnum.getCustomerStatusEnumByCode(code);
+		if (customerStatusEnum==null) {
 			return null;
 		}
-		return authTypeEnum.getName();
+		return customerStatusEnum.getName();
 	}
 }

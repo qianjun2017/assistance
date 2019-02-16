@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.cc.interfaces.controller;
+package com.cc.interfaces.web;
 
 import java.util.Map;
 

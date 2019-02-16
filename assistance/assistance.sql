@@ -269,6 +269,34 @@ LOCK TABLES `t_interface` WRITE;
 /*!40000 ALTER TABLE `t_interface` DISABLE KEYS */;
 /*!40000 ALTER TABLE `t_interface` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `t_customer`
+--
+
+DROP TABLE IF EXISTS `t_customer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `t_customer` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nickName` varchar(32) DEFAULT NULL,
+  `openid` varchar(32) DEFAULT NULL,
+  `avatarUrl` varchar(128) DEFAULT NULL,
+  `status` varchar(16) DEFAULT NULL,
+  `createTime` datetime DEFAULT NULL,
+  `retailer` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_customer`
+--
+
+LOCK TABLES `t_customer` WRITE;
+/*!40000 ALTER TABLE `t_customer` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_customer` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
