@@ -12,6 +12,7 @@ import SysLocation from '@/views/system/Location'
 import SysOperLog from '@/views/log/Operation'
 import Setting from '@/views/system/Setting'
 import Carousel from '@/views/carousel/Carousel'
+import Interface from '@/views/interface/Interface'
 
 Vue.use(Router)
 
@@ -90,7 +91,7 @@ export default new Router({
                 title: '系统管理',
                 isMenu: true,
                 isLeaf: false,
-                permission: 'system.user|system.role|system.auth|system.location|system.log'
+                permission: 'system.user|system.role|system.auth|system.location|system.log|system.interface'
             },
             children: [{
                     path: '/system/user',
@@ -145,6 +146,17 @@ export default new Router({
                         isMenu: true,
                         isLeaf: true,
                         permission: 'system.log'
+                    }
+                },
+                {
+                    path: '/system/interface',
+                    name: 'interface',
+                    component: Interface,
+                    meta: {
+                        title: '接口调用',
+                        isMenu: true,
+                        isLeaf: true,
+                        permission: 'system.interface'
                     }
                 }
             ]
