@@ -21,6 +21,8 @@ Vue.prototype.$ajax = api
 
 Vue.prototype.$service = api.serviceUrl
 
+Vue.prototype.$imageService = api.imageServiceUrl
+
 import util from './util/index'
 
 Vue.prototype.$util = util
@@ -29,9 +31,9 @@ Vue.directive('hasPermission', {
     bind: function(el, binding, vnode) {
         let permissions = JSON.parse(sessionStorage.getItem('permissions'))
         var noPermission = true
-        if(binding.value==undefined || binding.value == ''){
+        if (binding.value == undefined || binding.value == '') {
             noPermission = false
-        }else if (permissions && permissions.length) {
+        } else if (permissions && permissions.length) {
             var permission = binding.value.split('|')
             var p
             for (p in permission) {

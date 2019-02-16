@@ -74,5 +74,6 @@ export default {
             return Promise.resolve(res)
         })
     },
-    serviceUrl: axios.defaults.baseURL
+    serviceUrl: axios.defaults.baseURL,
+    imageServiceUrl: axios.defaults.baseURL
 }
