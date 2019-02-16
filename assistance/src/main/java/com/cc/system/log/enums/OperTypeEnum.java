@@ -26,7 +26,9 @@ public enum OperTypeEnum {
 	LOGIN("login", "登录"),
 	LOGOUT("logout", "退出"),
 	LOCK("lock", "锁定"),
-	UNLOCK("unlock", "解锁");
+	UNLOCK("unlock", "解锁"),
+	UP("up", "上架"),
+	DOWN("down", "下架");
 	
 	/**
 	 * 编码
