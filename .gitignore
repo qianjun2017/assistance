@@ -1,0 +1,14 @@
+/assistanceweb/node_modules
+/.swp
+/assistance/.classpath
+/assistance/.factorypath
+/assistance/.idea/
+/assistance/.settings/
+/assistance/.project
+/assistance/logs/
+/assistance/springboot.iml
+/assistance/target/
+/assistanceweb/.vscode/
+/assistance/assistance.iml
+/assistanceweb/dist/
+/assistanceweb/test/
