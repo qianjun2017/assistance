@@ -13,6 +13,7 @@ import SysOperLog from '@/views/log/Operation'
 import Setting from '@/views/system/Setting'
 import Carousel from '@/views/carousel/Carousel'
 import Interface from '@/views/interface/Interface'
+import Customer from '@/views/customer/Customer'
 
 Vue.use(Router)
 
@@ -182,6 +183,30 @@ export default new Router({
                     isMenu: false,
                     isLeaf: true,
                     permission: 'carousel'
+                }
+            }]
+        },
+        {
+            path: '/customer',
+            name: 'customer',
+            redirect: '/customer/index',
+            component: Admin,
+            meta: {
+                title: '客户管理',
+                isMenu: true,
+                isLeaf: true,
+                isLogin: true,
+                permission: 'customer'
+            },
+            children: [{
+                path: '/customer/index',
+                name: 'customerPage',
+                component: Customer,
+                meta: {
+                    title: '客户管理',
+                    isMenu: false,
+                    isLeaf: true,
+                    permission: 'customer'
                 }
             }]
         },
