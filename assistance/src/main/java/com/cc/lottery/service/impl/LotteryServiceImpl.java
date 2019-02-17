@@ -15,11 +15,15 @@ import com.cc.common.web.Page;
 import com.cc.lottery.bean.LotteryBean;
 import com.cc.lottery.bean.LotteryPrizeBean;
 import com.cc.lottery.dao.LotteryDao;
+import com.cc.lottery.enums.LotteryStatusEnum;
 import com.cc.lottery.form.LotteryQueryForm;
 import com.cc.lottery.result.LotteryListResult;
 import com.cc.lottery.service.LotteryService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+
+import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.entity.Example.Criteria;
 
 /**
  * @author Administrator
@@ -67,6 +71,36 @@ public class LotteryServiceImpl implements LotteryService {
 		page.setData(lotteryList);
 		page.setSuccess(Boolean.TRUE);
 		return page;
+	}
+
+	@Override
+	@Transactional
+	public void updateLottery(LotteryBean lotteryBean) {
+		LotteryBean updateLotteryBean = LotteryBean.get(LotteryBean.class, lotteryBean.getId());
+		if(updateLotteryBean==null){
+			throw new LogicException("E001", "抽奖不存在");
+		}
+		updateLotteryBean.setCount(lotteryBean.getCount());
+		updateLotteryBean.setStatus(lotteryBean.getStatus());
+		int row = updateLotteryBean.updateForce();
+		if (row!=1) {
+			throw new LogicException("E002","修改抽奖失败");
+		}
+		Example example = new Example(LotteryPrizeBean.class);
+		Criteria criteria = example.createCriteria();
+		criteria.andEqualTo("lotteryId", lotteryBean.getId());
+		LotteryPrizeBean updateLotteryPrizeBean = new LotteryPrizeBean();
+		updateLotteryPrizeBean.setStatus(LotteryStatusEnum.OVER.getCode());
+		updateLotteryPrizeBean.updateByExample(example);
+		if(!ListTools.isEmptyOrNull(lotteryBean.getPrizeList())){
+			for(LotteryPrizeBean lotteryPrizeBean: lotteryBean.getPrizeList()){
+				lotteryPrizeBean.setLotteryId(lotteryBean.getId());
+				row = lotteryPrizeBean.save();
+				if (row!=1) {
+					throw new LogicException("E002","保存抽奖奖项失败");
+				}
+			}
+		}
 	}
 
 }

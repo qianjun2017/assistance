@@ -51,6 +51,11 @@ public class LotteryPrizeBean extends BaseOrm<LotteryPrizeBean> implements BaseE
 	 * 万次抽奖奖项中奖次数
 	 */
 	private Integer weight;
+	
+	/**
+	 * 状态
+	 */
+	private String status;
 
 	/**
 	 * @return the id
@@ -134,5 +139,19 @@ public class LotteryPrizeBean extends BaseOrm<LotteryPrizeBean> implements BaseE
 	 */
 	public void setWeight(Integer weight) {
 		this.weight = weight;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public String getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

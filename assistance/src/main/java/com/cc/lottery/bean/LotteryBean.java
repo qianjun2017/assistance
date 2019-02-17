@@ -6,6 +6,7 @@ package com.cc.lottery.bean;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -54,9 +55,16 @@ public class LotteryBean extends BaseOrm<LotteryBean> implements BaseEntity {
 	private Date createTime;
 	
 	/**
+	 * 最后兑奖时间
+	 */
+	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date lastExchangeTime;
+	
+	/**
 	 * 每个人最多抽奖次数
 	 */
-	private Integer mCount;
+	@Column(name="mCount")
+	private Integer count;
 	
 	/**
 	 * 奖项
@@ -135,6 +143,20 @@ public class LotteryBean extends BaseOrm<LotteryBean> implements BaseEntity {
 	}
 
 	/**
+	 * @return the lastExchangeTime
+	 */
+	public Date getLastExchangeTime() {
+		return lastExchangeTime;
+	}
+
+	/**
+	 * @param lastExchangeTime the lastExchangeTime to set
+	 */
+	public void setLastExchangeTime(Date lastExchangeTime) {
+		this.lastExchangeTime = lastExchangeTime;
+	}
+
+	/**
 	 * @return the prizeList
 	 */
 	public List<LotteryPrizeBean> getPrizeList() {
@@ -149,16 +171,17 @@ public class LotteryBean extends BaseOrm<LotteryBean> implements BaseEntity {
 	}
 
 	/**
-	 * @return the mCount
+	 * @return the count
 	 */
-	public Integer getMCount() {
-		return mCount;
+	public Integer getCount() {
+		return count;
 	}
 
 	/**
-	 * @param mCount the mCount to set
+	 * @param count the count to set
 	 */
-	public void setMCount(Integer mCount) {
-		this.mCount = mCount;
+	public void setCount(Integer count) {
+		this.count = count;
 	}
+
 }

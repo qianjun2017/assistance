@@ -5,7 +5,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.cc.lottery.dao.LotteryDao">
 
 	<select id="queryLotteryList" resultType="com.cc.lottery.result.LotteryListResult" parameterType="com.cc.lottery.form.LotteryQueryForm" statementType="PREPARED">
-		select l.id, l.customerId,c.openid,l.status,l.no,l.createTime
+		select l.id, l.customerId,c.openid,c.nickName,l.status,l.no,l.createTime
 		from t_lottery l
 		left join t_customer c on c.id = l.customerId
 		<where>

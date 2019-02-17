@@ -26,4 +26,10 @@ public interface LotteryService {
 	 * @return
 	 */
 	Page<LotteryListResult> queryLotteryPage(LotteryQueryForm form);
+
+	/**
+	 * 修改抽奖
+	 * @param lotteryBean
+	 */
+	void updateLottery(LotteryBean lotteryBean);
 }

@@ -3,6 +3,7 @@
  */
 package com.cc.lottery.form;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,12 +37,17 @@ public class LotteryForm {
 	/**
 	 * 每个人最多抽奖次数
 	 */
-	private Integer mCount;
+	private Integer count;
 	
 	/**
 	 * 奖项
 	 */
 	private List<LotteryPrizeForm> prizeList;
+	
+	/**
+	 * 最后兑奖时间
+	 */
+	private Date lastExchangeTime;
 
 	/**
 	 * @return the id
@@ -114,17 +120,17 @@ public class LotteryForm {
 	}
 
 	/**
-	 * @return the mCount
+	 * @return the count
 	 */
-	public Integer getMCount() {
-		return mCount;
+	public Integer getCount() {
+		return count;
 	}
 
 	/**
-	 * @param mCount the mCount to set
+	 * @param count the count to set
 	 */
-	public void setMCount(Integer mCount) {
-		this.mCount = mCount;
+	public void setCount(Integer count) {
+		this.count = count;
 	}
 
 	/**
@@ -139,5 +145,19 @@ public class LotteryForm {
 	 */
 	public void setPrizeList(List<LotteryPrizeForm> prizeList) {
 		this.prizeList = prizeList;
+	}
+
+	/**
+	 * @return the lastExchangeTime
+	 */
+	public Date getLastExchangeTime() {
+		return lastExchangeTime;
+	}
+
+	/**
+	 * @param lastExchangeTime the lastExchangeTime to set
+	 */
+	public void setLastExchangeTime(Date lastExchangeTime) {
+		this.lastExchangeTime = lastExchangeTime;
 	}
 }
