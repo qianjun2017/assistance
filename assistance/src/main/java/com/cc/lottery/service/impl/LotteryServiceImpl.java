@@ -97,7 +97,7 @@ public class LotteryServiceImpl implements LotteryService {
 				lotteryPrizeBean.setLotteryId(lotteryBean.getId());
 				row = lotteryPrizeBean.save();
 				if (row!=1) {
-					throw new LogicException("E002","保存抽奖奖项失败");
+					throw new LogicException("E003","保存抽奖奖项失败");
 				}
 			}
 		}
