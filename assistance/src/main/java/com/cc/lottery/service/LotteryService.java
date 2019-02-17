@@ -5,7 +5,9 @@ package com.cc.lottery.service;
 
 import com.cc.common.web.Page;
 import com.cc.lottery.bean.LotteryBean;
+import com.cc.lottery.form.LotteryCustomerQueryForm;
 import com.cc.lottery.form.LotteryQueryForm;
+import com.cc.lottery.result.LotteryCustomerListResult;
 import com.cc.lottery.result.LotteryListResult;
 
 /**
@@ -32,4 +34,11 @@ public interface LotteryService {
 	 * @param lotteryBean
 	 */
 	void updateLottery(LotteryBean lotteryBean);
+	
+	/**
+	 * 分页查询中奖列表
+	 * @param form
+	 * @return
+	 */
+	Page<LotteryCustomerListResult> queryLotteryCustomerPage(LotteryCustomerQueryForm form);
 }

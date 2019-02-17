@@ -59,6 +59,21 @@ public class CustomerBean extends BaseOrm<CustomerBean> implements BaseEntity {
 	 * 是否开启商家服务
 	 */
 	private Boolean retailer;
+	
+	/**
+	 * 店名
+	 */
+	private String store;
+	
+	/**
+	 * 电话
+	 */
+	private String phone;
+	
+	/**
+	 * 地址
+	 */
+	private String address;
 
 	/**
 	 * @return the id
@@ -156,5 +171,47 @@ public class CustomerBean extends BaseOrm<CustomerBean> implements BaseEntity {
 	 */
 	public void setRetailer(Boolean retailer) {
 		this.retailer = retailer;
+	}
+
+	/**
+	 * @return the store
+	 */
+	public String getStore() {
+		return store;
+	}
+
+	/**
+	 * @param store the store to set
+	 */
+	public void setStore(String store) {
+		this.store = store;
+	}
+
+	/**
+	 * @return the phone
+	 */
+	public String getPhone() {
+		return phone;
+	}
+
+	/**
+	 * @param phone the phone to set
+	 */
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	/**
+	 * @return the address
+	 */
+	public String getAddress() {
+		return address;
+	}
+
+	/**
+	 * @param address the address to set
+	 */
+	public void setAddress(String address) {
+		this.address = address;
 	}
 }

@@ -14,6 +14,7 @@ import Setting from '@/views/system/Setting'
 import Carousel from '@/views/carousel/Carousel'
 import Interface from '@/views/interface/Interface'
 import Customer from '@/views/customer/Customer'
+import Lottery from '@/views/lottery/Lottery'
 
 Vue.use(Router)
 
@@ -207,6 +208,30 @@ export default new Router({
                     isMenu: false,
                     isLeaf: true,
                     permission: 'customer'
+                }
+            }]
+        },
+        {
+            path: '/lottery',
+            name: 'lottery',
+            redirect: '/lottery/index',
+            component: Admin,
+            meta: {
+                title: '抽奖管理',
+                isMenu: true,
+                isLeaf: true,
+                isLogin: true,
+                permission: 'lottery'
+            },
+            children: [{
+                path: '/lottery/index',
+                name: 'lotteryPage',
+                component: Lottery,
+                meta: {
+                    title: '抽奖管理',
+                    isMenu: false,
+                    isLeaf: true,
+                    permission: 'lottery'
                 }
             }]
         },

@@ -28,9 +28,11 @@ import com.cc.customer.bean.CustomerBean;
 import com.cc.lottery.bean.LotteryBean;
 import com.cc.lottery.bean.LotteryPrizeBean;
 import com.cc.lottery.enums.LotteryStatusEnum;
+import com.cc.lottery.form.LotteryCustomerQueryForm;
 import com.cc.lottery.form.LotteryForm;
 import com.cc.lottery.form.LotteryPrizeForm;
 import com.cc.lottery.form.LotteryQueryForm;
+import com.cc.lottery.result.LotteryCustomerListResult;
 import com.cc.lottery.result.LotteryListResult;
 import com.cc.lottery.service.LotteryService;
 import com.cc.system.shiro.SecurityContextUtil;
@@ -298,7 +300,7 @@ public class LotteryController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
-	public Page<LotteryListResult> queryCarouselPage(@ModelAttribute LotteryQueryForm form){
+	public Page<LotteryListResult> queryLotteryPage(@ModelAttribute LotteryQueryForm form){
 		return lotteryService.queryLotteryPage(form);
 	}
 	
@@ -327,5 +329,16 @@ public class LotteryController {
 			e.printStackTrace();
 		}
 		return response;
+	}
+	
+	/**
+	 * 分页查询中奖
+	 * @param form
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/customer/page", method = RequestMethod.GET)
+	public Page<LotteryCustomerListResult> queryLotteryCustomerPage(@ModelAttribute LotteryCustomerQueryForm form){
+		return lotteryService.queryLotteryCustomerPage(form);
 	}
 }

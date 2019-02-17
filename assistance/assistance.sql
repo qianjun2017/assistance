@@ -280,11 +280,14 @@ DROP TABLE IF EXISTS `t_customer`;
 CREATE TABLE `t_customer` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nickName` varchar(32) DEFAULT NULL,
-  `openid` varchar(32) DEFAULT NULL,
+  `openid` varchar(32) NOT NULL,
   `avatarUrl` varchar(128) DEFAULT NULL,
-  `status` varchar(16) DEFAULT NULL,
-  `createTime` datetime DEFAULT NULL,
+  `status` varchar(16) NOT NULL,
+  `createTime` datetime NOT NULL,
   `retailer` bit(1) DEFAULT NULL,
+  `store` varchar(128) DEFAULT NULL,
+  `phone` varchar(16) DEFAULT NULL,
+  `address` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -352,6 +355,33 @@ CREATE TABLE `t_lottery_prize` (
 LOCK TABLES `t_lottery_prize` WRITE;
 /*!40000 ALTER TABLE `t_lottery_prize` DISABLE KEYS */;
 /*!40000 ALTER TABLE `t_lottery_prize` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_lottery_customer`
+--
+
+DROP TABLE IF EXISTS `t_lottery_customer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `t_lottery_customer` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `customerId` int(11) NOT NULL,
+  `lotteryPrizeId` int(11) NOT NULL,
+  `status` varchar(16) NOT NULL,
+  `createTime` datetime NOT NULL,
+  `exchangeTime` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_lottery_customer`
+--
+
+LOCK TABLES `t_lottery_customer` WRITE;
+/*!40000 ALTER TABLE `t_lottery_customer` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_lottery_customer` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

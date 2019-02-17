@@ -30,4 +30,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</where>
 	</select>
 	
+	<select id="queryLotteryCustomerList" resultType="com.cc.lottery.result.LotteryCustomerListResult" parameterType="com.cc.lottery.form.LotteryCustomerQueryForm" statementType="PREPARED">
+		select lc.id, lc.customerId,c.openid,c.nickName,lc.status,lp.name,l.no,lc.createTime,lp.lotteryId,lc.lotteryPrizeId,lc.exchangeTime,r.phone,r.store,r.address
+		from t_lottery_customer lc
+		left join t_customer c on c.id = lc.customerId
+		left join t_lottery_prize lp on lp.id = lc.lotteryPrizeId
+		left join t_lottery l on l.id = lp.lotteryId
+		left join t_customer r on r.id = l.customerId
+		<where>
+		<if test="lotteryId!=null">
+				and lp.lotteryId = #{lotteryId}
+			</if>
+			<if test="customerId!=null">
+				and lc.customerId = #{customerId}
+			</if>
+			<if test="customerOpenid!=null and customerOpenid!=''">
+				and c.openid = #{customerOpenid}
+			</if>
+			<if test="retailerId!=null">
+				and l.customerId = #{retailerId}
+			</if>
+			<if test="retailerOpenid!=null and retailerOpenid!=''">
+				and r.openid = #{retailerOpenid}
+			</if>
+			<if test="nickName!=null and nickName!=''">
+				and c.nickName like concat('%',#{nickName},'%')
+			</if>
+			<if test="status!=null and status!=''">
+				and lc.status = #{status}
+			</if>
+		</where>
+	</select>
+	
 </mapper>

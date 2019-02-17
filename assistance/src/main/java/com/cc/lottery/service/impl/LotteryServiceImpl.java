@@ -16,7 +16,9 @@ import com.cc.lottery.bean.LotteryBean;
 import com.cc.lottery.bean.LotteryPrizeBean;
 import com.cc.lottery.dao.LotteryDao;
 import com.cc.lottery.enums.LotteryStatusEnum;
+import com.cc.lottery.form.LotteryCustomerQueryForm;
 import com.cc.lottery.form.LotteryQueryForm;
+import com.cc.lottery.result.LotteryCustomerListResult;
 import com.cc.lottery.result.LotteryListResult;
 import com.cc.lottery.service.LotteryService;
 import com.github.pagehelper.PageHelper;
@@ -101,6 +103,26 @@ public class LotteryServiceImpl implements LotteryService {
 				}
 			}
 		}
+	}
+
+	@Override
+	public Page<LotteryCustomerListResult> queryLotteryCustomerPage(LotteryCustomerQueryForm form) {
+		Page<LotteryCustomerListResult> page = new Page<LotteryCustomerListResult>();
+		PageHelper.orderBy(String.format("%s %s", form.getSort(), form.getOrder()));
+		PageHelper.startPage(form.getPage(), form.getPageSize());
+		List<LotteryCustomerListResult> lotteryCustomerList = lotteryDao.queryLotteryCustomerList(form);
+		PageInfo<LotteryCustomerListResult> pageInfo = new PageInfo<LotteryCustomerListResult>(lotteryCustomerList);
+		if (ListTools.isEmptyOrNull(lotteryCustomerList)) {
+			page.setMessage("没有查询到相关中奖数据");
+			return page;
+		}
+		page.setPage(pageInfo.getPageNum());
+		page.setPages(pageInfo.getPages());
+		page.setPageSize(pageInfo.getPageSize());
+		page.setTotal(pageInfo.getTotal());
+		page.setData(lotteryCustomerList);
+		page.setSuccess(Boolean.TRUE);
+		return page;
 	}
 
 }
