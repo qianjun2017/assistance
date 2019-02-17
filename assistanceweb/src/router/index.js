@@ -8,13 +8,13 @@ import IndexPage from '@/views/Index'
 import SysUser from '@/views/system/User'
 import SysAuth from '@/views/system/Auth'
 import SysRole from '@/views/system/Role'
-import SysLocation from '@/views/system/Location'
 import SysOperLog from '@/views/log/Operation'
 import Setting from '@/views/system/Setting'
 import Carousel from '@/views/carousel/Carousel'
 import Interface from '@/views/interface/Interface'
 import Customer from '@/views/customer/Customer'
 import Lottery from '@/views/lottery/Lottery'
+import SysConfig from '@/views/system/Config'
 
 Vue.use(Router)
 
@@ -93,7 +93,7 @@ export default new Router({
                 title: '系统管理',
                 isMenu: true,
                 isLeaf: false,
-                permission: 'system.user|system.role|system.auth|system.location|system.log|system.interface'
+                permission: 'system.user|system.role|system.auth|system.log|system.interface|system.config'
             },
             children: [{
                     path: '/system/user',
@@ -129,17 +129,6 @@ export default new Router({
                     }
                 },
                 {
-                    path: '/system/location',
-                    name: 'location',
-                    component: SysLocation,
-                    meta: {
-                        title: '地区管理',
-                        isMenu: true,
-                        isLeaf: true,
-                        permission: 'system.location'
-                    }
-                },
-                {
                     path: '/system/log',
                     name: 'log',
                     component: SysOperLog,
@@ -159,6 +148,17 @@ export default new Router({
                         isMenu: true,
                         isLeaf: true,
                         permission: 'system.interface'
+                    }
+                },
+                {
+                    path: '/system/config',
+                    name: 'config',
+                    component: SysConfig,
+                    meta: {
+                        title: '系统参数',
+                        isMenu: true,
+                        isLeaf: true,
+                        permission: 'system.config'
                     }
                 }
             ]
