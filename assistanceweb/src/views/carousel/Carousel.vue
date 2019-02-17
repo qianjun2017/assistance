@@ -25,8 +25,6 @@
 
 		<!--列表-->
 		<el-table :data="tableData" stripe highlight-current-row v-loading="listLoading" @sort-change="sortChanged" style="width: 100%;" :default-sort = "{prop: 'createTime', order: 'descending'}" :empty-text="message">
-			<el-table-column type="index" width="60" label="序号">
-			</el-table-column>
 			<el-table-column prop="name" label="轮播图名称" width="150" show-overflow-tooltip>
 			</el-table-column>
       <el-table-column prop="imageUrl" label="轮播图片" width="100">

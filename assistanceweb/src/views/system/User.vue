@@ -41,8 +41,6 @@
           </el-form>
         </template>
       </el-table-column>
-			<el-table-column type="index" width="60" label="序号">
-			</el-table-column>
 			<el-table-column prop="nickName" label="昵称" width="100">
 			</el-table-column>
 			<el-table-column prop="realName" label="姓名" width="100">

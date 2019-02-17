@@ -34,8 +34,6 @@
 
 		<!--列表-->
 		<el-table :data="tableData" stripe highlight-current-row v-loading="listLoading" @sort-change="sortChanged" style="width: 100%;" :default-sort = "{prop: 'operateTime', order: 'descending'}" :empty-text="message">
-			<el-table-column type="index" width="60" label="序号">
-			</el-table-column>
 			<el-table-column prop="userName" label="操作人" width="100" show-overflow-tooltip sortable='custom'>
 			</el-table-column>
       <el-table-column prop="module" label="操作模块" width="120" show-overflow-tooltip sortable='custom'>

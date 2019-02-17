@@ -52,8 +52,6 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column type="index" width="60" label="序号">
-			</el-table-column>
       <el-table-column prop="code" label="接口代码">
 			</el-table-column>
       <el-table-column prop="name" label="接口名称">
