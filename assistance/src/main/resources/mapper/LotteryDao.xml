@@ -59,6 +59,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="status!=null and status!=''">
 				and lc.status = #{status}
 			</if>
+			<if test="prize">
+				and lc.prize = ${prize}
+			</if>
 		</where>
 	</select>
 	

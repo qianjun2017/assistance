@@ -45,6 +45,11 @@ public class LotteryCustomerQueryForm {
 	 * 商家
 	 */
 	private Long retailerId;
+	
+	/**
+	 * 是否中奖
+	 */
+	private Boolean prize;
 
 	/**
 	 * 页码
@@ -162,6 +167,20 @@ public class LotteryCustomerQueryForm {
 	 */
 	public void setRetailerId(Long retailerId) {
 		this.retailerId = retailerId;
+	}
+
+	/**
+	 * @return the prize
+	 */
+	public Boolean getPrize() {
+		return prize;
+	}
+
+	/**
+	 * @param prize the prize to set
+	 */
+	public void setPrize(Boolean prize) {
+		this.prize = prize;
 	}
 
 	/**

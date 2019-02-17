@@ -5,6 +5,7 @@ package com.cc.lottery.service;
 
 import com.cc.common.web.Page;
 import com.cc.lottery.bean.LotteryBean;
+import com.cc.lottery.bean.LotteryCustomerBean;
 import com.cc.lottery.form.LotteryCustomerQueryForm;
 import com.cc.lottery.form.LotteryQueryForm;
 import com.cc.lottery.result.LotteryCustomerListResult;
@@ -41,4 +42,18 @@ public interface LotteryService {
 	 * @return
 	 */
 	Page<LotteryCustomerListResult> queryLotteryCustomerPage(LotteryCustomerQueryForm form);
+	
+	/**
+	 * 查询用户参与抽奖次数
+	 * @param customerId
+	 * @param lotteryId
+	 * @return
+	 */
+	int queryLotteryCustomerCount(Long customerId, Long lotteryId);
+	
+	/**
+	 * 保存抽奖结果
+	 * @param lotteryCustomerBean
+	 */
+	void saveLotteryCustomer(LotteryCustomerBean lotteryCustomerBean);
 }

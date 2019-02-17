@@ -13,6 +13,7 @@ import com.cc.common.exception.LogicException;
 import com.cc.common.tools.ListTools;
 import com.cc.common.web.Page;
 import com.cc.lottery.bean.LotteryBean;
+import com.cc.lottery.bean.LotteryCustomerBean;
 import com.cc.lottery.bean.LotteryPrizeBean;
 import com.cc.lottery.dao.LotteryDao;
 import com.cc.lottery.enums.LotteryStatusEnum;
@@ -123,6 +124,26 @@ public class LotteryServiceImpl implements LotteryService {
 		page.setData(lotteryCustomerList);
 		page.setSuccess(Boolean.TRUE);
 		return page;
+	}
+
+	@Override
+	public int queryLotteryCustomerCount(Long customerId, Long lotteryId) {
+		LotteryCustomerQueryForm form = new LotteryCustomerQueryForm();
+		form.setCustomerId(customerId);
+		form.setLotteryId(lotteryId);
+		List<LotteryCustomerListResult> lotteryCustomerList = lotteryDao.queryLotteryCustomerList(form);
+		if(ListTools.isEmptyOrNull(lotteryCustomerList)){
+			return 0;
+		}
+		return lotteryCustomerList.size();
+	}
+
+	@Override
+	public void saveLotteryCustomer(LotteryCustomerBean lotteryCustomerBean) {
+		int row = lotteryCustomerBean.save();
+		if (row!=1) {
+			throw new LogicException("E001","保存抽奖结果失败");
+		}
 	}
 
 }

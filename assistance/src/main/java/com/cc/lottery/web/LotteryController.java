@@ -6,6 +6,7 @@ package com.cc.lottery.web;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,7 +27,9 @@ import com.cc.common.web.Page;
 import com.cc.common.web.Response;
 import com.cc.customer.bean.CustomerBean;
 import com.cc.lottery.bean.LotteryBean;
+import com.cc.lottery.bean.LotteryCustomerBean;
 import com.cc.lottery.bean.LotteryPrizeBean;
+import com.cc.lottery.enums.LotteryCustomerStatusEnum;
 import com.cc.lottery.enums.LotteryStatusEnum;
 import com.cc.lottery.form.LotteryCustomerQueryForm;
 import com.cc.lottery.form.LotteryForm;
@@ -339,6 +342,97 @@ public class LotteryController {
 	@ResponseBody
 	@RequestMapping(value = "/customer/page", method = RequestMethod.GET)
 	public Page<LotteryCustomerListResult> queryLotteryCustomerPage(@ModelAttribute LotteryCustomerQueryForm form){
+		form.setPrize(Boolean.TRUE);
 		return lotteryService.queryLotteryCustomerPage(form);
+	}
+	
+	/**
+	 * 客户抽奖
+	 * @param customerMap
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/customer", method = RequestMethod.POST)
+	public Response<Object> customerLottery(@RequestBody Map<String, Long> customerMap){
+		Response<Object> response = new Response<Object>();
+		Long customerId = customerMap.get("customerId");
+		if(customerId==null){
+			response.setMessage("匿名客户不能参与抽奖");
+			response.setData(403);
+			return response;
+		}
+		CustomerBean customerBean = CustomerBean.get(CustomerBean.class, customerId);
+		if(customerBean==null){
+			response.setMessage("您尚未注册");
+			response.setData(403);
+			return response;
+		}
+		Long lotteryId = customerMap.get("lotteryId");
+		if(lotteryId==null){
+			response.setMessage("请选择抽奖");
+			response.setData(404);
+			return response;
+		}
+		LotteryBean lotteryBean = LotteryBean.get(LotteryBean.class, lotteryId);
+		if(lotteryBean==null){
+			response.setMessage("抽奖不存在");
+			response.setData(404);
+			return response;
+		}
+		if(LotteryStatusEnum.OVER.equals(LotteryStatusEnum.getLotteryStatusEnumByCode(lotteryBean.getStatus()))){
+			response.setMessage("抽奖已结束");
+			response.setData(404);
+			return response;
+		}
+		synchronized (this) {
+			int lotteryCustomerCount = lotteryService.queryLotteryCustomerCount(customerId, lotteryId);
+			if(lotteryCustomerCount>=lotteryBean.getCount()){
+				response.setMessage("您的抽奖次数已用玩");
+				response.setData(405);
+				return response;
+			}
+			List<LotteryPrizeBean> lotteryPrizeBeanList = LotteryPrizeBean.findAllByParams(LotteryPrizeBean.class, "lotteryId", lotteryId, "status", LotteryStatusEnum.NORMAL.getCode());
+			if(ListTools.isEmptyOrNull(lotteryPrizeBeanList)){
+				response.setMessage("奖品已抽完");
+				response.setData(406);
+				return response;
+			}
+			List<Long> prizeList = new ArrayList<Long>();
+			for(LotteryPrizeBean lotteryPrizeBean: lotteryPrizeBeanList){
+				if(lotteryPrizeBean.getTotal()<lotteryPrizeBean.getQuantity()){
+					Integer weight = 0;
+					if(weight<lotteryPrizeBean.getWeight()){
+						prizeList.add(lotteryPrizeBean.getId());
+						weight ++;
+					}
+				}
+			}
+			Random random = new Random();
+			int index = random.nextInt(10000);
+			LotteryCustomerBean lotteryCustomerBean = new LotteryCustomerBean();
+			if(index>prizeList.size()){
+				response.setMessage("很遗憾，您未中奖");
+				lotteryCustomerBean.setPrize(Boolean.FALSE);
+				response.setData(407);
+			}else{
+				lotteryCustomerBean.setPrize(Boolean.TRUE);
+				Long lotteryPrizeId = prizeList.get(index);
+				lotteryCustomerBean.setLotteryPrizeId(lotteryPrizeId);
+				LotteryPrizeBean lotteryPrizeBean = LotteryPrizeBean.get(LotteryPrizeBean.class, lotteryPrizeId);
+				response.setData(lotteryPrizeBean.getName());
+			}
+			lotteryCustomerBean.setCustomerId(customerId);
+			lotteryCustomerBean.setStatus(LotteryCustomerStatusEnum.EXCHANGED.getCode());
+			try {
+				lotteryService.saveLotteryCustomer(lotteryCustomerBean);
+				response.setSuccess(Boolean.TRUE);
+			} catch (LogicException e) {
+				response.setMessage(e.getErrContent());
+			} catch (Exception e) {
+				response.setMessage("系统内部错误");
+				e.printStackTrace();
+			}
+		}
+		return response;
 	}
 }

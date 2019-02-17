@@ -41,6 +41,11 @@ public class LotteryCustomerBean extends BaseOrm<LotteryCustomerBean> implements
 	private Long lotteryPrizeId;
 	
 	/**
+	 * 是否中奖
+	 */
+	private Boolean prize;
+	
+	/**
 	 * 状态
 	 */
 	private String status;
@@ -97,6 +102,20 @@ public class LotteryCustomerBean extends BaseOrm<LotteryCustomerBean> implements
 	 */
 	public void setLotteryPrizeId(Long lotteryPrizeId) {
 		this.lotteryPrizeId = lotteryPrizeId;
+	}
+
+	/**
+	 * @return the prize
+	 */
+	public Boolean getPrize() {
+		return prize;
+	}
+
+	/**
+	 * @param prize the prize to set
+	 */
+	public void setPrize(Boolean prize) {
+		this.prize = prize;
 	}
 
 	/**
