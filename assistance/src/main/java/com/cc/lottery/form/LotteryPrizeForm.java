@@ -1,36 +1,15 @@
 /**
  * 
  */
-package com.cc.lottery.bean;
-
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import com.cc.common.orm.BaseOrm;
-import com.cc.common.orm.entity.BaseEntity;
+package com.cc.lottery.form;
 
 /**
  * @author Administrator
  *
  */
-@Table(name="t_lottery_prize")
-public class LotteryPrizeBean extends BaseOrm<LotteryPrizeBean> implements BaseEntity {
+public class LotteryPrizeForm {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6434759602841480799L;
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	/**
-	 * 抽奖
-	 */
-	private Long lotteryId;
 	
 	/**
 	 * 奖项名称
@@ -43,7 +22,7 @@ public class LotteryPrizeBean extends BaseOrm<LotteryPrizeBean> implements BaseE
 	private Integer total;
 	
 	/**
-	 * 奖项已抽取数量
+	 * 奖项剩余数量
 	 */
 	private Integer quantity;
 	
@@ -64,20 +43,6 @@ public class LotteryPrizeBean extends BaseOrm<LotteryPrizeBean> implements BaseE
 	 */
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	/**
-	 * @return the lotteryId
-	 */
-	public Long getLotteryId() {
-		return lotteryId;
-	}
-
-	/**
-	 * @param lotteryId the lotteryId to set
-	 */
-	public void setLotteryId(Long lotteryId) {
-		this.lotteryId = lotteryId;
 	}
 
 	/**

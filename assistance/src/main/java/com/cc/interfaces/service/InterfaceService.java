@@ -8,7 +8,7 @@ import java.util.Map;
 import com.cc.common.web.Page;
 import com.cc.interfaces.bean.InterfaceBean;
 import com.cc.interfaces.enums.InterfaceEnum;
-import com.cc.interfaces.form.InterfaceForm;
+import com.cc.interfaces.form.InterfaceQueryForm;
 
 /**
  * @author ws_yu
@@ -35,5 +35,5 @@ public interface InterfaceService {
 	 * @param form
 	 * @return
 	 */
-	Page<Map<String, Object>> queryInterfacePage(InterfaceForm form);
+	Page<Map<String, Object>> queryInterfacePage(InterfaceQueryForm form);
 }

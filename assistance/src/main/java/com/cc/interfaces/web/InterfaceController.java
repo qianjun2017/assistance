@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.cc.common.web.Page;
 import com.cc.common.web.Response;
 import com.cc.interfaces.enums.InterfaceEnum;
-import com.cc.interfaces.form.InterfaceForm;
+import com.cc.interfaces.form.InterfaceQueryForm;
 import com.cc.interfaces.service.InterfaceService;
 
 /**
@@ -54,7 +54,7 @@ public class InterfaceController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
-	public Page<Map<String, Object>> queryInterfacePage(@ModelAttribute InterfaceForm form){
+	public Page<Map<String, Object>> queryInterfacePage(@ModelAttribute InterfaceQueryForm form){
 		return interfaceService.queryInterfacePage(form);
 	}
 }

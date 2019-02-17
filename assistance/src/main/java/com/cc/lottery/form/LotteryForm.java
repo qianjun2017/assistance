@@ -1,41 +1,27 @@
 /**
  * 
  */
-package com.cc.lottery.bean;
+package com.cc.lottery.form;
 
-import java.util.Date;
 import java.util.List;
-
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import com.cc.common.orm.BaseOrm;
-import com.cc.common.orm.entity.BaseEntity;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * @author Administrator
  *
  */
-@Table(name="t_lottery")
-public class LotteryBean extends BaseOrm<LotteryBean> implements BaseEntity {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5654585324331476090L;
+public class LotteryForm {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	/**
 	 * 所属客户
 	 */
 	private Long customerId;
+	
+	/**
+	 * 所属客户微信openid
+	 */
+	private String openid;
 	
 	/**
 	 * 期数
@@ -48,12 +34,6 @@ public class LotteryBean extends BaseOrm<LotteryBean> implements BaseEntity {
 	private String status;
 	
 	/**
-	 * 创建时间
-	 */
-	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-	private Date createTime;
-	
-	/**
 	 * 每个人最多抽奖次数
 	 */
 	private Integer mCount;
@@ -61,8 +41,7 @@ public class LotteryBean extends BaseOrm<LotteryBean> implements BaseEntity {
 	/**
 	 * 奖项
 	 */
-	@Transient
-	private List<LotteryPrizeBean> prizeList;
+	private List<LotteryPrizeForm> prizeList;
 
 	/**
 	 * @return the id
@@ -90,6 +69,20 @@ public class LotteryBean extends BaseOrm<LotteryBean> implements BaseEntity {
 	 */
 	public void setCustomerId(Long customerId) {
 		this.customerId = customerId;
+	}
+
+	/**
+	 * @return the openid
+	 */
+	public String getOpenid() {
+		return openid;
+	}
+
+	/**
+	 * @param openid the openid to set
+	 */
+	public void setOpenid(String openid) {
+		this.openid = openid;
 	}
 
 	/**
@@ -121,34 +114,6 @@ public class LotteryBean extends BaseOrm<LotteryBean> implements BaseEntity {
 	}
 
 	/**
-	 * @return the createTime
-	 */
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	/**
-	 * @param createTime the createTime to set
-	 */
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	/**
-	 * @return the prizeList
-	 */
-	public List<LotteryPrizeBean> getPrizeList() {
-		return prizeList;
-	}
-
-	/**
-	 * @param prizeList the prizeList to set
-	 */
-	public void setPrizeList(List<LotteryPrizeBean> prizeList) {
-		this.prizeList = prizeList;
-	}
-
-	/**
 	 * @return the mCount
 	 */
 	public Integer getMCount() {
@@ -160,5 +125,19 @@ public class LotteryBean extends BaseOrm<LotteryBean> implements BaseEntity {
 	 */
 	public void setMCount(Integer mCount) {
 		this.mCount = mCount;
+	}
+
+	/**
+	 * @return the prizeList
+	 */
+	public List<LotteryPrizeForm> getPrizeList() {
+		return prizeList;
+	}
+
+	/**
+	 * @param prizeList the prizeList to set
+	 */
+	public void setPrizeList(List<LotteryPrizeForm> prizeList) {
+		this.prizeList = prizeList;
 	}
 }

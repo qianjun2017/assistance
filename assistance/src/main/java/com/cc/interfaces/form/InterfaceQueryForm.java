@@ -13,7 +13,7 @@ import com.cc.common.tools.StringTools;
  * @author Administrator
  *
  */
-public class InterfaceForm {
+public class InterfaceQueryForm {
 	
 	/**
 	 * 接口

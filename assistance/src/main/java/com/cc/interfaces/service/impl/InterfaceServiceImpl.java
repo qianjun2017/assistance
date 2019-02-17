@@ -18,7 +18,7 @@ import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
 import com.cc.interfaces.bean.InterfaceBean;
 import com.cc.interfaces.enums.InterfaceEnum;
-import com.cc.interfaces.form.InterfaceForm;
+import com.cc.interfaces.form.InterfaceQueryForm;
 import com.cc.interfaces.service.InterfaceService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -59,7 +59,7 @@ public class InterfaceServiceImpl implements InterfaceService {
 	}
 
 	@Override
-	public Page<Map<String, Object>> queryInterfacePage(InterfaceForm form) {
+	public Page<Map<String, Object>> queryInterfacePage(InterfaceQueryForm form) {
 		Page<Map<String, Object>> page = new Page<Map<String,Object>>();
 		Example example = new Example(InterfaceBean.class);
 		Example.Criteria criteria = example.createCriteria();

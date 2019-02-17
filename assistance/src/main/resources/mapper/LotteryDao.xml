@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cc.lottery.dao.LotteryDao">
+
+	<select id="queryLotteryList" resultType="com.cc.lottery.result.LotteryListResult" parameterType="com.cc.lottery.form.LotteryQueryForm" statementType="PREPARED">
+		select l.id, l.customerId,c.openid,l.status,l.no,l.createTime
+		from t_lottery l
+		left join t_customer c on c.id = l.customerId
+		<where>
+			<if test="customerId!=null">
+				and l.customerId = #{customerId}
+			</if>
+			<if test="openid!=null and openid!=''">
+				and c.openid = #{openid}
+			</if>
+			<if test="nickName!=null and nickName!=''">
+				and c.nickName like concat('%',#{nickName},'%')
+			</if>
+			<if test="status!=null and status!=''">
+				and l.status = #{status}
+			</if>
+			<if test="createTimeStart!=null">
+				<![CDATA[ and l.createTime >= #{createTimeStart} ]]>
+			</if>
+			<if test="createTimeEnd!=null">
+				<![CDATA[ and l.createTime <= #{createTimeEnd} ]]>
+			</if>
+		</where>
+	</select>
+	
+</mapper>
