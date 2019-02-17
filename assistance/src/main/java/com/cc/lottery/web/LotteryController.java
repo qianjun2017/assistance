@@ -301,4 +301,31 @@ public class LotteryController {
 	public Page<LotteryListResult> queryCarouselPage(@ModelAttribute LotteryQueryForm form){
 		return lotteryService.queryLotteryPage(form);
 	}
+	
+	/**
+	 * 结束抽奖
+	 * @param id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/over/{id:\\d+}", method = RequestMethod.POST)
+	public Response<String> overLottery(@PathVariable Long id){
+		Response<String> response = new Response<String>();
+		LotteryBean lotteryBean = LotteryBean.get(LotteryBean.class, id);
+		if(lotteryBean==null){
+			response.setMessage("抽奖不存在");
+			return response;
+		}
+		lotteryBean.setStatus(LotteryStatusEnum.OVER.getCode());
+		try {
+			lotteryService.saveLottery(lotteryBean);
+			response.setSuccess(Boolean.TRUE);
+		} catch (LogicException e) {
+			response.setMessage(e.getErrContent());
+		} catch (Exception e) {
+			response.setMessage("系统内部错误");
+			e.printStackTrace();
+		}
+		return response;
+	}
 }
