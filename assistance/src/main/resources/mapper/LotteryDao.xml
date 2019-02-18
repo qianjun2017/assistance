@@ -12,6 +12,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="customerId!=null">
 				and l.customerId = #{customerId}
 			</if>
+			<if test="lotteryId!=null">
+				and l.id = #{lotteryId}
+			</if>
 			<if test="openid!=null and openid!=''">
 				and c.openid = #{openid}
 			</if>

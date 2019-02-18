@@ -286,7 +286,7 @@ public class LotteryController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/get/{id:\\d+}", method = RequestMethod.GET)
-	public Response<LotteryBean> queryCarousel(@PathVariable Long id){
+	public Response<LotteryBean> queryLottery(@PathVariable Long id){
 		Response<LotteryBean> response = new Response<LotteryBean>();
 		LotteryBean lotteryBean = LotteryBean.get(LotteryBean.class, id);
 		if (lotteryBean==null) {
@@ -294,6 +294,27 @@ public class LotteryController {
 			return response;
 		}
 		lotteryBean.setPrizeList(LotteryPrizeBean.findAllByParams(LotteryPrizeBean.class, "lotteryId", lotteryBean.getId()));
+		response.setData(lotteryBean);
+		response.setSuccess(Boolean.TRUE);
+		return response;
+	}
+	
+	/**
+	 * 客户获取抽奖信息
+	 * @param form
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/info", method = RequestMethod.GET)
+	public Response<LotteryBean> queryLottery(@ModelAttribute LotteryQueryForm form){
+		Response<LotteryBean> response = new Response<LotteryBean>();
+		LotteryBean lotteryBean = LotteryBean.get(LotteryBean.class, form.getLotteryId());
+		if (lotteryBean==null) {
+			response.setMessage("抽奖不存在");
+			return response;
+		}
+		lotteryBean.setPrizeList(LotteryPrizeBean.findAllByParams(LotteryPrizeBean.class, "lotteryId", lotteryBean.getId(), "status", LotteryStatusEnum.NORMAL.getCode()));
+		lotteryBean.setCount(lotteryBean.getCount()-lotteryService.queryLotteryCustomerCount(lotteryBean.getCustomerId(), lotteryBean.getId()));
 		response.setData(lotteryBean);
 		response.setSuccess(Boolean.TRUE);
 		return response;

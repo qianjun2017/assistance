@@ -48,6 +48,11 @@ public class LotteryQueryForm {
 	private Date createTimeEnd;
 	
 	/**
+	 * 抽奖
+	 */
+	private Long lotteryId;
+	
+	/**
 	 * 页码
 	 */
 	private String page = "1";
@@ -149,6 +154,20 @@ public class LotteryQueryForm {
 	 */
 	public void setCreateTimeEnd(Date createTimeEnd) {
 		this.createTimeEnd = createTimeEnd;
+	}
+
+	/**
+	 * @return the lotteryId
+	 */
+	public Long getLotteryId() {
+		return lotteryId;
+	}
+
+	/**
+	 * @param lotteryId the lotteryId to set
+	 */
+	public void setLotteryId(Long lotteryId) {
+		this.lotteryId = lotteryId;
 	}
 
 	/**
