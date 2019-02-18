@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cc.common.exception.LogicException;
+import com.cc.common.tools.JsonTools;
 import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
@@ -38,6 +39,32 @@ public class CustomerController {
 	
 	@Autowired
 	private CustomerService customerService;
+	
+	/**
+	 * 客户注册
+	 * @param registerMap
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/register", method = RequestMethod.POST)
+	public Response<Object> register(@RequestBody Map<String, String> registerMap){
+		Response<Object> response = new Response<Object>();
+		CustomerBean customerBean = JsonTools.toObject(JsonTools.toJsonString(registerMap), CustomerBean.class);
+		if(StringTools.isNullOrNone(customerBean.getOpenid())){
+			response.setMessage("请输入客户微信openid");
+			return response;
+		}
+		try {
+			customerService.saveCustomer(customerBean);
+			response.setSuccess(Boolean.TRUE);
+		} catch (LogicException e) {
+			response.setMessage(e.getErrContent());
+		} catch (Exception e) {
+			response.setMessage("系统内部错误");
+			e.printStackTrace();
+		}
+		return response;
+	}
 	
 	/**
 	 * 查询客户信息
@@ -64,12 +91,13 @@ public class CustomerController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/get/openid", method = RequestMethod.GET)
-	public Response<CustomerBean> queryCustomer(@ModelAttribute CustomerQueryForm form){
-		Response<CustomerBean> response = new Response<CustomerBean>();
+	@RequestMapping(value = "/info", method = RequestMethod.GET)
+	public Response<Object> queryCustomer(@ModelAttribute CustomerQueryForm form){
+		Response<Object> response = new Response<Object>();
 		List<CustomerBean> customerBeanList = CustomerBean.findAllByParams(CustomerBean.class, "openid", form.getOpenid());
 		if (ListTools.isEmptyOrNull(customerBeanList)) {
 			response.setMessage("客户不存在");
+			response.setData(404);
 			return response;
 		}
 		response.setData(customerBeanList.get(0));
