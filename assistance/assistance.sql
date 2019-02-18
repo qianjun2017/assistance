@@ -316,6 +316,7 @@ CREATE TABLE `t_lottery` (
   `mCount` tinyint(4) NOT NULL,
   `createTime` datetime NOT NULL,
   `lastExchangeTime` datetime NOT NULL,
+  `share` bit(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -372,6 +373,7 @@ CREATE TABLE `t_lottery_customer` (
   `createTime` datetime NOT NULL,
   `exchangeTime` datetime DEFAULT NULL,
   `prize` bit(1) DEFAULT NULL,
+  `share` bit(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

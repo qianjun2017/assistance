@@ -22,6 +22,11 @@ public class CustomerQueryForm {
 	private String nickName;
 	
 	/**
+	 * 是否需要分享
+	 */
+	private Boolean share;
+	
+	/**
 	 * 客户状态
 	 */
 	private String status;
@@ -72,6 +77,20 @@ public class CustomerQueryForm {
 	 */
 	public void setNickName(String nickName) {
 		this.nickName = nickName;
+	}
+
+	/**
+	 * @return the share
+	 */
+	public Boolean getShare() {
+		return share;
+	}
+
+	/**
+	 * @param share the share to set
+	 */
+	public void setShare(Boolean share) {
+		this.share = share;
 	}
 
 	/**

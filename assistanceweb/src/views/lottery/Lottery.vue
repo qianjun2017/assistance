@@ -9,12 +9,22 @@
                 </el-form-item>
                 <el-form-item>
                     <el-select v-model="queryForm.status" placeholder="请选择抽奖状态" clearable>
-                    <el-option
-                        v-for="(value,key) in statuss"
-                        :key="key"
-                        :label="value"
-                        :value="key">
-                    </el-option>
+                        <el-option
+                            v-for="(value,key) in statuss"
+                            :key="key"
+                            :label="value"
+                            :value="key">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-select v-model="queryForm.share" placeholder="请选择是否强制分享" clearable>
+                        <el-option
+                            v-for="(value,key) in shares"
+                            :key="key"
+                            :label="value"
+                            :value="key">
+                        </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -96,6 +106,11 @@
                                 <el-tag :type="scope.row.status=='toBeExchange'?'success':'danger'">{{ lotteryPrize.statuss[scope.row.status] }}</el-tag>
                             </template>
                         </el-table-column>
+                        <el-table-column prop="share" label="分享状态" width="150">
+                            <template slot-scope="scope">
+                                <el-tag :type="scope.row.share?'success':'danger'">{{ scope.row.share?'已分享':'未分享' }}</el-tag>
+                            </template>
+                        </el-table-column>
                         <el-table-column prop="createTime" label="中奖时间">
                         </el-table-column>
                         <el-table-column prop="exchangeTime" label="兑奖时间">
@@ -120,10 +135,12 @@ export default {
         return {
             queryForm: {
                 nickName: '',
-                status: ''
+                status: '',
+                share: ''
             },
             tableData: [],
             statuss: {'normal': '正常', 'over': '结束'},
+            shares: {'0': '否', '1': '是'},
             total: 0,
             pages: 0,
             page: 1,
@@ -161,6 +178,7 @@ export default {
             let para = {
                 nickName: this.queryForm.nickName,
                 status: this.queryForm.status,
+                share: this.queryForm.share==''?'':(this.queryForm.share=='1'?true:false),
                 page: this.page,
                 pageSize: this.pageSize,
                 sort: this.sort,

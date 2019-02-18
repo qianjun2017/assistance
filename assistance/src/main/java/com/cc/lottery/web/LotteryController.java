@@ -4,6 +4,7 @@
 package com.cc.lottery.web;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -95,6 +96,7 @@ public class LotteryController {
 			return response;
 		}
 		lotteryBean.setLastExchangeTime(lotteryForm.getLastExchangeTime());
+		lotteryBean.setShare(lotteryForm.getShare());
 		List<LotteryBean> lotteryList = LotteryBean.findAllByParams(LotteryBean.class, "customerId", customerBean.getId(), "createTime desc");
 		if(ListTools.isEmptyOrNull(lotteryList)){
 			lotteryBean.setNo(1l);
@@ -210,6 +212,7 @@ public class LotteryController {
 			return response;
 		}
 		lotteryBean.setLastExchangeTime(lotteryForm.getLastExchangeTime());
+		lotteryBean.setShare(lotteryForm.getShare());
 		List<LotteryBean> lotteryList = LotteryBean.findAllByParams(LotteryBean.class, "customerId", customerBean.getId(), "createTime desc");
 		if(ListTools.isEmptyOrNull(lotteryList)){
 			lotteryBean.setNo(1l);
@@ -386,6 +389,23 @@ public class LotteryController {
 		}
 		synchronized (this) {
 			int lotteryCustomerCount = lotteryService.queryLotteryCustomerCount(customerId, lotteryId);
+			if(lotteryBean.getShare() && lotteryCustomerCount==0){
+				Long shareId = customerMap.get("shareId");
+				if(shareId!=null){
+					LotteryCustomerBean lotteryCustomerBean = LotteryCustomerBean.get(LotteryCustomerBean.class, shareId);
+					lotteryCustomerBean.setShare(Boolean.TRUE);
+					try {
+						lotteryService.saveLotteryCustomer(lotteryCustomerBean);
+					} catch (LogicException e) {
+						response.setMessage(e.getErrContent());
+						return response;
+					} catch (Exception e) {
+						response.setMessage("系统内部错误");
+						e.printStackTrace();
+						return response;
+					}
+				}
+			}
 			if(lotteryCustomerCount>=lotteryBean.getCount()){
 				response.setMessage("您的抽奖次数已用玩");
 				response.setData(405);
@@ -421,6 +441,7 @@ public class LotteryController {
 				LotteryPrizeBean lotteryPrizeBean = LotteryPrizeBean.get(LotteryPrizeBean.class, lotteryPrizeId);
 				response.setData(lotteryPrizeBean.getName());
 			}
+			lotteryCustomerBean.setShare(Boolean.FALSE);
 			lotteryCustomerBean.setCustomerId(customerId);
 			lotteryCustomerBean.setStatus(LotteryCustomerStatusEnum.EXCHANGED.getCode());
 			try {
@@ -432,6 +453,71 @@ public class LotteryController {
 				response.setMessage("系统内部错误");
 				e.printStackTrace();
 			}
+		}
+		return response;
+	}
+	
+	/**
+	 * 客户兑奖
+	 * @param exchangeMap
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/customer/exchange", method = RequestMethod.POST)
+	public Response<String> customerLotteryExchange(@RequestBody Map<String, Long> exchangeMap){
+		Response<String> response = new Response<String>();
+		Long lotteryCustomerId = exchangeMap.get("lotteryCustomerId");
+		if(lotteryCustomerId==null){
+			response.setMessage("请扫描兑奖码");
+			return response;
+		}
+		LotteryCustomerBean lotteryCustomerBean = LotteryCustomerBean.get(LotteryCustomerBean.class, lotteryCustomerId);
+		if(lotteryCustomerBean==null){
+			response.setMessage("请扫描有效兑奖码");
+			return response;
+		}
+		if(!lotteryCustomerBean.getPrize()){
+			response.setMessage("对不起，您没有中奖");
+			return response;
+		}
+		LotteryCustomerStatusEnum lotteryCustomerStatusEnum = LotteryCustomerStatusEnum.getLotteryCustomerStatusEnumByCode(lotteryCustomerBean.getStatus());
+		if(!LotteryCustomerStatusEnum.TOBEEXCHANGE.equals(lotteryCustomerStatusEnum)){
+			if(LotteryCustomerStatusEnum.EXCHANGED.equals(lotteryCustomerStatusEnum)){
+				response.setMessage("奖品已被领取");
+			}else if(LotteryCustomerStatusEnum.EXPIRED.equals(lotteryCustomerStatusEnum)){
+				response.setMessage("对不起，奖品已过期");
+			}
+			return response;
+		}
+		LotteryPrizeBean lotteryPrizeBean = LotteryPrizeBean.get(LotteryPrizeBean.class, lotteryCustomerBean.getLotteryPrizeId());
+		if(lotteryPrizeBean==null){
+			response.setMessage("对不起，奖品不存在");
+			return response;
+		}
+		LotteryBean lotteryBean = LotteryBean.get(LotteryBean.class, lotteryPrizeBean.getLotteryId());
+		if(lotteryBean==null){
+			response.setMessage("对不起，抽奖不存在");
+			return response;
+		}
+		if(new Date().after(lotteryBean.getLastExchangeTime())){
+			response.setMessage("对不起，奖品已过期");
+			return response;
+		}
+		if(lotteryBean.getShare() && !lotteryCustomerBean.getShare()){
+			response.setMessage("奖品尚未分享认证，无法领取");
+			return response;
+		}
+		lotteryCustomerBean.setStatus(LotteryCustomerStatusEnum.EXCHANGED.getCode());
+		lotteryCustomerBean.setExchangeTime(new Date());
+		try {
+			lotteryService.saveLotteryCustomer(lotteryCustomerBean);
+			response.setData(lotteryPrizeBean.getName());
+			response.setSuccess(Boolean.TRUE);
+		} catch (LogicException e) {
+			response.setMessage(e.getErrContent());
+		} catch (Exception e) {
+			response.setMessage("系统内部错误");
+			e.printStackTrace();
 		}
 		return response;
 	}

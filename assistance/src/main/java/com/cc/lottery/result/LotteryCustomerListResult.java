@@ -81,6 +81,16 @@ public class LotteryCustomerListResult {
 	 */
 	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date exchangeTime;
+	
+	/**
+	 * 是否中奖
+	 */
+	private Boolean prize;
+	
+	/**
+	 * 是否已分享
+	 */
+	private Boolean share;
 
 	/**
 	 * @return the id
@@ -276,5 +286,33 @@ public class LotteryCustomerListResult {
 	 */
 	public void setExchangeTime(Date exchangeTime) {
 		this.exchangeTime = exchangeTime;
+	}
+
+	/**
+	 * @return the prize
+	 */
+	public Boolean getPrize() {
+		return prize;
+	}
+
+	/**
+	 * @param prize the prize to set
+	 */
+	public void setPrize(Boolean prize) {
+		this.prize = prize;
+	}
+
+	/**
+	 * @return the share
+	 */
+	public Boolean getShare() {
+		return share;
+	}
+
+	/**
+	 * @param share the share to set
+	 */
+	public void setShare(Boolean share) {
+		this.share = share;
 	}
 }

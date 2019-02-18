@@ -48,6 +48,11 @@ public class LotteryForm {
 	 * 最后兑奖时间
 	 */
 	private Date lastExchangeTime;
+	
+	/**
+	 * 是否需要分享
+	 */
+	private Boolean share;
 
 	/**
 	 * @return the id
@@ -159,5 +164,19 @@ public class LotteryForm {
 	 */
 	public void setLastExchangeTime(Date lastExchangeTime) {
 		this.lastExchangeTime = lastExchangeTime;
+	}
+
+	/**
+	 * @return the share
+	 */
+	public Boolean getShare() {
+		return share;
+	}
+
+	/**
+	 * @param share the share to set
+	 */
+	public void setShare(Boolean share) {
+		this.share = share;
 	}
 }

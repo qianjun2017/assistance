@@ -61,6 +61,11 @@ public class LotteryCustomerBean extends BaseOrm<LotteryCustomerBean> implements
 	 */
 	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date exchangeTime;
+	
+	/**
+	 * 是否已分享
+	 */
+	private Boolean share;
 
 	/**
 	 * @return the id
@@ -158,5 +163,19 @@ public class LotteryCustomerBean extends BaseOrm<LotteryCustomerBean> implements
 	 */
 	public void setExchangeTime(Date exchangeTime) {
 		this.exchangeTime = exchangeTime;
+	}
+
+	/**
+	 * @return the share
+	 */
+	public Boolean getShare() {
+		return share;
+	}
+
+	/**
+	 * @param share the share to set
+	 */
+	public void setShare(Boolean share) {
+		this.share = share;
 	}
 }

@@ -45,6 +45,11 @@ public class LotteryListResult {
 	 */
 	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
+	
+	/**
+	 * 是否需要分享
+	 */
+	private Boolean share;
 
 	/**
 	 * @return the id
@@ -142,5 +147,19 @@ public class LotteryListResult {
 	 */
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
+	}
+
+	/**
+	 * @return the share
+	 */
+	public Boolean getShare() {
+		return share;
+	}
+
+	/**
+	 * @param share the share to set
+	 */
+	public void setShare(Boolean share) {
+		this.share = share;
 	}
 }

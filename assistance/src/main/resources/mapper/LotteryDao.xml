@@ -5,7 +5,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.cc.lottery.dao.LotteryDao">
 
 	<select id="queryLotteryList" resultType="com.cc.lottery.result.LotteryListResult" parameterType="com.cc.lottery.form.LotteryQueryForm" statementType="PREPARED">
-		select l.id, l.customerId,c.openid,c.nickName,l.status,l.no,l.createTime
+		select l.id, l.customerId,c.openid,c.nickName,l.status,l.no,l.createTime,l.share
 		from t_lottery l
 		left join t_customer c on c.id = l.customerId
 		<where>
@@ -27,11 +27,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="createTimeEnd!=null">
 				<![CDATA[ and l.createTime <= #{createTimeEnd} ]]>
 			</if>
+			<if test="share">
+				and l.share = ${share}
+			</if>
 		</where>
 	</select>
 	
 	<select id="queryLotteryCustomerList" resultType="com.cc.lottery.result.LotteryCustomerListResult" parameterType="com.cc.lottery.form.LotteryCustomerQueryForm" statementType="PREPARED">
-		select lc.id, lc.customerId,c.openid,c.nickName,lc.status,lp.name,l.no,lc.createTime,lp.lotteryId,lc.lotteryPrizeId,lc.exchangeTime,r.phone,r.store,r.address
+		select lc.id, lc.customerId,c.openid,c.nickName,lc.status,lp.name,l.no,lc.createTime,lp.lotteryId,lc.lotteryPrizeId,lc.exchangeTime,r.phone,r.store,r.address,lc.prize,lc.share
 		from t_lottery_customer lc
 		left join t_customer c on c.id = lc.customerId
 		left join t_lottery_prize lp on lp.id = lc.lotteryPrizeId

@@ -71,6 +71,11 @@ public class LotteryBean extends BaseOrm<LotteryBean> implements BaseEntity {
 	 */
 	@Transient
 	private List<LotteryPrizeBean> prizeList;
+	
+	/**
+	 * 是否需要分享
+	 */
+	private Boolean share;
 
 	/**
 	 * @return the id
@@ -182,6 +187,20 @@ public class LotteryBean extends BaseOrm<LotteryBean> implements BaseEntity {
 	 */
 	public void setCount(Integer count) {
 		this.count = count;
+	}
+
+	/**
+	 * @return the share
+	 */
+	public Boolean getShare() {
+		return share;
+	}
+
+	/**
+	 * @param share the share to set
+	 */
+	public void setShare(Boolean share) {
+		this.share = share;
 	}
 
 }
