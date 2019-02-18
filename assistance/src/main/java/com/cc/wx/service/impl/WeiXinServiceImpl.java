@@ -48,7 +48,7 @@ public class WeiXinServiceImpl implements WeiXinService {
 		paramMap.put("js_code", request.getCode());
 		paramMap.put("grant_type", request.getGrantType());
 		String httpResponse = httpService.get(request.getUrl(), paramMap, "UTF-8");
-		if (StringTools.isNullOrNone(httpResponse)) {
+		if (!StringTools.isNullOrNone(httpResponse)) {
 			Map<String, String> map = JsonTools.toObject(httpResponse, Map.class);
 			if(map.containsKey("openid")){
 				response.setSuccess(Boolean.TRUE);
