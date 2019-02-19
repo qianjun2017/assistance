@@ -16,19 +16,29 @@ import com.cc.common.tools.StringTools;
 public class LotteryQueryForm {
 
 	/**
-	 * 客户
+	 * 所属客户
 	 */
-	private Long customerId;
+	private Long retailerId;
 	
 	/**
-	 * 客户微信openid
+	 * 所属客户微信openid
 	 */
-	private String openid;
+	private String retailerOpenid;
 	
 	/**
-	 * 客户微信昵称
+	 * 所属客户微信昵称
 	 */
 	private String nickName;
+	
+	/**
+	 * 抽奖客户微信opernid
+	 */
+	private String customerOpenid;
+	
+	/**
+	 * 抽奖客户
+	 */
+	private Long customerId;
 	
 	/**
 	 * 状态
@@ -51,6 +61,11 @@ public class LotteryQueryForm {
 	 * 抽奖
 	 */
 	private Long lotteryId;
+	
+	/**
+	 * 是否需要分享
+	 */
+	private Boolean share;
 	
 	/**
 	 * 页码
@@ -87,17 +102,31 @@ public class LotteryQueryForm {
 	}
 
 	/**
-	 * @return the openid
+	 * @return the retailerId
 	 */
-	public String getOpenid() {
-		return openid;
+	public Long getRetailerId() {
+		return retailerId;
 	}
 
 	/**
-	 * @param openid the openid to set
+	 * @param retailerId the retailerId to set
 	 */
-	public void setOpenid(String openid) {
-		this.openid = openid;
+	public void setRetailerId(Long retailerId) {
+		this.retailerId = retailerId;
+	}
+
+	/**
+	 * @return the retailerOpenid
+	 */
+	public String getRetailerOpenid() {
+		return retailerOpenid;
+	}
+
+	/**
+	 * @param retailerOpenid the retailerOpenid to set
+	 */
+	public void setRetailerOpenid(String retailerOpenid) {
+		this.retailerOpenid = retailerOpenid;
 	}
 
 	/**
@@ -112,6 +141,20 @@ public class LotteryQueryForm {
 	 */
 	public void setNickName(String nickName) {
 		this.nickName = nickName;
+	}
+
+	/**
+	 * @return the customerOpenid
+	 */
+	public String getCustomerOpenid() {
+		return customerOpenid;
+	}
+
+	/**
+	 * @param customerOpenid the customerOpenid to set
+	 */
+	public void setCustomerOpenid(String customerOpenid) {
+		this.customerOpenid = customerOpenid;
 	}
 
 	/**
@@ -168,6 +211,20 @@ public class LotteryQueryForm {
 	 */
 	public void setLotteryId(Long lotteryId) {
 		this.lotteryId = lotteryId;
+	}
+
+	/**
+	 * @return the share
+	 */
+	public Boolean getShare() {
+		return share;
+	}
+
+	/**
+	 * @param share the share to set
+	 */
+	public void setShare(Boolean share) {
+		this.share = share;
 	}
 
 	/**

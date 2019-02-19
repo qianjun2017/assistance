@@ -10,13 +10,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		left join t_customer c on c.id = l.customerId
 		<where>
 			<if test="customerId!=null">
-				and l.customerId = #{customerId}
+				and l.customerId = #{retailerId}
 			</if>
 			<if test="lotteryId!=null">
 				and l.id = #{lotteryId}
 			</if>
 			<if test="openid!=null and openid!=''">
-				and c.openid = #{openid}
+				and c.openid = #{retailerOpenid}
 			</if>
 			<if test="nickName!=null and nickName!=''">
 				and c.nickName like concat('%',#{nickName},'%')
