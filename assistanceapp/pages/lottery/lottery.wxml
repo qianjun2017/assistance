@@ -1,18 +1,4 @@
 <view class="wrapper">
-  <view class='notice-box'>
-    <view style='text-align: center; font-size: 32rpx;'>
-      <text>活动须知{{lotteryid}}</text>
-    </view> 
-    <view>
-      <text>1、大家按照提示次数抽奖后，获得的奖品存放在【我的】，点击可以查看
-</text>
-    </view>
-    <view>
-      <text>2、获得的奖品需要转发给你任意一位朋友认证领取后，才能获取到兑奖的二维码，每次消费仅限用一个奖品。
-</text>
-    </view>
-  </view>
-
     <view class="canvas-container">
       <view class='mfcj'>
         <image src='../../image/mfcj.png'></image>
@@ -38,28 +24,15 @@
                 </view>
             </view>
         </view>
-        <view bindtap="getLottery" class="canvas-btn {{btnDisabled}}">开始</view>
+        <view bindtap="handleLottery" class="canvas-btn {{btnDisabled}}">开始</view>
     </view>
 
     <view class='share'>
       <!-- <button class="index__share" openType="share">
          转发给朋友
       </button> -->
-      <button bindtap="getLottery" class='cj-btn'>
+      <button bindtap="handleLottery" class='cj-btn'>
         免费抽奖x{{count}}
       </button>
     </view>
-</view>
-<view class="modal-mask" bindtap="hideModal" catchtouchmove="preventTouchMove" wx:if="{{showModal}}"></view>
-<view class="modal-dialog" wx:if="{{showModal}}">
-<view class="modal-title">请输入购买信息!</view>
-  <view class="modal-content">
-    <view class="modal-input">
-      <input placeholder-class="input-holder" type="number" maxlength="11" bindinput='inputChange' class="input" placeholder="请输入手机号"></input>
-    </view>
-  </view>
-  <view class="modal-footer">
-    <view class="btn-cancel" bindtap="onCancel" data-status="cancel">取消</view>
-    <view class="btn-confirm" bindtap="onConfirm" data-status="confirm">确定</view>
-  </view>
 </view>

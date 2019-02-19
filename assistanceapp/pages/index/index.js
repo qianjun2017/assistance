@@ -18,10 +18,13 @@ Page({
     
   },
   bindScanTap: function(){
-    wx.scanCode({
-      success: res => {
-        console.log(res)
-      }
+    // wx.scanCode({
+    //   success: res => {
+    //     console.log(res)
+    //   }
+    // })
+    wx.navigateTo({
+      url: '../lottery/lottery',
     })
   },
   onLoad: function () {
@@ -88,13 +91,14 @@ Page({
       data: { prize: true, customerId: this.data.userInfo.id, sort: 'lp.lotteryId', order: 'desc', page: this.data.lotteryCustomerPage },
       success: res => {
         if (res.success) {
+          let lotteryCustomers = this.data.lotteryCustomers
           let i = 0
           for (; i < res.data.length; i ++){
             let lotteryCustomer = res.data[i]
             let find = false
             let lci = 0
-            for (; lci < this.data.lotteryCustomers.length; lci ++){
-              let lc = this.data.lotteryCustomers[lci]
+            for (; lci < lotteryCustomers.length; lci ++){
+              let lc = lotteryCustomers[lci]
               if (lc.lotteryId == lotteryCustomer.lotteryId){
                 lc.list.push(lotteryCustomer)
                 find = true
@@ -102,7 +106,7 @@ Page({
               }
             }
             if(!find){
-              lc = {
+              let lc = {
                 lotteryId: lotteryCustomer.lotteryId,
                 no: lotteryCustomer.no,
                 store: lotteryCustomer.store,
@@ -111,17 +115,22 @@ Page({
                 list: []
               }
               lc.list.push(lotteryCustomer)
-              this.data.lotteryCustomers.push(lc)
+              lotteryCustomers.push(lc)
             }
           }
-          this.data.lotteryCustomerPages = res.pages
+          this.setData({
+            lotteryCustomers: lotteryCustomers,
+            lotteryCustomerPages: res.pages
+          })
         }
       }
     })
   },
   scrolltolower: function(){
     if (this.data.lotteryCustomerPages > this.data.lotteryCustomerPage){
-      this.data.lotteryCustomerPage ++
+      this.setData({
+        lotteryCustomerPage: this.data.lotteryCustomerPage +1
+      })
       this.getLotteryCustomerData()
     }
   }

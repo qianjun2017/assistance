@@ -1,296 +1,217 @@
-var a = getApp();
-var utils = require('../../utils/util.js')
+var app = getApp();
 Page({
-    data: {
-      imageslist: [
-        '../../image/chuizi.png',
-        '../../image/hongbao.png'
-      ],
-      forceShare: 0,
-      shareId: '',
-      sendShareId: '',
-      awardsList: {},
-      animationData: {},
-      btnDisabled: "",
-      actNum: "",
-      awardsLen: 0,
-      prize: {},
-      showModal: false,
-      phone: '',
-      count: '',
-      lotteryid: ''
-    },
+  data: {
+    imageslist: [
+      '../../image/chuizi.png',
+      '../../image/hongbao.png'
+    ],
+    shareId: '',
+    awardsList: {},
+    animationData: {},
+    btnDisabled: "",
+    awardsLen: 0,
+    showModal: false,
+    count: 0,
+    lotteryId: null,
+    userInfo: {},
+    hasUserInfo: false,
+    lottery: {},
+    runDegs: 0,
+    prize: {}
+  },
   onLoad: function (options) {
     var scene = decodeURIComponent(options.scene)   // 扫码进入
     
     this.setData({
-      lotteryid: scene =='undefined'?'':scene
+      lotteryId: scene =='undefined'?'':scene
     })
 
-    if (options.shareid && options.lotteryid) {   // 转发进入
+    if (options.shareId && options.lotteryId) {   // 转发进入
       this.setData({
-        sendShareId: options.shareid,
-        lotteryid: options.lotteryid
+        shareId: options.shareId,
+        lotteryId: options.lotteryId
       })  
     }
-    },
-    initAdards: function() {
-        var e = this, n = a.awardsConfig.awards, t = n.length, i = 360 / t, s = i - 90, r = [], d = 1 / t;
-      var colorArr = ['#EE534F',
-        '#FF7F50',
-        '#FFC928',
-        '#66BB6A',
-        '#42A5F6',
-        '#5C6BC0',
-        '#AA47BC',
-        '#EC407A',
-        '#FFB6C1',
-        '#FFA827',
-        '#EE534F',
-        '#FF7F50',
-        '#FFC928',
-        '#66BB6A',
-        '#42A5F6',
-        '#5C6BC0',
-        '#AA47BC',
-        '#EC407A',
-        '#FFB6C1',
-        '#FFA827']
-        e.setData({
-            btnDisabled: a.awardsConfig.chance ? "" : "disabled"
-        });
-        // wx.createCanvasContext("lotteryCanvas");
-        for (var o = 942.47778 / t, g = 0; g < t; g++) {
-          var l = colorArr[g]
-          console.log(l)
-            // var l = "rgba(255,203,30,0.5)";
-            // if (t % 2 == 0) l = 1 == (u = g % 2) ? "rgba(228,55,14,0.5)" : 2 == u ? "rgba(228,155,14,0.5)" : "rgba(255,203,30,0.5)"; else {
-            //     var u = g % 2;
-            //     l = g == t - 1 ? "rgba(228,155,14,0.5)" : 1 == u ? "rgba(228,55,14,0.5)" : "rgba(255,203,30,0.5)";
-            // }
 
-            r.push({
-                k: g,
-                itemWidth: o + "px",
-                item2BgColor: l,
-                item2Deg: g * i + 90 - i / 2 + "deg",
-                item2Turn: g * d + d / 2 + "turn",
-                ttt: "",
-                tttSkewX: 4 * t + "deg",
-                afterDeg: s + "deg",
-                turn: g * d + "turn",
-                lineTurn: g * d + d / 2 + "turn",
-                award: n[g].name
-            });
-        }
-        e.setData({
-            awardsLen: r.length,
-            awardsList: r
-        });
-    },
-    getLottery: function() {
-      if (this.data.count <= 0) {
-        wx.showModal({
-          content: '抽奖次数已用光！',
-          showCancel: false
-        })
-        return false
-      }
-      if (this.data.lotteryid == ''){
-        wx.showToast({
-          title: '未获取到商品信息',
-          icon: 'none'
-        })
-        return false
-      }
-      var e = this, n = a.awardsConfig, t = n.awards.length
-      n.chance = n.chance - 1;
-      e.setData({
-        count: e.data.count<=0?0:e.data.count-1
+    this.setData({
+      lotteryId: 1
+    })
+
+    if (app.globalData.userInfo) {
+      this.setData({
+        userInfo: app.globalData.userInfo,
+        hasUserInfo: true
       })
-      // 算几率
-      var i = 0
-      var sumWeight = 0
-      var tempArr = []
-      for (var k = 0; k < t; k++) {
-        sumWeight += n.awards[k].weight
-        tempArr.push(sumWeight)
+      this.getLotteryData()
+    } else {
+      // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
+      // 所以此处加入 callback 以防止这种情况
+      app.userInfoReadyCallback = res => {
+        this.setData({
+          userInfo: res.data,
+          hasUserInfo: true
+        })
+        this.getLotteryData()
       }
-      var randomNum = Math.floor(Math.random() * sumWeight + 1)
-      for (var j = 0; j < tempArr.length; j++) {
-        if (randomNum <= tempArr[j]) {
-          i = j
-          break
+    }
+  },
+  initAdards: function() {
+    var e = this, n = e.data.lottery.prizeList, t = n.length, i = 360 / t, s = i - 90, r = [], d = 1 / t;
+    var colorArr = ['#EE534F',
+      '#FF7F50',
+      '#FFC928',
+      '#66BB6A',
+      '#42A5F6',
+      '#5C6BC0',
+      '#AA47BC',
+      '#EC407A',
+      '#FFB6C1',
+      '#FFA827',
+      '#EE534F',
+      '#FF7F50',
+      '#FFC928',
+      '#66BB6A',
+      '#42A5F6',
+      '#5C6BC0',
+      '#AA47BC',
+      '#EC407A',
+      '#FFB6C1',
+      '#FFA827']
+      e.setData({
+        btnDisabled: e.data.lottery.count ? "" : "disabled"
+      });
+      // wx.createCanvasContext("lotteryCanvas");
+      for (var o = 942.47778 / t, g = 0; g < t; g++) {
+        var l = colorArr[g]
+        console.log(l)
+          // var l = "rgba(255,203,30,0.5)";
+          // if (t % 2 == 0) l = 1 == (u = g % 2) ? "rgba(228,55,14,0.5)" : 2 == u ? "rgba(228,155,14,0.5)" : "rgba(255,203,30,0.5)"; else {
+          //     var u = g % 2;
+          //     l = g == t - 1 ? "rgba(228,155,14,0.5)" : 1 == u ? "rgba(228,55,14,0.5)" : "rgba(255,203,30,0.5)";
+          // }
+
+          r.push({
+              k: g,
+              itemWidth: o + "px",
+              item2BgColor: l,
+              item2Deg: g * i + 90 - i / 2 + "deg",
+              item2Turn: g * d + d / 2 + "turn",
+              ttt: "",
+              tttSkewX: 4 * t + "deg",
+              afterDeg: s + "deg",
+              turn: g * d + "turn",
+              lineTurn: g * d + d / 2 + "turn",
+              award: n[g].name
+          });
+      }
+      e.setData({
+          awardsLen: r.length,
+          awardsList: r
+      });
+  },
+  getLotteryData: function(){
+    app.ajaxGet({
+      url: '/lottery/info',
+      data: {
+        lotteryId: this.data.lotteryId,
+        customerId: this.data.userInfo.id
+      },
+      success: res => {
+        if(res.success){
+          let lottery = res.data
+          let weight = 0
+          let i = 0
+          for (; i < lottery.prizeList.length; i ++){
+            weight += lottery.prizeList[i].weight
+          }
+          if(weight<10000){
+            lottery.prizeList.push({name: '谢谢惠顾'})
+          }
+          this.setData({
+            lottery: lottery,
+            count: lottery.count
+          })
+          this.initAdards()
         }
       }
-      var tempPrize = a.awardsConfig.awards[i]
-      this.setData({prize: tempPrize})
-      //输入手机号
-      setTimeout(function () {
-        utils.httpPost(a.globalData.domainUrl + 'customer/lottery/save', { lotteryItemId: e.data.prize.id, openid: wx.getStorageSync('openid'), shareNum: e.data.sendShareId }, function (res) {
-          if (res.code == 200) {
-            wx.showModal({
-              title: '恭喜您！',
-              content: '恭喜您！获得' + e.data.prize.name + '，赶快(我的)转发给你朋友帮你确认下吧！不然奖品无法使用哦！',
-              showCancel: true
-            })
-          } else {
-            wx.showToast({
-              title: res.msg,
-              icon: 'none',
-              duration: 3500
-            })
-          }
-        })
-      }, 4e3)
-
-      a.runDegs = a.runDegs || 0, a.runDegs = a.runDegs + (360 - a.runDegs % 360) + (2160 - i * (360 / t))
-      var s = wx.createAnimation({
-          duration: 4e3,
-          timingFunction: "ease"
-      });
-      e.animationRun = s, s.rotate(a.runDegs).step(), e.setData({
-          animationData: s.export(),
-          btnDisabled: "disabled",
-          // sliderDisabled: "disabled"
-      }), setTimeout(function() {
-          n.chance && e.setData({
-              btnDisabled: "",
-              // sliderDisabled: ""
-          });
-      }, 4e3);
-    },
-  onReady: function (e) {
-    this.getLotteryInfo()
-    },
-    getLotteryInfo: function() {    // 获取转盘配置
-      var self = this
-      if (self.data.lotteryid == '') {
-        wx.showToast({
-          title: '未获取到商品信息，请扫码进入！',
-          icon: 'none'
-        })
-        return false
-      }
-      utils.httpGet(a.globalData.domainUrl + 'lottery/get', { lotteryId: self.data.lotteryid},function(res){
-        if (res.code == 200) {
-          a.awardsConfig = {
-            chance: res.data.mcount,
-            awards: res.data.items,
-            forceShare: res.data.forceshare
-          }
-          self.chance = res.data.mcount
-          // 判断用户是否有资格
-          utils.httpGet(a.globalData.domainUrl + 'customer/lottery/qualify', { lotteryId: self.data.lotteryid, openid: wx.getStorageSync('openid') }, function (res) {
-            if (res.code == 200) {   //有资格
-              if (res.data <= 0) {
-                self.setData({
-                  btnDisabled: 'disabled',
-                })
-                a.awardsConfig.chance = 0
+    })
+  },
+  handleLottery: function() {
+    let data = {
+      customerId: this.data.userInfo.id,
+      lotteryId: this.data.lotteryId
+    }
+    if (this.data.shareId != null && this.data.shareId!=''){
+      data.shareId = this.data.shareId
+    }
+    app.ajaxPost({
+      url: '/lottery/customer',
+      data: data,
+      success: res => {
+        if(res.success){
+          let i = 0
+          if(res.data!=407){
+            for (; i < this.data.lottery.prizeList.length; i ++){
+              if (this.data.lottery.prizeList[i].id==res.data.id){
+                break
               }
-              self.setData({
-                count: res.data
+            }
+            this.setData({
+              prize: res.data
+            })
+          }else{
+            i = this.data.lottery.prizeList.length - 1
+            this.setData({
+              prize: null
+            })
+          }
+          let runDegs = this.data.runDegs
+          console.log(runDegs)
+          runDegs = runDegs + (360 - runDegs % 360) + (2160 - i * (360 / this.data.lottery.prizeList.length))
+          console.log(runDegs)
+          let s = wx.createAnimation({
+            duration: 4e3,
+            timingFunction: "ease"
+          });
+          this.data.animationRun = s
+          s.rotate(runDegs).step()
+          this.setData({
+            animationData: s.export(),
+            btnDisabled: "disabled",
+            runDegs: runDegs
+          })
+          var self = this
+          setTimeout(function () {
+            if (self.data.prize==null){
+              wx.showModal({
+                title: '很遗憾！',
+                content: '很遗憾奖品溜走了' + (self.data.count > 0 ? '，再试一次' : '') +'！',
+                showCancel: true
               })
-            } else if (res.code == 501){
-              wx.showToast({
-                title: res.msg,
-                icon: 'none',
-                duration: 3000
-              })
-              self.setData({
-                btnDisabled: 'disabled'
-              })
-              a.awardsConfig.chance = 0
             } else {
-              utils.httpPost(a.globalData.domainUrl + 'customer/save', { openid: wx.getStorageSync('openid') }, function (res) {
-                if (res.code == 200) {  //保存手机号成功，再领取奖品
-                  self.setData({
-                    btnDisabled: ''
-                  })
-                  a.awardsConfig.chance = self.chance
-                } else {
-                  wx.showToast({
-                    title: res.msg,
-                    icon: 'none',
-                    duration: 2000
-                  })
-                  setTimeout(function () {
-                    self.setData({
-                      btnDisabled: 'disabled'
-                    })
-                    a.awardsConfig.chance = 0
-                  }, 2000)
-                }
+              wx.showModal({
+                title: '恭喜您！',
+                content: '恭喜您！您抽中了' + self.data.prize.name + '！',
+                showCancel: true
               })
             }
-            self.initAdards(self)
-          })
-        }
-      })
-    },
-  preventTouchMove: function () {
-  },
-  /**
-   * 隐藏模态对话框
-   */
-  hideModal: function () {
-    this.setData({
-      showModal: false
-    });
-  },
-  /**
-   * 对话框取消按钮点击事件
-   */
-  onCancel: function () {
-    this.setData({
-      btnDisabled: 'disabled'
-    })
-    a.awardsConfig.chance = 0
-    this.hideModal();
-  },
-  /**
-   * 对话框确认按钮点击事件
-   */
-  onConfirm: function () {
-    var zz = /^1[34578]\d{9}$/
-    var self = this
-    if (zz.test(this.data.phone)) {
-      this.hideModal()
-      utils.httpPost(a.globalData.domainUrl + 'customer/save', { phone: this.data.phone, openid: wx.getStorageSync('openid')},function(res) {
-        if (res.code == 200) {  //保存手机号成功，再领取奖品
-          self.setData({
-            btnDisabled: ''
-          })
-          a.awardsConfig.chance = self.chance
-        } else {
+            self.setData({
+              count: self.data.count - 1
+            })
+            if (self.data.count){
+              self.setData({
+                btnDisabled: ""
+              });
+            }
+          }, 4e3);
+        }else{
           wx.showToast({
-            title: res.msg,
+            title: res.message,
             icon: 'none',
-            duration: 2000
+            duration: 3500
           })
-          setTimeout(function () {
-            self.setData({
-              showModal: true
-            })
-            self.setData({
-              btnDisabled: 'disabled'
-            })
-            a.awardsConfig.chance = 0
-          }, 2000)
         }
-      })
-    } else{
-      wx.showToast({
-        title: '输入手机号有误！',
-        icon: 'none'
-      })
-    }
-    
-  },
-  inputChange: function(e) {
-    this.setData({
-      phone: e.detail.value
+      }
     })
   }
 });
