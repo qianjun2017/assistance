@@ -1,0 +1,375 @@
+page {
+    background: #000 url(https://aiyuanmqz.com:443/file/images/67a6ef7a-8d8e-4416-9195-76e02d4ddbb8_caidai.gif) no-repeat;
+    padding-top: 30rpx;
+    background-size: 100% 110%;
+}
+
+.canvas-container {
+    margin: 0 auto;
+    margin-top: 50px;
+    position: relative;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: #7d66b4 url(https://aiyuanmqz.com:443/file/images/2ac68b0e-7131-41f7-95a4-d54f638b0452_dots.png) no-repeat;
+    background-size: 100% 100%;
+}
+
+.canvas-content {
+    position:absolute;
+    left:10px;
+    top:10px;
+    z-index:10;
+    display:300px;
+    width:280px;
+    height:280px;
+    overflow:hidden;
+    border-radius:50%;
+    background-clip:padding-box;
+    background-color:#ffcb3f;
+    border:4px solid #9581d9;
+
+}
+
+.canvas-list {
+    position: absolute;
+    left: -10px;
+    top: -15px;
+    width: inherit;
+    height: inherit;
+    z-index: 9999;
+}
+
+.canvas-item {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 20rem;
+    height: 20rem;
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 0 1px 1px rgba(255,255,255,.6);
+}
+
+.canvas-item2 {
+    position: absolute;
+    left: 0px;
+    top: 0;
+    width: 300px;
+    height: 150px;
+    color: #e4370e;
+    font-weight: bold;
+    transform-origin: 150px 150px;
+    transform: rotate(0deg);
+    overflow: hidden;
+}
+
+.canvas-item2-after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: "";
+    width: 150px;
+    height: 150px;
+    transform-origin: 150px 150px;
+    transform: rotate(-30deg);
+}
+
+.canvas-item3 {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 1;
+    width: 300px;
+    height: 150px;
+    color: #e4370e;
+    font-weight: bold;
+    transform-origin: 150px 150px;
+    transform: rotate(60deg);
+    overflow: hidden;
+}
+
+.canvas-item3:after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: "";
+    background: rgba(228,55,14,0.5);
+    width: 150px;
+    height: 150px;
+    transform-origin: 150px 150px;
+    transform: rotate(-42.428deg);
+}
+
+.canvas-item-text {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    margin-left: 0;
+    width: 300px;
+    padding-top: 2.2rem;
+    transform-origin: 50% 150px;
+}
+
+.canvas-item-text-f {
+    position: relative;
+    margin: auto;
+    display: block;
+    text-align: center;
+    width: 200rpx;
+    height: 200rpx;
+    font-weight: bold;
+    line-height: 1.1rem;
+    font-size: 50rpx;
+}
+
+.canvas-box {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: inherit;
+    height: inherit;
+}
+
+.canvas-litem3 {
+    position: absolute;
+    left: 150px;
+    top: 150px;
+    width: 150px;
+    height: 150px;
+    background-color: rgba(228,55,14,.5);
+    transform-origin: left top;
+    transform: rotate(10deg) skewX(7deg);
+}
+
+.canvas-litem {
+    position:absolute;
+    left:135px;
+    top:0px;
+    width:2px;
+    height:140px;
+    background-color:rgba(228,55,14,.4);
+    transform-origin:50% 135px;
+}
+
+.canvas-btn {
+    position: absolute;
+    left: 122px;
+    top: 122px;
+    z-index: 400;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    color: #F4E9CC;
+    background-color: #E44025;
+    line-height: 60px;
+    text-align: center;
+    font-size: 20px;
+    text-shadow: 0 -1px 1px rgba(0,0,0,.6);
+    box-shadow: 0 3px 5px rgba(0,0,0,.6);
+    text-decoration: none;
+}
+
+.canvas-btn::after {
+    position: absolute;
+    display: block;
+    content: ' ';
+    left: 10px;
+    top: -33px;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    border-width: 20px;
+    border-style: solid;
+    border-color: transparent;
+    border-bottom-color: #E44025;
+}
+
+.canvas-btn.disabled {
+    pointer-events: none;
+    background: #B07A7B;
+    color: #ccc;
+}
+
+.canvas-btn.disabled::after {
+    border-bottom-color: #B07A7B;
+}
+
+.gb-run {
+    transition: all 6s ease;
+}
+
+.main-container {
+    margin: 1rem 2rem;
+}
+
+.main-container-rule {
+    padding: 1rem 0;
+}
+
+.main-rule-title {
+    display: block;
+    padding: 4px 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.main-rule-item {
+    display: block;
+    padding: 2px 0;
+}
+
+.zxh-box {
+    margin: 100rpx 0 50rpx 0;
+    background: #B07A7B;
+}
+
+.zxh-text {
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    padding: 20rpx;
+}
+image{width: 80rpx; height: 100rpx;}
+.gtitle{
+  position:absolute;
+  left:-10%;
+  font-size:30rpx;
+  text-align:center;
+  display:block;
+  width:120%;
+  margin-top: -20rpx;
+  color: #000;
+  font-weight: bold;
+}
+.gimg{margin-top: 20rpx;}
+
+
+.show-btn {
+  margin-top: 100rpx;
+  color: #22cc22;
+}
+
+.modal-mask {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #000;
+  opacity: 0.5;
+  overflow: hidden;
+  z-index: 9000;
+  color: #fff;
+}
+
+.modal-dialog {
+  width: 540rpx;
+  overflow: hidden;
+  position: fixed;
+  top: 50%;
+  left: 0;
+  z-index: 9999;
+  background: #f9f9f9;
+  margin: -180rpx 105rpx;
+  border-radius: 36rpx;
+}
+
+.modal-title {
+  padding-top: 50rpx;
+  font-size: 36rpx;
+  color: #030303;
+  text-align: center;
+}
+
+.modal-content {
+  padding: 10rpx 32rpx 30rpx 32rpx;
+}
+
+.modal-input {
+  display: flex;
+  background: #fff;
+  border: 2rpx solid #ddd;
+  border-radius: 4rpx;
+  font-size: 28rpx;
+}
+
+
+.input {
+  width: 100%;
+  height: 82rpx;
+  font-size: 28rpx;
+  line-height: 28rpx;
+  padding: 0 20rpx;
+  box-sizing: border-box;
+  color: #333;
+}
+
+input-holder {
+  color: #666;
+  font-size: 28rpx;
+}
+
+.modal-footer {
+  display: flex;
+  flex-direction: row;
+  height: 86rpx;
+  border-top: 1px solid #dedede;
+  font-size: 34rpx;
+  line-height: 86rpx;
+}
+
+.btn-cancel {
+  width: 50%;
+  color: #666;
+  text-align: center;
+  border-right: 1px solid #dedede;
+}
+
+.btn-confirm {
+  width: 50%;
+  color: #ec5300;
+  text-align: center;
+}
+.share {
+   width: 100%;
+   height: 180rpx;
+   display: flex;
+   align-items: center;
+   justify-content: space-around;
+}
+
+.index__share {
+   width: 36%;
+   color: #1078e7;
+   border-radius: 8rpx;
+   border: 1px solid #1078e7;
+   background: none;
+   font-size: 28rpx;
+   padding: 10rpx 0;
+}
+.mfcj{
+  position: absolute;
+  left: 0;
+  top: -40px;
+  width: 100%;
+  text-align: center;
+  z-index: 100;
+}
+.mfcj image{
+  width: 220px;
+  height: 67px;
+}
+.notice-box{
+  width:80%;
+  margin:0 auto;
+  background:#49ece6;
+  padding:10px;
+  border-radius:20px;
+  color:#fff;
+}
+.cj-btn{
+  border-radius:50rpx;
+  background: linear-gradient(to bottom right, #fe8900 0%,#ffbb07 100%);
+  color:#fff;
+}

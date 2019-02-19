@@ -4,51 +4,125 @@ const app = getApp()
 
 Page({
   data: {
-    motto: 'Hello World',
     userInfo: {},
     hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo')
+    canIUse: wx.canIUse('button.open-type.getUserInfo'),
+    hasNickName: false,
+    carousels: [],
+    lotteryCustomers: [],
+    lotteryCustomerPage: 1,
+    lotteryCustomerPages: 0
   },
   //事件处理函数
-  bindViewTap: function() {
-    wx.navigateTo({
-      url: '../logs/logs'
+  bindRetailerTap: function() {
+    
+  },
+  bindScanTap: function(){
+    wx.scanCode({
+      success: res => {
+        console.log(res)
+      }
     })
   },
   onLoad: function () {
     if (app.globalData.userInfo) {
       this.setData({
         userInfo: app.globalData.userInfo,
-        hasUserInfo: true
+        hasUserInfo: true,
+        hasNickName: app.globalData.userInfo.nickName!=null
       })
-    } else if (this.data.canIUse){
+      this.getLotteryCustomerData()
+    } else {
       // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
       // 所以此处加入 callback 以防止这种情况
       app.userInfoReadyCallback = res => {
         this.setData({
-          userInfo: res.userInfo,
-          hasUserInfo: true
+          userInfo: res.data,
+          hasUserInfo: true,
+          hasNickName: res.data.nickName != null
         })
+        this.getLotteryCustomerData()
       }
-    } else {
-      // 在没有 open-type=getUserInfo 版本的兼容处理
-      wx.getUserInfo({
-        success: res => {
-          app.globalData.userInfo = res.userInfo
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          })
-        }
-      })
     }
   },
   getUserInfo: function(e) {
-    console.log(e)
-    app.globalData.userInfo = e.detail.userInfo
-    this.setData({
-      userInfo: e.detail.userInfo,
-      hasUserInfo: true
+    app.ajaxPost({
+      url: '/customer/info',
+      data: {
+        customerId: this.data.userInfo.id,
+        nickName: e.detail.userInfo.nickName,
+        avatarUrl: e.detail.userInfo.avatarUrl
+      },
+      success: res => {
+        if(res){
+          app.globalData.userInfo.nickName = e.detail.userInfo.nickName
+          app.globalData.userInfo.avatarUrl = e.detail.userInfo.avatarUrl
+          this.setData({
+            userInfo: app.globalData.userInfo,
+            hasUserInfo: true,
+            hasNickName: true
+          })
+        }
+      }
     })
+  },
+  onReady: function(){
+    this.getCarouselData()
+  },
+  getCarouselData: function(){
+    app.ajaxGet({
+      url: '/carousel/page',
+      data: { status: 'on'},
+      success: res => {
+        if(res.success){
+          res.data.forEach(carousel=>{
+            this.data.carousels.push(carousel)
+          })
+        }
+      }
+    })
+  },
+  getLotteryCustomerData: function () {
+    app.ajaxGet({
+      url: '/lottery/customer/page',
+      data: { prize: true, customerId: this.data.userInfo.id, sort: 'lp.lotteryId', order: 'desc', page: this.data.lotteryCustomerPage },
+      success: res => {
+        if (res.success) {
+          let i = 0
+          for (; i < res.data.length; i ++){
+            let lotteryCustomer = res.data[i]
+            let find = false
+            let lci = 0
+            for (; lci < this.data.lotteryCustomers.length; lci ++){
+              let lc = this.data.lotteryCustomers[lci]
+              if (lc.lotteryId == lotteryCustomer.lotteryId){
+                lc.list.push(lotteryCustomer)
+                find = true
+                break;
+              }
+            }
+            if(!find){
+              lc = {
+                lotteryId: lotteryCustomer.lotteryId,
+                no: lotteryCustomer.no,
+                store: lotteryCustomer.store,
+                address: lotteryCustomer.address,
+                phone: lotteryCustomer.phone,
+                list: []
+              }
+              lc.list.push(lotteryCustomer)
+              this.data.lotteryCustomers.push(lc)
+            }
+          }
+          this.data.lotteryCustomerPages = res.pages
+        }
+      }
+    })
+  },
+  scrolltolower: function(){
+    if (this.data.lotteryCustomerPages > this.data.lotteryCustomerPage){
+      this.data.lotteryCustomerPage ++
+      this.getLotteryCustomerData()
+    }
   }
 })

@@ -20,7 +20,10 @@ App({
                 data: { openid: r.data},
                 success: k => {
                   if(k.success){
-                    this.userInfo = k.data
+                    this.globalData.userInfo = k.data
+                    if (this.userInfoReadyCallback){
+                      this.userInfoReadyCallback(k)
+                    }
                   }else{
                     if(k.data == 404){
                       this.ajaxPost({
@@ -33,7 +36,10 @@ App({
                               data: { openid: r.data },
                               success: p => {
                                 if (p.success) {
-                                  this.userInfo = p.data
+                                  this.globalData.userInfo = p.data
+                                  if (this.userInfoReadyCallback) {
+                                    this.userInfoReadyCallback(p)
+                                  }
                                 }
                               }
                             })

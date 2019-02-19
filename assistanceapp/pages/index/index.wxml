@@ -1,13 +1,50 @@
 <!--index.wxml-->
 <view class="container">
   <view class="userinfo">
-    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
+    <button wx:if="{{!hasNickName && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取微信公开信息 </button>
     <block wx:else>
       <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
       <text class="userinfo-nickname">{{userInfo.nickName}}</text>
     </block>
   </view>
-  <view class="usermotto">
-    <text class="user-motto">{{motto}}</text>
+  <view class='menus'>
+    <view class='menu' bindtap="bindRetailerTap">
+      <image src='../images/money.png'></image>
+      <text class='block'>商家服务</text>
+    </view>
+    <view class='menu' bindtap="bindScanTap">
+      <image src='../images/qrcode.png'></image>
+      <text class='block'>扫一扫</text>
+    </view>
+  </view>
+  <swiper wx:if="{{carousels.length>0}}">
+    <block wx:for="{{carousels}}" wx:for-item="carousel">
+      <swiper-item>
+        <image src="{{carousel.imageUrl}}"></image>
+      </swiper-item>
+    </block>
+  </swiper>
+  <view>
+    <scroll-view wx:if="{{lotteryCustomers.length>0}}"
+      scroll-y
+      enable-back-to-top
+      style="height: 200px;"
+      bindscrolltolower="scrolltolower"
+    >
+      <block wx:for="{{lotteryCustomers}}" wx:for-item="lotteryCustomer">
+        <view class='lotteryCustomer'>
+          <view class='retailer'>
+            <text class='lottery'>{{lotteryCustomer.store}}第{{lotteryCustomer.no}}期</text>
+          </view>
+          <view class='prizes'>
+            <block wx:for="{{lotteryCustomer.list}}" wx:for-item="prize">
+            <view class='prize'>
+              <text>{{prize.name}}</text>
+            </view>
+            </block>
+          </view>
+        </view>
+      </block>
+    </scroll-view>
   </view>
 </view>
