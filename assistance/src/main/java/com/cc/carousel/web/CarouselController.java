@@ -22,7 +22,6 @@ import com.cc.carousel.form.CarouselQueryForm;
 import com.cc.carousel.service.CarouselService;
 import com.cc.common.exception.LogicException;
 import com.cc.common.tools.JsonTools;
-import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
 import com.cc.common.web.Response;
@@ -62,10 +61,6 @@ public class CarouselController {
 			response.setMessage("请上传轮播图");
 			return response;
 		}
-		if (ListTools.isEmptyOrNull(carousel.getChannelList())) {
-			response.setMessage("至少选择一个频道");
-			return response;
-		}
 		try {
 			carouselService.saveCarousel(carousel);
 			response.setSuccess(Boolean.TRUE);
@@ -96,10 +91,6 @@ public class CarouselController {
 		}
 		if (StringTools.isNullOrNone(carousel.getImageUrl())) {
 			response.setMessage("请上传轮播图");
-			return response;
-		}
-		if (ListTools.isEmptyOrNull(carousel.getChannelList())) {
-			response.setMessage("至少选择一个频道");
 			return response;
 		}
 		try {
