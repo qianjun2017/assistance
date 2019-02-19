@@ -58,6 +58,7 @@ public class CustomerController {
 		}
 		customerBean.setStatus(CustomerStatusEnum.NORMAL.getCode());
 		customerBean.setCreateTime(DateTools.now());
+		customerBean.setRetailer(Boolean.FALSE);
 		try {
 			customerService.saveCustomer(customerBean);
 			response.setSuccess(Boolean.TRUE);

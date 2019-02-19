@@ -10,36 +10,43 @@ App({
     wx.login({
       success: res => {
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
-        console.log(res)
         this.ajaxGet({
           url: '/wx/openid',
           data: { code: res.code },
-          success: function (r) {
+          success: r => {
             if (r.success) {
-
+              this.ajaxGet({
+                url: '/customer/info',
+                data: { openid: r.data},
+                success: k => {
+                  if(k.success){
+                    this.userInfo = k.data
+                  }else{
+                    if(k.data == 404){
+                      this.ajaxPost({
+                        url: '/customer/register',
+                        data: { openid: r.data},
+                        success: q => {
+                          if (q.success) {
+                            this.ajaxGet({
+                              url: '/customer/info',
+                              data: { openid: r.data },
+                              success: p => {
+                                if (p.success) {
+                                  this.userInfo = p.data
+                                }
+                              }
+                            })
+                          }
+                        }
+                      })
+                    }
+                  }
+                }
+              })
             }
           }
         })
-      }
-    })
-    // 获取用户信息
-    wx.getSetting({
-      success: res => {
-        if (res.authSetting['scope.userInfo']) {
-          // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-          wx.getUserInfo({
-            success: res => {
-              // 可以将 res 发送给后台解码出 unionId
-              this.globalData.userInfo = res.userInfo
-
-              // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-              // 所以此处加入 callback 以防止这种情况
-              if (this.userInfoReadyCallback) {
-                this.userInfoReadyCallback(res)
-              }
-            }
-          })
-        }
       }
     })
   },
@@ -52,6 +59,18 @@ App({
       url: this.globalData.service + config.url,
       data: config.data || {},
       header: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      success: function (res) {
+        if (config.success) {
+          config.success(res.data)
+        }
+      }
+    })
+  },
+  ajaxPost: function (config) {
+    wx.request({
+      url: this.globalData.service + config.url,
+      data: config.data || {},
+      method: 'POST',
       success: function (res) {
         if (config.success) {
           config.success(res.data)
