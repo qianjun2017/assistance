@@ -97,6 +97,7 @@ public class LotteryController {
 		}
 		lotteryBean.setLastExchangeTime(lotteryForm.getLastExchangeTime());
 		lotteryBean.setShare(lotteryForm.getShare());
+		lotteryBean.setSame(lotteryForm.getSame());
 		List<LotteryBean> lotteryList = LotteryBean.findAllByParams(LotteryBean.class, "customerId", customerBean.getId(), "createTime desc");
 		if(ListTools.isEmptyOrNull(lotteryList)){
 			lotteryBean.setNo(1l);
@@ -213,6 +214,7 @@ public class LotteryController {
 		}
 		lotteryBean.setLastExchangeTime(lotteryForm.getLastExchangeTime());
 		lotteryBean.setShare(lotteryForm.getShare());
+		lotteryBean.setSame(lotteryForm.getSame());
 		List<LotteryBean> lotteryList = LotteryBean.findAllByParams(LotteryBean.class, "customerId", customerBean.getId(), "createTime desc");
 		if(ListTools.isEmptyOrNull(lotteryList)){
 			lotteryBean.setNo(1l);
@@ -314,7 +316,7 @@ public class LotteryController {
 			return response;
 		}
 		lotteryBean.setPrizeList(LotteryPrizeBean.findAllByParams(LotteryPrizeBean.class, "lotteryId", lotteryBean.getId(), "status", LotteryStatusEnum.NORMAL.getCode()));
-		lotteryBean.setCount(lotteryBean.getCount()-lotteryService.queryLotteryCustomerCount(lotteryBean.getCustomerId(), lotteryBean.getId()));
+		lotteryBean.setCount(lotteryBean.getCount()-lotteryService.queryLotteryCustomerCount(form.getCustomerId(), lotteryBean.getId()));
 		response.setData(lotteryBean);
 		response.setSuccess(Boolean.TRUE);
 		return response;
@@ -428,7 +430,7 @@ public class LotteryController {
 				}
 			}
 			if(lotteryCustomerCount>=lotteryBean.getCount()){
-				response.setMessage("您的抽奖次数已用玩");
+				response.setMessage("您的抽奖次数已用完");
 				response.setData(405);
 				return response;
 			}
@@ -440,9 +442,9 @@ public class LotteryController {
 			}
 			List<Long> prizeList = new ArrayList<Long>();
 			for(LotteryPrizeBean lotteryPrizeBean: lotteryPrizeBeanList){
-				if(lotteryPrizeBean.getTotal()<lotteryPrizeBean.getQuantity()){
+				if(lotteryPrizeBean.getTotal()>lotteryPrizeBean.getQuantity()){
 					Integer weight = 0;
-					if(weight<lotteryPrizeBean.getWeight()){
+					while(weight<lotteryPrizeBean.getWeight()){
 						prizeList.add(lotteryPrizeBean.getId());
 						weight ++;
 					}
@@ -451,20 +453,30 @@ public class LotteryController {
 			Random random = new Random();
 			int index = random.nextInt(10000);
 			LotteryCustomerBean lotteryCustomerBean = new LotteryCustomerBean();
+			lotteryCustomerBean.setLotteryId(lotteryId);
 			if(index>prizeList.size()){
 				response.setMessage("很遗憾，您未中奖");
 				lotteryCustomerBean.setPrize(Boolean.FALSE);
 				response.setData(407);
 			}else{
-				lotteryCustomerBean.setPrize(Boolean.TRUE);
 				Long lotteryPrizeId = prizeList.get(index);
-				lotteryCustomerBean.setLotteryPrizeId(lotteryPrizeId);
-				LotteryPrizeBean lotteryPrizeBean = LotteryPrizeBean.get(LotteryPrizeBean.class, lotteryPrizeId);
-				response.setData(lotteryPrizeBean.getName());
+				if(!lotteryBean.getSame() && !ListTools.isEmptyOrNull(LotteryCustomerBean.findAllByParams(LotteryCustomerBean.class, "customerId", customerId, "lotteryId", lotteryId, "lotteryPrizeId", lotteryPrizeId))){
+					response.setMessage("很遗憾，您未中奖");
+					lotteryCustomerBean.setPrize(Boolean.FALSE);
+					response.setData(407);
+				}else{
+					lotteryCustomerBean.setPrize(Boolean.TRUE);
+					lotteryCustomerBean.setLotteryPrizeId(lotteryPrizeId);
+					lotteryCustomerBean.setShare(Boolean.FALSE);
+					lotteryCustomerBean.setStatus(LotteryCustomerStatusEnum.TOBEEXCHANGE.getCode());
+					LotteryPrizeBean lotteryPrizeBean = LotteryPrizeBean.get(LotteryPrizeBean.class, lotteryPrizeId);
+					lotteryPrizeBean.setQuantity(lotteryPrizeBean.getQuantity()+1);
+					lotteryPrizeBean.save();
+					response.setData(lotteryPrizeBean);
+				}
 			}
-			lotteryCustomerBean.setShare(Boolean.FALSE);
 			lotteryCustomerBean.setCustomerId(customerId);
-			lotteryCustomerBean.setStatus(LotteryCustomerStatusEnum.EXCHANGED.getCode());
+			lotteryCustomerBean.setCreateTime(DateTools.now());
 			try {
 				lotteryService.saveLotteryCustomer(lotteryCustomerBean);
 				response.setSuccess(Boolean.TRUE);

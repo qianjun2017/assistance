@@ -53,6 +53,11 @@ public class LotteryForm {
 	 * 是否需要分享
 	 */
 	private Boolean share;
+	
+	/**
+	 * 是否允许多次抽到同一个奖品
+	 */
+	private Boolean same;
 
 	/**
 	 * @return the id
@@ -178,5 +183,19 @@ public class LotteryForm {
 	 */
 	public void setShare(Boolean share) {
 		this.share = share;
+	}
+
+	/**
+	 * @return the same
+	 */
+	public Boolean getSame() {
+		return same;
+	}
+
+	/**
+	 * @param same the same to set
+	 */
+	public void setSame(Boolean same) {
+		this.same = same;
 	}
 }

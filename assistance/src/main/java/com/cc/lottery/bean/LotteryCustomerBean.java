@@ -36,6 +36,11 @@ public class LotteryCustomerBean extends BaseOrm<LotteryCustomerBean> implements
 	private Long customerId;
 	
 	/**
+	 * 抽奖
+	 */
+	private Long lotteryId;
+	
+	/**
 	 * 奖项
 	 */
 	private Long lotteryPrizeId;
@@ -93,6 +98,20 @@ public class LotteryCustomerBean extends BaseOrm<LotteryCustomerBean> implements
 	 */
 	public void setCustomerId(Long customerId) {
 		this.customerId = customerId;
+	}
+
+	/**
+	 * @return the lotteryId
+	 */
+	public Long getLotteryId() {
+		return lotteryId;
+	}
+
+	/**
+	 * @param lotteryId the lotteryId to set
+	 */
+	public void setLotteryId(Long lotteryId) {
+		this.lotteryId = lotteryId;
 	}
 
 	/**
