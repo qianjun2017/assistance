@@ -101,12 +101,12 @@
                         </el-table-column>
                         <el-table-column prop="nickName" label="中奖客户" width="200" show-overflow-tooltip>
                         </el-table-column>
-                        <el-table-column prop="status" label="兑奖状态" width="150">
+                        <el-table-column prop="status" label="兑奖状态" width="100">
                             <template slot-scope="scope">
                                 <el-tag :type="scope.row.status=='toBeExchange'?'success':'danger'">{{ lotteryPrize.statuss[scope.row.status] }}</el-tag>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="share" label="分享状态" width="150">
+                        <el-table-column prop="share" label="分享状态" width="100">
                             <template slot-scope="scope">
                                 <el-tag :type="scope.row.share?'success':'danger'">{{ scope.row.share?'已分享':'未分享' }}</el-tag>
                             </template>

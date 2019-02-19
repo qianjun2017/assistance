@@ -27,8 +27,13 @@
       <el-table :data="tableData" stripe highlight-current-row v-loading="listLoading" @sort-change="sortChanged" style="width: 100%;" :default-sort = "{prop: 'createTime', order: 'descending'}" :empty-text="message">
         <el-table-column prop="nickName" label="客户昵称" width="250" show-overflow-tooltip>
           <template slot-scope="scope">
-            <img :src = "scope.row.avatarUrl" width="40" height="40"/>
-            <span style="margin-left: 10px">{{ scope.row.nickName }}</span>
+            <div v-if="scope.row.avatarUrl!=null">
+              <img :src = "scope.row.avatarUrl" width="40" height="40"/>
+              <span style="margin-left: 10px">{{ scope.row.nickName }}</span>
+            </div>
+            <div v-else>
+              <span style="height: 40px; line-height: 40px">{{ scope.row.openid }}</span>
+            </div>
           </template>
         </el-table-column>
         <el-table-column prop="retailer" label="是否商家" width="100">
