@@ -22,7 +22,6 @@ import com.cc.common.tools.DateTools;
 import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
-import com.cc.system.log.bean.OperationLogBean;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -73,7 +72,7 @@ public class CarouselServiceImpl implements CarouselService {
 	@Override
 	public Page<Map<String, Object>> queryCarouselPage(CarouselQueryForm form) {
 		Page<Map<String, Object>> page = new Page<Map<String,Object>>();
-		Example example = new Example(OperationLogBean.class);
+		Example example = new Example(CarouselBean.class);
 		Example.Criteria criteria = example.createCriteria();
 		if(!StringTools.isNullOrNone(form.getName())){
 			criteria.andLike("name", "%"+form.getName()+"%");
