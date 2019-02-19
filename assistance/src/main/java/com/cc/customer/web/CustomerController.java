@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cc.common.exception.LogicException;
+import com.cc.common.tools.DateTools;
 import com.cc.common.tools.JsonTools;
 import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
@@ -24,6 +25,7 @@ import com.cc.common.web.Page;
 import com.cc.common.web.Response;
 import com.cc.customer.service.CustomerService;
 import com.cc.customer.bean.CustomerBean;
+import com.cc.customer.enums.CustomerStatusEnum;
 import com.cc.customer.form.CustomerQueryForm;
 import com.cc.system.log.annotation.OperationLog;
 import com.cc.system.log.enums.ModuleEnum;
@@ -47,13 +49,43 @@ public class CustomerController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public Response<Object> register(@RequestBody Map<String, String> registerMap){
+	public Response<Object> register(@RequestBody Map<String, Object> registerMap){
 		Response<Object> response = new Response<Object>();
 		CustomerBean customerBean = JsonTools.toObject(JsonTools.toJsonString(registerMap), CustomerBean.class);
 		if(StringTools.isNullOrNone(customerBean.getOpenid())){
 			response.setMessage("请输入客户微信openid");
 			return response;
 		}
+		customerBean.setStatus(CustomerStatusEnum.NORMAL.getCode());
+		customerBean.setCreateTime(DateTools.now());
+		try {
+			customerService.saveCustomer(customerBean);
+			response.setSuccess(Boolean.TRUE);
+		} catch (LogicException e) {
+			response.setMessage(e.getErrContent());
+		} catch (Exception e) {
+			response.setMessage("系统内部错误");
+			e.printStackTrace();
+		}
+		return response;
+	}
+	
+	/**
+	 * 客户信息
+	 * @param customerMap
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/info", method = RequestMethod.POST)
+	public Response<Object> updateCustomerInfo(@RequestBody Map<String, String> customerMap){
+		Response<Object> response = new Response<Object>();
+		CustomerBean customerBean = CustomerBean.get(CustomerBean.class, Long.valueOf(customerMap.get("customerId")));
+		if (customerBean == null) {
+			response.setMessage("您尚未注册");
+			return response;
+		}
+		customerBean.setNickName(customerMap.get("nickName"));
+		customerBean.setAvatarUrl(customerMap.get("avatarUrl"));
 		try {
 			customerService.saveCustomer(customerBean);
 			response.setSuccess(Boolean.TRUE);
@@ -92,7 +124,7 @@ public class CustomerController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public Response<Object> queryCustomer(@ModelAttribute CustomerQueryForm form){
+	public Response<Object> queryCustomerInfo(@ModelAttribute CustomerQueryForm form){
 		Response<Object> response = new Response<Object>();
 		List<CustomerBean> customerBeanList = CustomerBean.findAllByParams(CustomerBean.class, "openid", form.getOpenid());
 		if (ListTools.isEmptyOrNull(customerBeanList)) {
