@@ -17,7 +17,10 @@
       <text class='block'>扫一扫</text>
     </view>
   </view>
-  <swiper wx:if="{{carousels.length>0}}">
+  <swiper wx:if="{{carousels.length>0}}"
+    indicator-dots
+    autoplay
+  >
     <block wx:for="{{carousels}}" wx:for-item="carousel">
       <swiper-item>
         <image src="{{carousel.imageUrl}}"></image>

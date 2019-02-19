@@ -78,8 +78,12 @@ Page({
       data: { status: 'on'},
       success: res => {
         if(res.success){
+          let carousels = []
           res.data.forEach(carousel=>{
-            this.data.carousels.push(carousel)
+            carousels.push(carousel)
+          })
+          this.setData({
+            carousels: carousels
           })
         }
       }
