@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<select id="queryLotteryCustomerList" resultType="com.cc.lottery.result.LotteryCustomerListResult" parameterType="com.cc.lottery.form.LotteryCustomerQueryForm" statementType="PREPARED">
-		select lc.id, lc.customerId,c.openid,c.nickName,lc.status,lp.name,l.no,lc.createTime,lc.lotteryId,lc.lotteryPrizeId,lc.exchangeTime,r.phone,r.store,r.address,lc.prize,lc.share
+		select lc.id, lc.customerId,c.openid,c.nickName,lc.status,lp.name,l.no,lc.createTime,lc.lotteryId,lc.lotteryPrizeId,lc.exchangeTime,r.phone,r.store,r.address,lc.prize,lc.share,l.share as needShare
 		from t_lottery_customer lc
 		left join t_customer c on c.id = lc.customerId
 		left join t_lottery_prize lp on lp.id = lc.lotteryPrizeId

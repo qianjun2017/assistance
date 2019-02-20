@@ -91,6 +91,11 @@ public class LotteryCustomerListResult {
 	 * 是否已分享
 	 */
 	private Boolean share;
+	
+	/**
+	 * 是否需要分享
+	 */
+	private Boolean needShare;
 
 	/**
 	 * @return the id
@@ -314,5 +319,19 @@ public class LotteryCustomerListResult {
 	 */
 	public void setShare(Boolean share) {
 		this.share = share;
+	}
+
+	/**
+	 * @return the needShare
+	 */
+	public Boolean getNeedShare() {
+		return needShare;
+	}
+
+	/**
+	 * @param needShare the needShare to set
+	 */
+	public void setNeedShare(Boolean needShare) {
+		this.needShare = needShare;
 	}
 }
