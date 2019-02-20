@@ -44,8 +44,11 @@
           </view>
           <view class='prizes'>
             <block wx:for="{{lotteryCustomer.list}}" wx:for-item="prize"  wx:key="id">
-            <view class='prize {{prize.status=="toBeExchange"?((prize.needShare && !prize.share)?"red":"green"):(prize.status=="exchanged"?"grey":"expired")}}' bindtap="bindExchangeTap" data-prize='{{prize}}'>
-              <text>{{prize.name}}</text>
+            <view class='prize'>
+              <text wx:if="{{prize.status == 'exchanged'}}" class='grey'>{{prize.name}}</text>
+              <text wx:elif="{{prize.status == 'expired'}}" class='expired'>{{prize.name}}</text>
+              <button open-type='share' data-prize='{{prize}}' class='share' wx:elif="{{prize.needShare && !prize.share}}">{{prize.name}}</button>
+              <text wx:else bindtap="bindExchangeTap" data-prize='{{prize}}' class='green'>{{prize.name}}</text>
             </view>
             </block>
           </view>

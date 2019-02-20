@@ -65,10 +65,6 @@
   font-size: 12px;
 }
 
-.red {
-  color: #1a8a8a;
-}
-
 .green {
   color: #1afa29;
 }
@@ -80,4 +76,17 @@
 .expired {
   color: #ddd;
   text-decoration:line-through;
+}
+
+.share {
+  color: #1a8a8a;
+  height: 32px;
+  line-height: 32px;
+  font-size: 12px;
+  background-color: #fff;
+  border-radius:0;
+}
+
+.share::after{
+  border: none;
 }

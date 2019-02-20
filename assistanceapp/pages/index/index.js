@@ -141,13 +141,28 @@ Page({
   bindExchangeTap: function(e){
     let data = e.currentTarget.dataset
     let prize = data.prize
-    if (prize.status == 'exchanged' || prize.status == 'expired'){
-      return false
-    }
-    if(prize.needShare && !prize.share){
-      console.log('分享')
+    app.ajaxGet({
+      url: '/wx/acode',
+      page: 'pages/lottery/lottery',
+      scene: prize.lotteryId,
+      success: res => {
+        console.log(res)
+      }
+    })
+  },
+  onShareAppMessage: function(options){
+    if (options.from == 'button'){
+      let data = options.target.dataset
+      let prize = data.prize
+      return {
+        title: prize.store+'做活动啦！我领到了'+prize.name+"，你也来试试吧！",
+        path: '/pages/lottery/lottery?lotteryId='+prize.lotteryId,
+        imageUrl: ''
+      }
     }else{
-      console.log('兑奖二维码')
+      return {
+        title: '助销小工具助力商家快速营销'
+      }
     }
   }
 })
