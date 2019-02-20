@@ -373,7 +373,7 @@
     },
     computed: {
       action: function(){
-        return this.service + "/image/up"
+        return this.service + "/file/up"
       }
     }
 	}

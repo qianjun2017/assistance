@@ -75,5 +75,5 @@ export default {
         })
     },
     serviceUrl: axios.defaults.baseURL,
-    imageServiceUrl: axios.defaults.baseURL
+    imageServiceUrl: process.env.FILE_URL
 }
