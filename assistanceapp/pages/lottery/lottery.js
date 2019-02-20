@@ -2,8 +2,8 @@ var app = getApp();
 Page({
   data: {
     imageslist: [
-      '../../image/chuizi.png',
-      '../../image/hongbao.png'
+      '../../images/chuizi.png',
+      '../../images/hongbao.png'
     ],
     shareId: '',
     awardsList: {},
@@ -32,10 +32,6 @@ Page({
         lotteryId: options.lotteryId
       })  
     }
-
-    this.setData({
-      lotteryId: 1
-    })
 
     if (app.globalData.userInfo) {
       this.setData({

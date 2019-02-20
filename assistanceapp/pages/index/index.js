@@ -24,7 +24,7 @@ Page({
     //   }
     // })
     wx.navigateTo({
-      url: '../lottery/lottery',
+      url: '../lottery/lottery?lotteryId=1',
     })
   },
   onLoad: function () {
