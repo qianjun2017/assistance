@@ -41,6 +41,7 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/static/**", "anon");
 		filterChainDefinitionMap.put("/key", "anon");
 		filterChainDefinitionMap.put("/login", "anon");
+		filterChainDefinitionMap.put("/wx/acode", "anon");
 		filterChainDefinitionMap.put("/wx/openid", "anon");
 		filterChainDefinitionMap.put("/customer/register", "anon");
 		filterChainDefinitionMap.put("/customer/info", "anon");
