@@ -9,7 +9,7 @@
   </view>
   <view class='menus'>
     <view class='menu' bindtap="bindRetailerTap">
-      <image src='../images/money.png'></image>
+      <image src='../images/sjfw.png'></image>
       <text class='block'>商家服务</text>
     </view>
     <view class='menu' bindtap="bindScanTap">
@@ -17,31 +17,34 @@
       <text class='block'>扫一扫</text>
     </view>
   </view>
-  <swiper wx:if="{{carousels.length>0}}"
-    indicator-dots
-    autoplay
-  >
-    <block wx:for="{{carousels}}" wx:for-item="carousel">
-      <swiper-item>
-        <image src="{{carousel.imageUrl}}"></image>
-      </swiper-item>
-    </block>
-  </swiper>
-  <view>
+  <view class='carousels'>
+    <swiper wx:if="{{carousels.length>0}}"
+      indicator-dots
+      autoplay
+    >
+      <block wx:for="{{carousels}}" wx:for-item="carousel" wx:key="id">
+        <swiper-item>
+          <image src="{{carousel.imageUrl}}"></image>
+        </swiper-item>
+      </block>
+    </swiper>
+  </view>
+  <view class='lotteryCustomers'>
     <scroll-view wx:if="{{lotteryCustomers.length>0}}"
       scroll-y
       enable-back-to-top
       style="height: 200px;"
       bindscrolltolower="scrolltolower"
     >
-      <block wx:for="{{lotteryCustomers}}" wx:for-item="lotteryCustomer">
+      <block wx:for="{{lotteryCustomers}}" wx:for-item="lotteryCustomer"  wx:key="lotteryId">
         <view class='lotteryCustomer'>
           <view class='retailer'>
-            <text class='lottery'>{{lotteryCustomer.store}}第{{lotteryCustomer.no}}期</text>
+            <text class='lottery'>{{lotteryCustomer.store}}  第{{lotteryCustomer.no}}期</text>
+            <image src='../images/angle-right.png'></image>
           </view>
           <view class='prizes'>
-            <block wx:for="{{lotteryCustomer.list}}" wx:for-item="prize">
-            <view class='prize'>
+            <block wx:for="{{lotteryCustomer.list}}" wx:for-item="prize"  wx:key="id">
+            <view class='prize {{prize.status=="toBeExchange"?((prize.needShare && !prize.share)?"red":"green"):(prize.status=="exchanged"?"grey":"expired")}}' bindtap="bindExchangeTap" data-prize='{{prize}}'>
               <text>{{prize.name}}</text>
             </view>
             </block>

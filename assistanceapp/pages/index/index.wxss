@@ -19,3 +19,65 @@
 .usermotto {
   margin-top: 200px;
 }
+
+.carousels, .lotteryCustomers {
+  padding: 5rpx 0;
+}
+
+.carousels image {
+  width: 100%;
+}
+
+.lotteryCustomers{
+  margin-top: 5px;
+}
+
+.lotteryCustomer {
+  border-radius: 12px;
+  box-sizing: border-box;
+  margin: 0 13.248px 12px;
+  background-color: #fff;
+  padding: 0 13.248px;
+}
+
+.retailer{
+  width: 100%;
+  height: 46px;
+  line-height: 46px;
+  display: flex;
+  align-items:center;
+  justify-content: space-between;
+}
+
+.retailer image {
+  height: 16px;
+  width: 16px;
+}
+
+.prizes {
+  display: flex;
+}
+
+.prize {
+  margin-right: 12px;
+  height: 32px;
+  line-height: 32px;
+  font-size: 12px;
+}
+
+.red {
+  color: #1a8a8a;
+}
+
+.green {
+  color: #1afa29;
+}
+
+.grey {
+  color: #ddd;
+}
+
+.expired {
+  color: #ddd;
+  text-decoration:line-through;
+}

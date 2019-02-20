@@ -1,7 +1,7 @@
 <view class="wrapper">
     <view class="canvas-container">
       <view class='mfcj'>
-        <image src='../../images/mfcj.png'></image>
+        <image src='../images/mfcj.png'></image>
       </view>
 
         <view animation="{{animationData}}" class="canvas-content">

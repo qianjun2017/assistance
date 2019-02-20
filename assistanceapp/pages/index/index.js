@@ -137,5 +137,17 @@ Page({
       })
       this.getLotteryCustomerData()
     }
+  },
+  bindExchangeTap: function(e){
+    let data = e.currentTarget.dataset
+    let prize = data.prize
+    if (prize.status == 'exchanged' || prize.status == 'expired'){
+      return false
+    }
+    if(prize.needShare && !prize.share){
+      console.log('分享')
+    }else{
+      console.log('兑奖二维码')
+    }
   }
 })
