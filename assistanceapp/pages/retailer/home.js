@@ -8,7 +8,11 @@ Page({
    * 页面的初始数据
    */
   data: {
-    userInfo: {}
+    userInfo: {},
+    currentLottery: {},
+    showCreate: false,
+    stoping: false,
+    showCurrent: false
   },
 
   /**
@@ -17,6 +21,34 @@ Page({
   onLoad: function (options) {
     this.setData({
       userInfo: app.globalData.userInfo
+    })
+    app.ajaxGet({
+      url: '/lottery/page',
+      data: {
+        pageSize: '1',
+        retailerId: this.data.userInfo.id,
+        status: 'normal',
+        sort: 'l.id'
+      },
+      success: res => {
+        if(res.success){
+          app.ajaxGet({
+            url: '/lottery/get/' + res.data[0].id,
+            success: l => {
+              if(l.success){
+                this.setData({
+                  currentLottery: l.data,
+                  showCurrent: true
+                })
+              }
+            }
+          })
+        }else{
+          this.setData({
+            showCreate: true
+          })
+        }
+      }
     })
   },
 
@@ -81,9 +113,35 @@ Page({
     })
   },
 
-  bindPastLotterysTap: function(e) {
+  bindHistoryTap: function(e) {
     wx.navigateTo({
-      url: '../retailer/pastLotterys'
+      url: '../retailer/history'
+    })
+  },
+
+  bindStopTap: function(e) {
+    this.setData({
+      stoping: true
+    })
+    app.ajaxGet({
+      url: '/lottery/over/' + this.data.currentLottery.id,
+      success: res => {
+        this.setData({
+          stoping: false
+        })
+        if(res.success){
+          this.setData({
+            currentLottery: {},
+            showCreate: true,
+            showCurrent: false
+          })
+        }
+      }
+    })
+  },
+  bindUpdateTap: function(e) {
+    wx.navigateTo({
+      url: '../retailer/lottery'
     })
   }
 })

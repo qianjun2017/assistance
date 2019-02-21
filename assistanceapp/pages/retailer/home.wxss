@@ -16,3 +16,21 @@
 .userinfo-nickname {
   color: #aaa;
 }
+
+.lottery {
+  border-radius: 12px;
+  box-sizing: border-box;
+  padding: 0px 20rpx;
+  padding-bottom: 12px;
+  background-color: #fff;
+}
+
+.lottery .retailer {
+  width: 100%;
+  height: 46px;
+  line-height: 46px;
+}
+
+.lottery .prizes {
+  padding-top: 10px;
+}

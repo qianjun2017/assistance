@@ -6,7 +6,7 @@
       <text class='block'>商家服务</text>
     </view>
     <view class='menu' bindtap="bindScanTap">
-      <image src='../images/qrcode.png'></image>
+      <image src='../images/scan.png'></image>
       <text class='block'>扫一扫</text>
     </view>
   </view>

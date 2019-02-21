@@ -7,16 +7,32 @@
   </view>
   <view class='menus'>
     <view class='menu' bindtap="bindRetailerTap">
-      <image src='../images/sjfw.png'></image>
+      <image src='../images/shop.png'></image>
       <text class='block'>我的店铺</text>
     </view>
-    <view class='menu' bindtap="bindLotteryTap">
-      <image src='../images/qrcode.png'></image>
+    <view class='menu' bindtap="bindLotteryTap" wx:if="{{showCreate}}">
+      <image src='../images/lottery.png'></image>
       <text class='block'>创建活动</text>
     </view>
-    <view class='menu' bindtap="bindPastLotterysTap">
-      <image src='../images/qrcode.png'></image>
+    <view class='menu' bindtap="bindHistoryTap">
+      <image src='../images/history.png'></image>
       <text class='block'>历史活动</text>
+    </view>
+  </view>
+  <view class='lottery' wx:if="{{showCurrent}}">
+    <view class='retailer'>
+      <text>第{{currentLottery.no}}期</text>
+    </view>
+    <view class='prizes'>
+      <block wx:for="{{currentLottery.prizeList}}" wx:for-item="prize" wx:key="id">
+        <view class='prize {{prize.status=="normal"?"green":"grey"}}'>
+          <text>{{prize.name}} {{prize.total-prize.quantity}}({{prize.total}}) {{prize.weight/100}}%</text>
+        </view>
+      </block>
+    </view>
+    <view class='btns'>
+      <button class='btn1' loading='{{stoping}}' bindtap='bindStopTap'>停 止</button>
+      <button class='btn2' bindtap='bindUpdateTap'>修 改</button>
     </view>
   </view>
 </view>

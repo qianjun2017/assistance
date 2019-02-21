@@ -4,12 +4,13 @@
     "pages/lottery/lottery",
     "pages/retailer/lottery",
     "pages/retailer/retailer",
-    "pages/retailer/home"
+    "pages/retailer/home",
+    "pages/retailer/history"
   ],
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "首页",
+    "navigationBarTitleText": "Wechat",
     "navigationBarTextStyle": "black"
   }
 }

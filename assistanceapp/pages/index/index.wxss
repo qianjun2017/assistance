@@ -34,9 +34,10 @@
   margin-bottom: 12px;
   background-color: #fff;
   padding: 0 13.248px;
+  padding-bottom: 12px;
 }
 
-.retailer{
+.lotteryCustomer .retailer{
   width: 100%;
   height: 46px;
   line-height: 46px;
@@ -45,46 +46,9 @@
   justify-content: space-between;
 }
 
-.retailer image {
+.lotteryCustomer .retailer image {
   height: 16px;
   width: 16px;
-}
-
-.prizes {
-  display: flex;
-}
-
-.prize {
-  margin-right: 12px;
-  height: 32px;
-  line-height: 32px;
-  font-size: 12px;
-}
-
-.green {
-  color: #1afa29;
-}
-
-.grey {
-  color: #ddd;
-}
-
-.expired {
-  color: #ddd;
-  text-decoration:line-through;
-}
-
-.share {
-  color: #1a8a8a;
-  height: 32px;
-  line-height: 32px;
-  font-size: 12px;
-  background-color: #fff;
-  border-radius:0;
-}
-
-.share::after {
-  border: none;
 }
 
 .acode {

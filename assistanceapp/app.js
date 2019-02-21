@@ -58,7 +58,7 @@ App({
   },
   globalData: {
     userInfo: null,
-    service: 'http://localhost:8080'
+    service: 'http://192.168.0.104:8080'
   },
   ajaxGet: function (config) {
     wx.request({

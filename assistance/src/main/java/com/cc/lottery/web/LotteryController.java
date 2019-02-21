@@ -215,17 +215,6 @@ public class LotteryController {
 		lotteryBean.setLastExchangeTime(lotteryForm.getLastExchangeTime());
 		lotteryBean.setShare(lotteryForm.getShare());
 		lotteryBean.setSame(lotteryForm.getSame());
-		List<LotteryBean> lotteryList = LotteryBean.findAllByParams(LotteryBean.class, "customerId", customerBean.getId(), "createTime desc");
-		if(ListTools.isEmptyOrNull(lotteryList)){
-			lotteryBean.setNo(1l);
-		}else{
-			LotteryBean LastestLotteryBean = lotteryList.get(0);
-			if(LotteryStatusEnum.NORMAL.equals(LotteryStatusEnum.getLotteryStatusEnumByCode(LastestLotteryBean.getStatus()))){
-				response.setMessage("请先结束正在进行中的抽奖");
-				return response;
-			}
-			lotteryBean.setNo(LastestLotteryBean.getNo()+1);
-		}
 		List<LotteryPrizeBean> lotteryPrizeBeanList = new ArrayList<LotteryPrizeBean>();
 		Integer weight = 0;
 		for(LotteryPrizeForm lotteryPrizeForm: lotteryForm.getPrizeList()){
