@@ -31,7 +31,7 @@ Page({
     //   }
     // })
     wx.navigateTo({
-      url: '../lottery/lottery?lotteryId=1'
+      url: '../lottery/lottery?lotteryId=2'
     })
   },
   onLoad: function () {

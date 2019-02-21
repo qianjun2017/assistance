@@ -2,8 +2,8 @@ var app = getApp();
 Page({
   data: {
     imageslist: [
-      '../../images/chuizi.png',
-      '../../images/hongbao.png'
+      '../images/chuizi.png',
+      '../images/hongbao.png'
     ],
     shareId: '',
     awardsList: {},
@@ -24,6 +24,10 @@ Page({
     
     this.setData({
       lotteryId: scene =='undefined'?'':scene
+    })
+
+    this.setData({
+      lotteryId: 2
     })
 
     if (options.shareId && options.lotteryId) {   // 转发进入
