@@ -373,6 +373,25 @@ public class LotteryController {
 	}
 	
 	/**
+	 * 查询中奖详情
+	 * @param id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/customer/get/{id:\\d+}", method = RequestMethod.GET)
+	public Response<LotteryCustomerBean> queryLotteryCustomer(@PathVariable Long id){
+		Response<LotteryCustomerBean> response = new Response<LotteryCustomerBean>();
+		LotteryCustomerBean lotteryCustomerBean = LotteryCustomerBean.get(LotteryCustomerBean.class, id);
+		if (lotteryCustomerBean==null) {
+			response.setMessage("中奖不存在");
+			return response;
+		}
+		response.setData(lotteryCustomerBean);
+		response.setSuccess(Boolean.TRUE);
+		return response;
+	}
+	
+	/**
 	 * 客户抽奖
 	 * @param customerMap
 	 * @return

@@ -69,6 +69,11 @@ App({
         if (config.success) {
           config.success(res.data)
         }
+      },
+      fail: function (res) {
+        if (config.fail) {
+          config.fail(res)
+        }
       }
     })
   },

@@ -16,10 +16,6 @@
   color: #aaa;
 }
 
-.usermotto {
-  margin-top: 200px;
-}
-
 .carousels, .lotteryCustomers {
   padding: 5rpx 0;
 }
@@ -35,7 +31,7 @@
 .lotteryCustomer {
   border-radius: 12px;
   box-sizing: border-box;
-  margin: 0 13.248px 12px;
+  margin-bottom: 12px;
   background-color: #fff;
   padding: 0 13.248px;
 }
@@ -87,6 +83,25 @@
   border-radius:0;
 }
 
-.share::after{
+.share::after {
   border: none;
+}
+
+.acode {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,.5);
+}
+
+.acode image {
+  position: absolute;
+  width: 400rpx;
+  height: 400rpx;
+  top: 50%;
+  left: 50%;
+  margin-left: -200rpx;
+  margin-top: -200rpx;
 }

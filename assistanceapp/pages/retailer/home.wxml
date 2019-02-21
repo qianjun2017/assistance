@@ -1,0 +1,22 @@
+<view class="container">
+  <view class="userinfo">
+    <block>
+      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+    </block>
+  </view>
+  <view class='menus'>
+    <view class='menu' bindtap="bindRetailerTap">
+      <image src='../images/sjfw.png'></image>
+      <text class='block'>我的店铺</text>
+    </view>
+    <view class='menu' bindtap="bindLotteryTap">
+      <image src='../images/qrcode.png'></image>
+      <text class='block'>创建活动</text>
+    </view>
+    <view class='menu' bindtap="bindPastLotterysTap">
+      <image src='../images/qrcode.png'></image>
+      <text class='block'>历史活动</text>
+    </view>
+  </view>
+</view>

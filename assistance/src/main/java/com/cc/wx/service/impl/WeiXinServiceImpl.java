@@ -109,7 +109,7 @@ public class WeiXinServiceImpl implements WeiXinService {
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("scene", request.getScene());
 		if(!StringTools.isNullOrNone(request.getPage())){
-			paramMap.put("auto_color", request.getPage());
+			paramMap.put("page", request.getPage());
 		}
 		if(request.getWidth()!=null){
 			paramMap.put("width", request.getWidth());

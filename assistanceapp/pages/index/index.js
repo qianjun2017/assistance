@@ -4,18 +4,25 @@ const app = getApp()
 
 Page({
   data: {
-    userInfo: {},
-    hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     hasNickName: false,
     carousels: [],
     lotteryCustomers: [],
     lotteryCustomerPage: 1,
-    lotteryCustomerPages: 0
+    lotteryCustomerPages: 0,
+    acode: '',
+    showAcode: false,
+    interval: undefined
   },
   //事件处理函数
   bindRetailerTap: function() {
-    
+    if(this.data.hasNickName){
+      wx.navigateTo({
+        url: '../retailer/home'
+      })
+    }else{
+
+    }
   },
   bindScanTap: function(){
     // wx.scanCode({
@@ -24,14 +31,12 @@ Page({
     //   }
     // })
     wx.navigateTo({
-      url: '../lottery/lottery?lotteryId=1',
+      url: '../lottery/lottery?lotteryId=1'
     })
   },
   onLoad: function () {
     if (app.globalData.userInfo) {
       this.setData({
-        userInfo: app.globalData.userInfo,
-        hasUserInfo: true,
         hasNickName: app.globalData.userInfo.nickName!=null
       })
       this.getLotteryCustomerData()
@@ -40,8 +45,6 @@ Page({
       // 所以此处加入 callback 以防止这种情况
       app.userInfoReadyCallback = res => {
         this.setData({
-          userInfo: res.data,
-          hasUserInfo: true,
           hasNickName: res.data.nickName != null
         })
         this.getLotteryCustomerData()
@@ -61,8 +64,6 @@ Page({
           app.globalData.userInfo.nickName = e.detail.userInfo.nickName
           app.globalData.userInfo.avatarUrl = e.detail.userInfo.avatarUrl
           this.setData({
-            userInfo: app.globalData.userInfo,
-            hasUserInfo: true,
             hasNickName: true
           })
         }
@@ -92,7 +93,7 @@ Page({
   getLotteryCustomerData: function () {
     app.ajaxGet({
       url: '/lottery/customer/page',
-      data: { prize: true, customerId: this.data.userInfo.id, sort: 'lp.lotteryId', order: 'desc', page: this.data.lotteryCustomerPage },
+      data: { prize: true, customerId: app.globalData.userInfo.id, sort: 'lp.lotteryId', order: 'desc', page: this.data.lotteryCustomerPage },
       success: res => {
         if (res.success) {
           let lotteryCustomers = this.data.lotteryCustomers
@@ -141,13 +142,56 @@ Page({
   bindExchangeTap: function(e){
     let data = e.currentTarget.dataset
     let prize = data.prize
-    app.ajaxGet({
-      url: '/wx/acode',
-      page: 'pages/lottery/lottery',
-      scene: prize.lotteryId,
-      success: res => {
-        console.log(res)
-      }
+    let self = this
+    this.setData({
+      acode: app.globalData.service + '/wx/acode?scene=' + prize.id +'&v='+Math.random(),
+      showAcode: true,
+      interval: setInterval(function(){
+        app.ajaxGet({
+          url: '/lottery/customer/get/'+prize.id,
+          success: res => {
+            if(res.success){
+              if (res.data.status =='exchanged'){
+                let lotteryCustomers = self.data.lotteryCustomers
+                let lotteryCustomer = {}
+                for (lotteryCustomer in lotteryCustomers){
+                  if (lotteryCustomer.lotteryId == prize.lotteryId){
+                    let p = {}
+                    for (p in lotteryCustomer.list){
+                      if(p.id == prize.id){
+                        p.status = res.data.status
+                        break;
+                      }
+                    }
+                    break;
+                  }
+                }
+                self.setData({
+                  showAcode: false,
+                  interval: null,
+                  lotteryCustomers: lotteryCustomers
+                })
+                wx.showToast({
+                  title: '您成功兑换了'+prize.name,
+                  icon: 'none',
+                  duration: 1000
+                })
+              }
+            }
+          },
+          fail: res => {
+            self.setData({
+              showAcode: false,
+              interval: null
+            })
+            wx.showToast({
+              title: '出问题了，请稍后再试',
+              icon: 'none',
+              duration: 1000
+            })
+          }
+        })
+      },2000)
     })
   },
   onShareAppMessage: function(options){

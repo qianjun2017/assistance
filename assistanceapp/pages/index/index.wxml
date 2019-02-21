@@ -1,12 +1,5 @@
 <!--index.wxml-->
 <view class="container">
-  <view class="userinfo">
-    <button wx:if="{{!hasNickName && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取微信公开信息 </button>
-    <block wx:else>
-      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-    </block>
-  </view>
   <view class='menus'>
     <view class='menu' bindtap="bindRetailerTap">
       <image src='../images/sjfw.png'></image>
@@ -55,5 +48,8 @@
         </view>
       </block>
     </scroll-view>
+  </view>
+  <view wx:if="{{showAcode}}" class='acode'>
+    <image src="{{acode}}"></image>
   </view>
 </view>

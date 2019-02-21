@@ -1,0 +1,28 @@
+.retailer {
+  padding: 0 25px;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+
+.field {
+  margin: 20px 0px 0px;
+  padding: 10px 0px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.field1 {
+  height: 29px;
+  line-height: 29px;
+}
+
+.field2 {
+  min-height: 29px;
+}
+
+.notice {
+  font-size: 14px;
+  line-height: 30px;
+  min-height: 15px;
+  color: #f23030;
+  text-align: left;
+}
