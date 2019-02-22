@@ -141,7 +141,7 @@ Page({
   },
   bindUpdateTap: function(e) {
     wx.navigateTo({
-      url: '../retailer/lottery'
+      url: '../retailer/lottery?lotteryId=' + this.data.currentLottery.id
     })
   }
 })

@@ -1,2 +1,25 @@
-<!--pages/retailer/lottery.wxml-->
-<text>pages/retailer/lottery.wxml</text>
+<!--pages/retailer/retailer.wxml-->
+<view class="container">
+  <view class='form'>
+    <view class='field field1'>
+      <text class='lable'>参与次数</text>
+      <input type='number' maxlength='4' focus bindinput='bindCountInput' bindblur="bindCountValid" value='{{lottery.count}}'></input>
+    </view>
+    <view class='field field1'>
+      <text class='lable'>截止日期</text>
+      <picker
+        mode="date"
+        value="{{lottery.lastExchangeTime}}"
+        start="{{start}}"
+        bindchange="bindLastExchangeTimeChange">
+        <view>{{lottery.lastExchangeTime?lottery.lastExchangeTime:'请选择最后兑奖时间'}}</view>
+      </picker>
+    </view>
+    <view class='notice'>
+      <text>{{notice}}</text>
+    </view>
+    <view class='btns'>
+      <button class='btn1' loading='{{loading}}' bindtap='bindSubmitTap'>提 交</button>
+    </view>
+  </view>
+</view>

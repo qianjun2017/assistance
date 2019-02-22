@@ -3,7 +3,7 @@
     <scroll-view wx:if="{{lotterys.length>0}}"
       scroll-y
       enable-back-to-top
-      style="height: 100%;"
+      style="height: {{scrollHight}}px;"
       bindscrolltolower="scrolltolower"
     >
       <block wx:for="{{lotterys}}" wx:for-item="lottery"  wx:key="id">

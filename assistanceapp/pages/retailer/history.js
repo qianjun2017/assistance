@@ -11,14 +11,22 @@ Page({
     lotterys: [],
     lotteryPage: 1,
     lotteryPages: 0,
-    loading: false
+    loading: false,
+    scrollHight: 0
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.getLotteryData()
+    wx.getSystemInfo({
+      success: res => {
+        this.setData({
+          scrollHight: res.windowHeight
+        })
+        this.getLotteryData()
+      }
+    })
   },
 
   /**

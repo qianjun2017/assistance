@@ -3,7 +3,6 @@
  */
 package com.cc.lottery.form;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,7 +46,7 @@ public class LotteryForm {
 	/**
 	 * 最后兑奖时间
 	 */
-	private Date lastExchangeTime;
+	private String lastExchangeTime;
 	
 	/**
 	 * 是否需要分享
@@ -160,14 +159,14 @@ public class LotteryForm {
 	/**
 	 * @return the lastExchangeTime
 	 */
-	public Date getLastExchangeTime() {
+	public String getLastExchangeTime() {
 		return lastExchangeTime;
 	}
 
 	/**
 	 * @param lastExchangeTime the lastExchangeTime to set
 	 */
-	public void setLastExchangeTime(Date lastExchangeTime) {
+	public void setLastExchangeTime(String lastExchangeTime) {
 		this.lastExchangeTime = lastExchangeTime;
 	}
 
