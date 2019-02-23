@@ -57,7 +57,7 @@ public class LotteryBean extends BaseOrm<LotteryBean> implements BaseEntity {
 	/**
 	 * 最后兑奖时间
 	 */
-	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
 	private Date lastExchangeTime;
 	
 	/**

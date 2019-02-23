@@ -84,7 +84,8 @@ public class LotteryServiceImpl implements LotteryService {
 			throw new LogicException("E001", "抽奖不存在");
 		}
 		updateLotteryBean.setCount(lotteryBean.getCount());
-		updateLotteryBean.setStatus(lotteryBean.getStatus());
+		updateLotteryBean.setShare(lotteryBean.getShare());
+		updateLotteryBean.setSame(lotteryBean.getSame());
 		int row = updateLotteryBean.updateForce();
 		if (row!=1) {
 			throw new LogicException("E002","修改抽奖失败");

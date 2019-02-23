@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cc.common.exception.LogicException;
-import com.cc.common.tools.DESTools;
 import com.cc.common.tools.DateTools;
 import com.cc.common.tools.JsonTools;
 import com.cc.common.tools.ListTools;
@@ -39,7 +38,6 @@ import com.cc.lottery.form.LotteryQueryForm;
 import com.cc.lottery.result.LotteryCustomerListResult;
 import com.cc.lottery.result.LotteryListResult;
 import com.cc.lottery.service.LotteryService;
-import com.cc.system.shiro.SecurityContextUtil;
 
 /**
  * @author Administrator
@@ -75,8 +73,7 @@ public class LotteryController {
 			response.setMessage("您尚未开通商家服务");
 			return response;
 		}
-		String openid = DESTools.decrypt(lotteryForm.getOpenid(), SecurityContextUtil.getDESKey());
-		if(!customerBean.getOpenid().equals(openid)){
+		if(!customerBean.getOpenid().equals(lotteryForm.getOpenid())){
 			response.setMessage("您无权为他人发起抽奖");
 			return response;
 		}
@@ -95,7 +92,7 @@ public class LotteryController {
 			response.setMessage("请选择最后兑奖时间");
 			return response;
 		}
-		lotteryBean.setLastExchangeTime(lotteryForm.getLastExchangeTime());
+		lotteryBean.setLastExchangeTime(DateTools.getDate(lotteryForm.getLastExchangeTime()+" 23:59:59"));
 		lotteryBean.setShare(lotteryForm.getShare());
 		lotteryBean.setSame(lotteryForm.getSame());
 		List<LotteryBean> lotteryList = LotteryBean.findAllByParams(LotteryBean.class, "customerId", customerBean.getId(), "createTime desc");
@@ -187,8 +184,7 @@ public class LotteryController {
 			response.setMessage("您尚未开通商家服务");
 			return response;
 		}
-		String openid = DESTools.decrypt(lotteryForm.getOpenid(), SecurityContextUtil.getDESKey());
-		if(!customerBean.getOpenid().equals(openid)){
+		if(!customerBean.getOpenid().equals(lotteryForm.getOpenid())){
 			response.setMessage("您无权修改他人发起的抽奖");
 			return response;
 		}
@@ -198,7 +194,6 @@ public class LotteryController {
 			return response;
 		}
 		lotteryBean.setId(lotteryForm.getId());
-		lotteryBean.setCustomerId(customerBean.getId());
 		if(lotteryForm.getCount()==null){
 			response.setMessage("请输入每个客户最多抽奖次数");
 			return response;
@@ -212,7 +207,7 @@ public class LotteryController {
 			response.setMessage("请选择最后兑奖时间");
 			return response;
 		}
-		lotteryBean.setLastExchangeTime(lotteryForm.getLastExchangeTime());
+		lotteryBean.setLastExchangeTime(DateTools.getDate(lotteryForm.getLastExchangeTime()+" 23:59:59"));
 		lotteryBean.setShare(lotteryForm.getShare());
 		lotteryBean.setSame(lotteryForm.getSame());
 		List<LotteryPrizeBean> lotteryPrizeBeanList = new ArrayList<LotteryPrizeBean>();
@@ -247,6 +242,7 @@ public class LotteryController {
 			lotteryPrizeBean.setWeight(lotteryPrizeForm.getWeight());
 			weight += lotteryPrizeBean.getWeight();
 			lotteryPrizeBean.setStatus(LotteryStatusEnum.NORMAL.getCode());
+			lotteryPrizeBean.setQuantity(lotteryPrizeForm.getQuantity());
 			lotteryPrizeBeanList.add(lotteryPrizeBean);
 		}
 		if(ListTools.isEmptyOrNull(lotteryPrizeBeanList)){
@@ -291,7 +287,7 @@ public class LotteryController {
 	}
 	
 	/**
-	 * 客户获取抽奖信息
+	 * 获取抽奖信息
 	 * @param form
 	 * @return
 	 */
@@ -305,7 +301,11 @@ public class LotteryController {
 			return response;
 		}
 		lotteryBean.setPrizeList(LotteryPrizeBean.findAllByParams(LotteryPrizeBean.class, "lotteryId", lotteryBean.getId(), "status", LotteryStatusEnum.NORMAL.getCode()));
-		lotteryBean.setCount(lotteryBean.getCount()-lotteryService.queryLotteryCustomerCount(form.getCustomerId(), lotteryBean.getId()));
+		Integer count = lotteryBean.getCount();
+		if(form.getCustomerId()!=null){
+			count -= lotteryService.queryLotteryCustomerCount(form.getCustomerId(), lotteryBean.getId());
+		}
+		lotteryBean.setCount(count);
 		response.setData(lotteryBean);
 		response.setSuccess(Boolean.TRUE);
 		return response;
