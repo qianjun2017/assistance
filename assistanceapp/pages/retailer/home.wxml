@@ -31,8 +31,8 @@
       </block>
     </view>
     <view class='btns'>
-      <button class='btn1' loading='{{stoping}}' bindtap='bindStopTap'>停 止</button>
-      <button class='btn2' bindtap='bindUpdateTap'>修 改</button>
+      <button type='primary' loading='{{stoping}}' bindtap='bindStopTap'>停 止</button>
+      <button bindtap='bindUpdateTap'>修 改</button>
     </view>
   </view>
 </view>

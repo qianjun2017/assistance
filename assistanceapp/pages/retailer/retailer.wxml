@@ -1,23 +1,25 @@
 <!--pages/retailer/retailer.wxml-->
 <view class="container">
   <view class='form'>
-    <view class='field field1'>
-      <text class='lable'>手机号码</text>
-      <input type='number' placeholder="请输入手机号码" maxlength='11' focus bindinput='bindPhoneInput' bindblur="bindPhoneValid" value='{{phone}}'></input>
-    </view>
-    <view class='field field1'>
-      <text class='lable'>店铺名称</text>
-      <input type='text' placeholder="请输入店铺名称" maxlength='-1' bindinput='bindStoreInput' value='{{store}}'></input>
-    </view>
-    <view class='field field2'>
-      <text class='lable'>店铺地址</text>
-      <textarea placeholder='请输入店铺地址' maxlength='-1' auto-height bindinput='bindAddressInput' value='{{address}}'></textarea>
-    </view>
-    <view class='notice'>
-      <text>{{notice}}</text>
-    </view>
-    <view class='btns'>
-      <button class='btn1' loading='{{loading}}' bindtap='bindSubmitTap'>提 交</button>
+    <view class='block'>
+      <view class='field field1'>
+        <text class='lable'>手机号码</text>
+        <input type='number' placeholder="请输入手机号码" maxlength='11' focus bindinput='bindPhoneInput' bindblur="bindPhoneValid" value='{{phone}}'></input>
+      </view>
+      <view class='field field1'>
+        <text class='lable'>店铺名称</text>
+        <input type='text' placeholder="请输入店铺名称" maxlength='-1' bindinput='bindStoreInput' value='{{store}}'></input>
+      </view>
+      <view class='field field2'>
+        <text class='lable'>店铺地址</text>
+        <textarea placeholder='请输入店铺地址' maxlength='-1' auto-height bindinput='bindAddressInput' value='{{address}}'></textarea>
+      </view>
+      <view class='notice'>
+        <text>{{notice}}</text>
+      </view>
+      <view class='btns'>
+        <button type='primary' loading='{{loading}}' bindtap='bindSubmitTap'>提 交</button>
+      </view>
     </view>
   </view>
 </view>

@@ -31,7 +31,7 @@ Page({
     this.setData({
       start: year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '')+day
     })
-    if(this.data.lotteryId==''){
+    if (options.lotteryId==undefined){
       return
     }else{
       this.setData({
@@ -237,6 +237,7 @@ Page({
   bindSubmitTap: function () {
     let lottery = this.data.lottery
     lottery.openid = app.globalData.userInfo.openid
+    lottery.customerId = app.globalData.userInfo.id
     app.ajaxPost({
       url: '/lottery/'+(this.data.createLottery?'add':'update'),
       data: lottery,
