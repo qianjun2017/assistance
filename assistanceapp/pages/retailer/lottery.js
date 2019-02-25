@@ -8,7 +8,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    lotteryId: undefined,
+    lotteryId: '',
     createLottery: true,
     lottery: {},
     loading: false,
@@ -24,9 +24,6 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.setData({
-      lotteryId: options.lotteryId
-    })
     let now = new Date()
     let year = now.getFullYear()
     let month = now.getMonth()+1
@@ -34,11 +31,16 @@ Page({
     this.setData({
       start: year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '')+day
     })
-    if(this.data.lotteryId){
+    if(this.data.lotteryId==''){
+      return
+    }else{
       this.setData({
-        createLottery: false
+        lotteryId: options.lotteryId
       })
     }
+    this.setData({
+      createLottery: false
+    })
     app.ajaxGet({
       url: '/lottery/info',
       data: { lotteryId: this.data.lotteryId},

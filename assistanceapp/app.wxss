@@ -33,6 +33,7 @@ page{
   padding: 10rpx;
   flex-grow: 1;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .menus .menu:last-child{
@@ -47,9 +48,24 @@ page{
 }
 
 .form {
-  padding: 0 25px;
   box-sizing: border-box;
+}
+
+.block {
   background-color: #fff;
+
+}
+.block:not(:first-child) {
+  margin-top: 8px;
+}
+
+.title {
+  border-bottom: 1px solid #f5f5f5;
+  font-weight: bold;
+}
+
+.group {
+  padding: 0 25px;
 }
 
 .field {

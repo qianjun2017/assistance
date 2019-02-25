@@ -123,7 +123,7 @@ Page({
     this.setData({
       stoping: true
     })
-    app.ajaxGet({
+    app.ajaxPost({
       url: '/lottery/over/' + this.data.currentLottery.id,
       success: res => {
         this.setData({

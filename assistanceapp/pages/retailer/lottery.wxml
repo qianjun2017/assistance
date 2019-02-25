@@ -1,67 +1,75 @@
 <!--pages/retailer/retailer.wxml-->
 <view class="container">
   <view class='form'>
-    <view class='title'>
-      <text>基本信息</text>
-    </view>
-    <view class='field field1'>
-      <text class='lable'>参与次数</text>
-      <input type='number' maxlength='4' focus bindinput='bindCountInput' bindblur="bindCountValid" value='{{lottery.count}}'></input>
-    </view>
-    <view class='field field1'>
-      <text class='lable'>截止日期</text>
-      <picker
-        mode="date"
-        value="{{lottery.lastExchangeTime}}"
-        start="{{start}}"
-        bindchange="bindLastExchangeTimeChange">
-        <view>{{lottery.lastExchangeTime?lottery.lastExchangeTime:'请选择最后兑奖时间'}}</view>
-      </picker>
-    </view>
-    <view class='field field1'>
-      <text class='lable'>重复抽中</text>
-      <picker
-        range="{{sameArray}}"
-        bindchange="bindSameChange"
-        value='{{same}}'
-        >
-        <view>{{sameArray[same]}}</view>
-      </picker>
-    </view>
-    <view class='field field1'>
-      <text class='lable'>兑换分享</text>
-      <picker
-        range="{{shareArray}}"
-        bindchange="bindShareChange"
-        value='{{share}}'
-        >
-        <view>{{shareArray[share]}}</view>
-      </picker>
-    </view>
-    <view class='title'>
-      <text>奖品信息</text>
-    </view>
-    <block wx:for="{{lottery.prizeList}}" wx:for-item="prize" wx:key="index">
-      <view class='field field1'>
-        <text class='lable'>奖品名称</text>
-        <input maxlength='-1' bindinput='bindNameInput' data-index='{{index}}' value='{{prize.name}}'></input>
+    <view class='block'>
+      <view class='title'>
+        <text>基本信息</text>
       </view>
-      <view class='field field1'>
-        <text class='lable'>奖品总数</text>
-        <input type='number' maxlength='4' bindinput='bindTotalInput' bindblur="bindTotalValid" data-index='{{index}}' value='{{prize.total}}'></input>
+      <view class='group'>
+        <view class='field field1'>
+          <text class='lable'>参与次数</text>
+          <input type='number' maxlength='4' focus bindinput='bindCountInput' bindblur="bindCountValid" value='{{lottery.count}}'></input>
+        </view>
+        <view class='field field1'>
+          <text class='lable'>截止日期</text>
+          <picker
+            mode="date"
+            value="{{lottery.lastExchangeTime}}"
+            start="{{start}}"
+            bindchange="bindLastExchangeTimeChange">
+            <view>{{lottery.lastExchangeTime?lottery.lastExchangeTime:'请选择最后兑奖时间'}}</view>
+          </picker>
+        </view>
+        <view class='field field1'>
+          <text class='lable'>重复抽中</text>
+          <picker
+            range="{{sameArray}}"
+            bindchange="bindSameChange"
+            value='{{same}}'
+            >
+            <view>{{sameArray[same]}}</view>
+          </picker>
+        </view>
+        <view class='field field1'>
+          <text class='lable'>兑换分享</text>
+          <picker
+            range="{{shareArray}}"
+            bindchange="bindShareChange"
+            value='{{share}}'
+            >
+            <view>{{shareArray[share]}}</view>
+          </picker>
+        </view>
       </view>
-      <view class='field field1'>
-        <text class='lable'>万次抽中</text>
-        <input type='number' maxlength='4' bindinput='bindWeightInput' bindblur="bindWeightValid" data-index='{{index}}' value='{{prize.weight}}'></input>
-        <text class="tips">{{prize.weight/100}}%</text>
-      </view>
-    </block>
-    <view class='notice'>
-      <text>{{notice}}</text>
     </view>
-    <view class='btns'>
-      <button class='btn2' bindtap='bindAddPrizeTap'>增加奖品</button>
-      <button class='btn1' loading='{{loading}}' bindtap='bindSubmitTap'>提   交</button>
+    <view class='block'>
+      <view class='title'>
+        <text>奖品信息</text>
+      </view>
+      <view class='group'>
+        <block wx:for="{{lottery.prizeList}}" wx:for-item="prize" wx:key="index">
+          <view class='field field1'>
+            <text class='lable'>奖品名称</text>
+            <input maxlength='-1' bindinput='bindNameInput' data-index='{{index}}' value='{{prize.name}}'></input>
+          </view>
+          <view class='field field1'>
+            <text class='lable'>奖品总数</text>
+            <input type='number' maxlength='4' bindinput='bindTotalInput' bindblur="bindTotalValid" data-index='{{index}}' value='{{prize.total}}'></input>
+          </view>
+          <view class='field field1'>
+            <text class='lable'>万次抽中</text>
+            <input type='number' maxlength='4' bindinput='bindWeightInput' bindblur="bindWeightValid" data-index='{{index}}' value='{{prize.weight}}'></input>
+            <text class="tips">{{prize.weight/100}}%</text>
+          </view>
+        </block>
+      </view>
+      <view class='notice'>
+        <text>{{notice}}</text>
+      </view>
+      <view class='btns'>
+        <button class='btn2' bindtap='bindAddPrizeTap'>增加奖品</button>
+        <button class='btn1' loading='{{loading}}' bindtap='bindSubmitTap'>提   交</button>
+      </view>
     </view>
   </view>
 </view>
