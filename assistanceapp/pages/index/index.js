@@ -4,7 +4,6 @@ const app = getApp()
 
 Page({
   data: {
-    canIUse: wx.canIUse('button.open-type.getUserInfo'),
     hasNickName: false,
     carousels: [],
     lotteryCustomers: [],
@@ -21,7 +20,9 @@ Page({
         url: '../retailer/home'
       })
     }else{
-
+      wx.navigateTo({
+        url: '../authorize/authorize'
+      })
     }
   },
   bindScanTap: function(){
@@ -41,8 +42,6 @@ Page({
       })
       this.getLotteryCustomerData()
     } else {
-      // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-      // 所以此处加入 callback 以防止这种情况
       app.userInfoReadyCallback = res => {
         this.setData({
           hasNickName: res.data.nickName != null
@@ -50,25 +49,6 @@ Page({
         this.getLotteryCustomerData()
       }
     }
-  },
-  getUserInfo: function(e) {
-    app.ajaxPost({
-      url: '/customer/info',
-      data: {
-        customerId: this.data.userInfo.id,
-        nickName: e.detail.userInfo.nickName,
-        avatarUrl: e.detail.userInfo.avatarUrl
-      },
-      success: res => {
-        if(res){
-          app.globalData.userInfo.nickName = e.detail.userInfo.nickName
-          app.globalData.userInfo.avatarUrl = e.detail.userInfo.avatarUrl
-          this.setData({
-            hasNickName: true
-          })
-        }
-      }
-    })
   },
   onReady: function(){
     this.getCarouselData()
