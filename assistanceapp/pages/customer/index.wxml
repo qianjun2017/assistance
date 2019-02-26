@@ -8,10 +8,10 @@
       bindscrolltolower="scrolltolower"
     >
       <block wx:for="{{lotteryCustomers}}" wx:for-item="lotteryCustomer"  wx:key="lotteryId">
-        <view class='lotteryCustomer'>
+        <view class='lotteryCustomer' bindtap='bindCustomerLotteryTap' data-id='{{lotteryCustomer.lotteryId}}'>
           <view class='retailer'>
             <text class='lottery'>{{lotteryCustomer.store}}  第{{lotteryCustomer.no}}期</text>
-            <image src='../images/angle-right.png' bindtap='bindCustomerLotteryTap' data-id='{{lotteryCustomer.lotteryId}}'></image>
+            <image src='../images/angle-right.png'></image>
           </view>
           <view class='prizes'>
             <block wx:for="{{lotteryCustomer.list}}" wx:for-item="prize"  wx:key="id">
