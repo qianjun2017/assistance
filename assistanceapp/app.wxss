@@ -179,6 +179,17 @@ page{
   background-color: #fff;
   padding: 0 13.248px;
   padding-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.lotteryCustomer .main{
+  flex-grow: 1;
+}
+
+.lotteryCustomer .more{
+  width: 16px;
+  flex-shrink: 0;
 }
 
 .lotteryCustomer .retailer{
@@ -190,7 +201,7 @@ page{
   justify-content: space-between;
 }
 
-.lotteryCustomer .retailer image {
+.lotteryCustomer .more image {
   height: 16px;
   width: 16px;
 }
