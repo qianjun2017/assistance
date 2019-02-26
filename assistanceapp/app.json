@@ -8,7 +8,8 @@
     "pages/retailer/history",
     "pages/authorize/authorize",
     "pages/customer/index",
-    "pages/customer/lottery"
+    "pages/customer/lottery",
+    "pages/retailer/exchange"
   ],
   "window": {
     "backgroundTextStyle": "light",

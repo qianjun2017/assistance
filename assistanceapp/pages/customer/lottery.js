@@ -126,7 +126,7 @@ Page({
     let prize = data.prize
     let self = this
     this.setData({
-      acode: app.globalData.service + '/wx/acode?scene=' + prize.id + '&v=' + Math.random(),
+      acode: app.globalData.service + '/wx/acode?page=pages/retailer/exchange&scene=' + prize.id + '&v=' + Math.random(),
       showAcode: true,
       interval: setInterval(function () {
         app.ajaxGet({
