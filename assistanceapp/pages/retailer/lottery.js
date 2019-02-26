@@ -246,7 +246,7 @@ Page({
           loading: false
         })
         if(res.success){
-          wx.navigateTo({
+          wx.redirectTo({
             url: '../retailer/home'
           })
         } else {

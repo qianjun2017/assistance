@@ -1,9 +1,8 @@
 .lotterys {
-  margin-top: 5px;
+  margin-top: 5rpx;
 }
 
 .lottery {
-  border-radius: 12px;
   box-sizing: border-box;
   padding: 0px 20rpx;
   padding-bottom: 12px;

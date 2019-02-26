@@ -53,12 +53,8 @@ page{
 
 .block {
   background-color: #fff;
-  margin-top: 8px;
+  margin-top: 5rpx;
   padding: 0 30rpx;
-}
-
-.block:not(:first-child) {
-  margin-top: 8px;
 }
 
 .group {
@@ -173,13 +169,11 @@ page{
   line-height: 30px;
   font-size: 12px;
   box-sizing: border-box;
-  border-radius: 4px;
   display: block;
   padding-bottom: 12px;
 }
 
 .lotteryCustomer {
-  border-radius: 12px;
   box-sizing: border-box;
   margin-bottom: 5rpx;
   background-color: #fff;
