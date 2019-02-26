@@ -22,34 +22,6 @@ Page({
     this.setData({
       userInfo: app.globalData.userInfo
     })
-    app.ajaxGet({
-      url: '/lottery/page',
-      data: {
-        pageSize: '1',
-        retailerId: this.data.userInfo.id,
-        status: 'normal',
-        sort: 'l.id'
-      },
-      success: res => {
-        if(res.success){
-          app.ajaxGet({
-            url: '/lottery/get/' + res.data[0].id,
-            success: l => {
-              if(l.success){
-                this.setData({
-                  currentLottery: l.data,
-                  showCurrent: true
-                })
-              }
-            }
-          })
-        }else{
-          this.setData({
-            showCreate: true
-          })
-        }
-      }
-    })
   },
 
   /**
@@ -63,7 +35,34 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
+    app.ajaxGet({
+      url: '/lottery/page',
+      data: {
+        pageSize: '1',
+        retailerId: this.data.userInfo.id,
+        status: 'normal',
+        sort: 'l.id'
+      },
+      success: res => {
+        if (res.success) {
+          app.ajaxGet({
+            url: '/lottery/get/' + res.data[0].id,
+            success: l => {
+              if (l.success) {
+                this.setData({
+                  currentLottery: l.data,
+                  showCurrent: true
+                })
+              }
+            }
+          })
+        } else {
+          this.setData({
+            showCreate: true
+          })
+        }
+      }
+    })
   },
 
   /**

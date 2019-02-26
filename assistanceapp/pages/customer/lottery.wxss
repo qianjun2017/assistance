@@ -1,0 +1,19 @@
+
+.acode {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,.5);
+}
+
+.acode image {
+  position: absolute;
+  width: 400rpx;
+  height: 400rpx;
+  top: 50%;
+  left: 50%;
+  margin-left: -200rpx;
+  margin-top: -200rpx;
+}

@@ -95,7 +95,7 @@ public class LotteryController {
 		lotteryBean.setLastExchangeTime(DateTools.getDate(lotteryForm.getLastExchangeTime()+" 23:59:59"));
 		lotteryBean.setShare(lotteryForm.getShare());
 		lotteryBean.setSame(lotteryForm.getSame());
-		List<LotteryBean> lotteryList = LotteryBean.findAllByParams(LotteryBean.class, "customerId", customerBean.getId(), "createTime desc");
+		List<LotteryBean> lotteryList = LotteryBean.findAllByParams(LotteryBean.class, "customerId", customerBean.getId(), "sort", "createTime", "order", "desc");
 		if(ListTools.isEmptyOrNull(lotteryList)){
 			lotteryBean.setNo(1l);
 		}else{

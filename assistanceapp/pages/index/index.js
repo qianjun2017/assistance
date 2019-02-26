@@ -4,18 +4,12 @@ const app = getApp()
 
 Page({
   data: {
-    hasNickName: false,
     carousels: [],
-    lotteryCustomers: [],
-    lotteryCustomerPage: 1,
-    lotteryCustomerPages: 0,
-    acode: '',
-    showAcode: false,
-    interval: undefined
+    lotteryCustomers: []
   },
   //事件处理函数
   bindRetailerTap: function() {
-    if(this.data.hasNickName){
+    if (app.globalData.userInfo.nickName != null){
       wx.navigateTo({
         url: '../retailer/home'
       })
@@ -25,33 +19,29 @@ Page({
       })
     }
   },
-  bindScanTap: function(){
-    // wx.scanCode({
-    //   success: res => {
-    //     console.log(res)
-    //   }
-    // })
+  bindPrizeTap: function () {
     wx.navigateTo({
-      url: '../lottery/lottery?lotteryId=2'
+      url: '../customer/index'
     })
   },
-  onLoad: function () {
-    if (app.globalData.userInfo) {
-      this.setData({
-        hasNickName: app.globalData.userInfo.nickName!=null
-      })
-      this.getLotteryCustomerData()
-    } else {
-      app.userInfoReadyCallback = res => {
-        this.setData({
-          hasNickName: res.data.nickName != null
-        })
-        this.getLotteryCustomerData()
+  bindScanTap: function(){
+    wx.scanCode({
+      success: res => {
+        console.log(res)
       }
-    }
+    })
+  },
+  bindCustomerLotteryTap: function(e){
+    let data = e.currentTarget.dataset
+    wx.navigateTo({
+      url: '../customer/lottery?lotteryId=' + data.id
+    })
+  },
+  onLoad: function (options) {
+    
   },
   onReady: function(){
-    this.getCarouselData()
+    
   },
   getCarouselData: function(){
     app.ajaxGet({
@@ -73,10 +63,10 @@ Page({
   getLotteryCustomerData: function () {
     app.ajaxGet({
       url: '/lottery/customer/page',
-      data: { prize: true, customerId: app.globalData.userInfo.id, sort: 'lp.lotteryId', order: 'desc', page: this.data.lotteryCustomerPage },
+      data: { prize: true, customerId: app.globalData.userInfo.id, sort: 'lp.lotteryId', order: 'desc', page: '1', pageSize: '5' },
       success: res => {
         if (res.success) {
-          let lotteryCustomers = this.data.lotteryCustomers
+          let lotteryCustomers = []
           let i = 0
           for (; i < res.data.length; i ++){
             let lotteryCustomer = res.data[i]
@@ -104,89 +94,25 @@ Page({
             }
           }
           this.setData({
-            lotteryCustomers: lotteryCustomers,
-            lotteryCustomerPages: res.pages
+            lotteryCustomers: lotteryCustomers
           })
         }
       }
     })
   },
-  scrolltolower: function(){
-    if (this.data.lotteryCustomerPages > this.data.lotteryCustomerPage){
-      this.setData({
-        lotteryCustomerPage: this.data.lotteryCustomerPage +1
-      })
-      this.getLotteryCustomerData()
-    }
-  },
-  bindExchangeTap: function(e){
-    let data = e.currentTarget.dataset
-    let prize = data.prize
-    let self = this
-    this.setData({
-      acode: app.globalData.service + '/wx/acode?scene=' + prize.id +'&v='+Math.random(),
-      showAcode: true,
-      interval: setInterval(function(){
-        app.ajaxGet({
-          url: '/lottery/customer/get/'+prize.id,
-          success: res => {
-            if(res.success){
-              if (res.data.status =='exchanged'){
-                let lotteryCustomers = self.data.lotteryCustomers
-                let lotteryCustomer = {}
-                for (lotteryCustomer in lotteryCustomers){
-                  if (lotteryCustomer.lotteryId == prize.lotteryId){
-                    let p = {}
-                    for (p in lotteryCustomer.list){
-                      if(p.id == prize.id){
-                        p.status = res.data.status
-                        break;
-                      }
-                    }
-                    break;
-                  }
-                }
-                self.setData({
-                  showAcode: false,
-                  interval: null,
-                  lotteryCustomers: lotteryCustomers
-                })
-                wx.showToast({
-                  title: '您成功兑换了'+prize.name,
-                  icon: 'none',
-                  duration: 1000
-                })
-              }
-            }
-          },
-          fail: res => {
-            self.setData({
-              showAcode: false,
-              interval: null
-            })
-            wx.showToast({
-              title: '出问题了，请稍后再试',
-              icon: 'none',
-              duration: 1000
-            })
-          }
-        })
-      },2000)
-    })
-  },
   onShareAppMessage: function(options){
-    if (options.from == 'button'){
-      let data = options.target.dataset
-      let prize = data.prize
-      return {
-        title: prize.store+'做活动啦！我领到了'+prize.name+"，你也来试试吧！",
-        path: '/pages/lottery/lottery?lotteryId='+prize.lotteryId,
-        imageUrl: ''
-      }
-    }else{
-      return {
-        title: '助销小工具助力商家快速营销'
+    return {
+      title: '助销小工具助力商家快速营销'
+    }
+  },
+  onShow: function () {
+    if (app.globalData.userInfo) {
+      this.getLotteryCustomerData()
+    } else {
+      app.userInfoReadyCallback = res => {
+        this.getLotteryCustomerData()
       }
     }
+    this.getCarouselData()
   }
 })

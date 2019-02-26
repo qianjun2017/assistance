@@ -6,7 +6,9 @@
     "pages/retailer/retailer",
     "pages/retailer/home",
     "pages/retailer/history",
-    "pages/authorize/authorize"
+    "pages/authorize/authorize",
+    "pages/customer/index",
+    "pages/customer/lottery"
   ],
   "window": {
     "backgroundTextStyle": "light",

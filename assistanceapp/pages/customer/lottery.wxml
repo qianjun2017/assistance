@@ -1,0 +1,23 @@
+<view class="container">
+  <view class='lotteryCustomer'>
+    <view class='retailer'>
+      <text class='lottery'>{{lotteryCustomer.store}}  第{{lotteryCustomer.no}}期</text>
+    </view>
+    <view class='retailer'>
+      <text class='lottery'>{{lotteryCustomer.address}}  {{lotteryCustomer.phone}}</text>
+    </view>
+    <view class='prizes'>
+      <block wx:for="{{lotteryCustomer.list}}" wx:for-item="prize"  wx:key="id">
+      <view class='prize'>
+        <text wx:if="{{prize.status == 'exchanged'}}" class='grey'>{{prize.name}}</text>
+        <text wx:elif="{{prize.status == 'expired'}}" class='expired'>{{prize.name}}</text>
+        <button open-type='share' data-prize='{{prize}}' class='prize-share' wx:elif="{{prize.needShare && !prize.share}}">{{prize.name}}</button>
+        <text wx:else bindtap="bindExchangeTap" data-prize='{{prize}}' class='green'>{{prize.name}}</text>
+      </view>
+      </block>
+    </view>
+  </view>
+  <view wx:if="{{showAcode}}" class='acode'>
+    <image src="{{acode}}"></image>
+  </view>
+</view>

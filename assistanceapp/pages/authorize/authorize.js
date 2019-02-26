@@ -79,7 +79,7 @@ Page({
           app.globalData.userInfo.nickName = e.detail.userInfo.nickName
           app.globalData.userInfo.avatarUrl = e.detail.userInfo.avatarUrl
           wx.redirectTo({
-            url: 'pages/index/index',
+            url: '../retailer/home',
           })
         }
       }
