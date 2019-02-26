@@ -26,10 +26,6 @@ Page({
       lotteryId: scene =='undefined'?'':scene
     })
 
-    this.setData({
-      lotteryId: 2
-    })
-
     if (options.shareId && options.lotteryId) {   // 转发进入
       this.setData({
         shareId: options.shareId,

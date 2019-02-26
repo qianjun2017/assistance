@@ -31,8 +31,13 @@
       </block>
     </view>
     <view class='btns'>
-      <button type='primary' loading='{{stoping}}' bindtap='bindStopTap'>停 止</button>
-      <button bindtap='bindUpdateTap'>修 改</button>
+      <button type='primary' loading='{{stoping}}' bindtap='bindStopTap'>停  止</button>
+      <button bindtap='bindAcodeTap'>二维码</button>
+      <button bindtap='bindUpdateTap'>修  改</button>
     </view>
+  </view>
+  <view wx:if="{{showAcode}}" class='acode-box'>
+    <image class='acode' src="{{acode}}"></image>
+    <button type='primary' class='close' bindtap='bindCloseTap'>取  消</button>
   </view>
 </view>

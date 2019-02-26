@@ -185,7 +185,7 @@ Page({
       let prize = data.prize
       return {
         title: prize.store + '做活动啦！我领到了' + prize.name + "，你也来试试吧！",
-        path: '/pages/lottery/lottery?lotteryId=' + prize.lotteryId,
+        path: '/pages/lottery/lottery?lotteryId=' + prize.lotteryId + "&shareId=" + app.globalData.userInfo.id,
         imageUrl: ''
       }
     } else {

@@ -12,7 +12,9 @@ Page({
     currentLottery: {},
     showCreate: false,
     stoping: false,
-    showCurrent: false
+    showCurrent: false,
+    showAcode: false,
+    acode: ''
   },
 
   /**
@@ -141,6 +143,22 @@ Page({
   bindUpdateTap: function(e) {
     wx.navigateTo({
       url: '../retailer/lottery?lotteryId=' + this.data.currentLottery.id
+    })
+  },
+
+  bindCloseTap: function () {
+    this.setData({
+      showAcode: false,
+      interval: null
+    })
+  },
+  /**
+   * 二维码
+   */
+  bindAcodeTap: function (e) {
+    this.setData({
+      acode: app.globalData.service + '/wx/acode?page=pages/lottery/lottery&scene=' + this.data.currentLottery.id + '&v=' + Math.random(),
+      showAcode: true
     })
   }
 })
