@@ -47,7 +47,7 @@
       <block wx:for="{{lottery.prizeList}}" wx:for-item="prize" wx:key="index">
         <view class='group'>
           <view class='ops'>
-            <image src='../images/close.png' class='op' bindtap='bindDeletPrizeTap' data-index='{{index}}'>X</image>
+            <image src='../images/close.png' class='op' bindtap='bindDeletPrizeTap' data-index='{{index}}'></image>
           </view>
           <view class='field field1'>
             <text class='lable'>奖品名称</text>

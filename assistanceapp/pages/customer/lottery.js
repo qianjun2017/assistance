@@ -193,5 +193,12 @@ Page({
         title: '助销小工具助力商家快速营销'
       }
     }
+  },
+
+  bindCloseTap: function () {
+    this.setData({
+      showAcode: false,
+      interval: null
+    })
   }
 })

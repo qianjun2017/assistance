@@ -19,7 +19,8 @@
       </view>
     </view>
   </view>
-  <view wx:if="{{showAcode}}" class='acode'>
-    <image src="{{acode}}"></image>
+  <view wx:if="{{showAcode}}" class='acode-box'>
+    <image class='acode' src="{{acode}}"></image>
+    <button type='primary' class='close' bindtap='bindCloseTap'>取  消</button>
   </view>
 </view>
