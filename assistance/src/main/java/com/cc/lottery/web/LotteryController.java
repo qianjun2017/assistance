@@ -319,7 +319,13 @@ public class LotteryController {
 	@ResponseBody
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public Page<LotteryListResult> queryLotteryPage(@ModelAttribute LotteryQueryForm form){
-		return lotteryService.queryLotteryPage(form);
+		Page<LotteryListResult> page = lotteryService.queryLotteryPage(form);
+		if(page.isSuccess() && form.getRetailerId()!=null){
+			for(LotteryListResult lotteryListResult: page.getData()){
+				lotteryListResult.setPrizeList(LotteryPrizeBean.findAllByParams(LotteryPrizeBean.class, "lotteryId", lotteryListResult.getId()));
+			}
+		}
+		return page;
 	}
 	
 	/**

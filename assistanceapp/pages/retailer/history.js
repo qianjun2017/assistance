@@ -61,14 +61,29 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-  
+    if (this.data.loading) {
+      return
+    }
+    this.setData({
+      lotteryPage: 1,
+      lotterys: []
+    })
+    this.getLotteryData()
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-  
+    if (this.data.loading) {
+      return
+    }
+    if (this.data.lotteryPages > this.data.lotteryPage) {
+      this.setData({
+        lotteryPage: this.data.lotteryPage + 1
+      })
+      this.getLotteryData()
+    }
   },
 
   /**
@@ -84,38 +99,17 @@ Page({
     })
     app.ajaxGet({
       url: '/lottery/page',
-      data: { retailerId: app.globalData.userInfo.id, sort: 'l.createTime', order: 'desc', page: this.data.lotteryPage, pageSize: '1', status: 'over' },
+      data: { retailerId: app.globalData.userInfo.id, sort: 'l.createTime', order: 'desc', page: this.data.lotteryPage, status: 'over' },
       success: res => {
         if (res.success) {
-          let lottery = res.data[0]
-          app.ajaxGet({
-            url: '/lottery/get/' + lottery.id,
-            success: l => {
-              if (l.success) {
-                lottery.prizeList = l.data.prizeList
-                let lotterys = this.data.lotterys
-                lotterys.push(lottery)
-                this.setData({
-                  lotterys: lotterys,
-                  lotteryPages: res.pages,
-                  loading: false
-                })
-              }
-            }
+          let lotterys = this.data.lotterys
+          this.setData({
+            lotterys: lotterys.concat(res.data),
+            lotteryPages: res.pages,
+            loading: false
           })
         }
       }
     })
-  },
-  scrolltolower: function () {
-    if(this.data.loading){
-      return
-    }
-    if(this.data.lotterPages > this.data.lotteryPage) {
-      this.setData({
-        lotteryPage: this.data.lotteryPage + 1
-      })
-      this.getLotteryData()
-    }
   }
 })

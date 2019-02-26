@@ -1,34 +1,27 @@
 <!--pages/customer/index.wxml-->
 <view class="container">
-  <view class='lotteryCustomers'>
-    <scroll-view wx:if="{{lotteryCustomers.length>0}}"
-      scroll-y
-      enable-back-to-top
-      style="height: {{scrollHight}}px"
-      bindscrolltolower="scrolltolower"
-    >
-      <block wx:for="{{lotteryCustomers}}" wx:for-item="lotteryCustomer"  wx:key="lotteryId">
-        <view class='lotteryCustomer' bindtap='bindCustomerLotteryTap' data-id='{{lotteryCustomer.lotteryId}}'>
-          <view class='main'>
-            <view class='retailer'>
-              <text class='lottery'>{{lotteryCustomer.store}}  第{{lotteryCustomer.no}}期</text>
-            </view>
-            <view class='prizes'>
-              <block wx:for="{{lotteryCustomer.list}}" wx:for-item="prize"  wx:key="id">
-              <view class='prize'>
-                <text wx:if="{{prize.status == 'exchanged'}}" class='grey'>{{prize.name}}</text>
-                <text wx:elif="{{prize.status == 'expired'}}" class='expired'>{{prize.name}}</text>
-                <text wx:elif="{{prize.needShare && !prize.share}}" class='prize-share'>{{prize.name}}</text>
-                <text wx:else data-prize='{{prize}}' class='green'>{{prize.name}}</text>
-              </view>
-              </block>
-            </view>
+  <view class='lotteryCustomers' style="height: {{scrollHight}}px">
+    <block wx:for="{{lotteryCustomers}}" wx:for-item="lotteryCustomer"  wx:key="lotteryId">
+      <view class='lotteryCustomer' bindtap='bindCustomerLotteryTap' data-id='{{lotteryCustomer.lotteryId}}'>
+        <view class='main'>
+          <view class='retailer'>
+            <text class='lottery'>{{lotteryCustomer.store}}  第{{lotteryCustomer.no}}期</text>
           </view>
-          <view class='more'>
-            <image src='../images/angle-right.png'></image>
+          <view class='prizes'>
+            <block wx:for="{{lotteryCustomer.list}}" wx:for-item="prize"  wx:key="id">
+            <view class='prize'>
+              <text wx:if="{{prize.status == 'exchanged'}}" class='grey'>{{prize.name}}</text>
+              <text wx:elif="{{prize.status == 'expired'}}" class='expired'>{{prize.name}}</text>
+              <text wx:elif="{{prize.needShare && !prize.share}}" class='prize-share'>{{prize.name}}</text>
+              <text wx:else data-prize='{{prize}}' class='green'>{{prize.name}}</text>
+            </view>
+            </block>
           </view>
         </view>
-      </block>
-    </scroll-view>
+        <view class='more'>
+          <image src='../images/angle-right.png'></image>
+        </view>
+      </view>
+    </block>
   </view>
 </view>

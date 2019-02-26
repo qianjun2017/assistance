@@ -1,25 +1,18 @@
 <view class="container">
-  <view class='lotterys'>
-    <scroll-view wx:if="{{lotterys.length>0}}"
-      scroll-y
-      enable-back-to-top
-      style="height: {{scrollHight}}px;"
-      bindscrolltolower="scrolltolower"
-    >
-      <block wx:for="{{lotterys}}" wx:for-item="lottery"  wx:key="id">
-        <view class='lottery'>
-          <view class='retailer'>
-            <text>第{{lottery.no}}期</text>
-          </view>
-          <view class='prizes'>
-            <block wx:for="{{lottery.prizeList}}" wx:for-item="prize" wx:key="id">
-              <view class='prize {{prize.status=="normal"?"green":"grey"}}'>
-                <text>{{prize.name}} {{prize.total-prize.quantity}}({{prize.total}}) {{prize.weight/100}}%</text>
-              </view>
-            </block>
-          </view>
+  <view class='lotterys' style="height: {{scrollHight}}px;">
+    <block wx:for="{{lotterys}}" wx:for-item="lottery"  wx:key="id">
+      <view class='lottery'>
+        <view class='retailer'>
+          <text>第{{lottery.no}}期</text>
         </view>
-      </block>
-    </scroll-view>
+        <view class='prizes'>
+          <block wx:for="{{lottery.prizeList}}" wx:for-item="prize" wx:key="id">
+            <view class='prize {{prize.status=="normal"?"green":"grey"}}'>
+              <text>{{prize.name}} {{prize.total-prize.quantity}}({{prize.total}}) {{prize.weight/100}}%</text>
+            </view>
+          </block>
+        </view>
+      </view>
+    </block>
   </view>
 </view>

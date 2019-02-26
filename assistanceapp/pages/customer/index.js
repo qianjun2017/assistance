@@ -11,7 +11,8 @@ Page({
     lotteryCustomers: [],
     lotteryCustomerPage: 1,
     lotteryCustomerPages: 0,
-    scrollHight: 0
+    scrollHight: 0,
+    loading: false
   },
 
   /**
@@ -60,16 +61,34 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-
+    if (this.data.loading) {
+      return
+    }
+    this.setData({
+      lotteryCustomerPage: 1,
+      lotteryCustomers: []
+    })
+    this.getLotteryCustomerData()
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-
+    if (this.data.loading) {
+      return
+    }
+    if (this.data.lotteryCustomerPages > this.data.lotteryCustomerPage) {
+      this.setData({
+        lotteryCustomerPage: this.data.lotteryCustomerPage + 1
+      })
+      this.getLotteryCustomerData()
+    }
   },
   getLotteryCustomerData: function () {
+    this.setData({
+      loading: true
+    })
     app.ajaxGet({
       url: '/lottery/customer/page',
       data: { prize: true, customerId: app.globalData.userInfo.id, sort: 'lp.lotteryId', order: 'desc', page: this.data.lotteryCustomerPage },
@@ -103,6 +122,7 @@ Page({
             }
           }
           this.setData({
+            loading: false,
             lotteryCustomers: lotteryCustomers,
             lotteryCustomerPages: res.pages
           })
@@ -110,14 +130,7 @@ Page({
       }
     })
   },
-  scrolltolower: function () {
-    if (this.data.lotteryCustomerPages > this.data.lotteryCustomerPage) {
-      this.setData({
-        lotteryCustomerPage: this.data.lotteryCustomerPage + 1
-      })
-      this.getLotteryCustomerData()
-    }
-  },
+  
   bindCustomerLotteryTap: function (e) {
     let data = e.currentTarget.dataset
     wx.navigateTo({

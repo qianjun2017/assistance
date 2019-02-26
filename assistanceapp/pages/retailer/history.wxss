@@ -9,6 +9,10 @@
   background-color: #fff;
 }
 
+.lottery:not(:first-child){
+  margin-top: 5rpx;
+}
+
 .lottery .retailer {
   width: 100%;
   height: 46px;

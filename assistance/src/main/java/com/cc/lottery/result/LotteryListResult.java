@@ -50,6 +50,11 @@ public class LotteryListResult {
 	 * 是否需要分享
 	 */
 	private Boolean share;
+	
+	/**
+	 * 奖品
+	 */
+	private Object prizeList;
 
 	/**
 	 * @return the id
@@ -161,5 +166,19 @@ public class LotteryListResult {
 	 */
 	public void setShare(Boolean share) {
 		this.share = share;
+	}
+
+	/**
+	 * @return the prizeList
+	 */
+	public Object getPrizeList() {
+		return prizeList;
+	}
+
+	/**
+	 * @param prizeList the prizeList to set
+	 */
+	public void setPrizeList(Object prizeList) {
+		this.prizeList = prizeList;
 	}
 }
