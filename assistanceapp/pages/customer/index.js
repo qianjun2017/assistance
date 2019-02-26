@@ -89,6 +89,9 @@ Page({
     this.setData({
       loading: true
     })
+    wx.showLoading({
+      title: '加载中'
+    })
     app.ajaxGet({
       url: '/lottery/customer/page',
       data: { prize: true, customerId: app.globalData.userInfo.id, sort: 'lp.lotteryId', order: 'desc', page: this.data.lotteryCustomerPage },
@@ -126,11 +129,12 @@ Page({
             lotteryCustomers: lotteryCustomers,
             lotteryCustomerPages: res.pages
           })
+          wx.hideLoading()
         }
       }
     })
   },
-  
+
   bindCustomerLotteryTap: function (e) {
     let data = e.currentTarget.dataset
     wx.navigateTo({

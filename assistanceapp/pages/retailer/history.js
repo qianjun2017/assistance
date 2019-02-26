@@ -97,6 +97,9 @@ Page({
     this.setData({
       loading: true
     })
+    wx.showLoading({
+      title: '加载中'
+    })
     app.ajaxGet({
       url: '/lottery/page',
       data: { retailerId: app.globalData.userInfo.id, sort: 'l.createTime', order: 'desc', page: this.data.lotteryPage, status: 'over' },
@@ -108,6 +111,7 @@ Page({
             lotteryPages: res.pages,
             loading: false
           })
+          wx.hideLoading()
         }
       }
     })
