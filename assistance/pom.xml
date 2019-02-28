@@ -3,7 +3,7 @@
   <groupId>com.cc</groupId>
   <artifactId>assistance</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
   <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -55,13 +55,7 @@
   		<artifactId>spring-boot-starter-mail</artifactId>
   		<version>${spring.boot.version}</version>
   	</dependency>
-	  <!-- tomcat -->
-	  <dependency>
-		  <groupId>org.springframework.boot</groupId>
-		  <artifactId>spring-boot-starter-tomcat</artifactId>
-		  <version>${spring.boot.version}</version>
-	  </dependency>
-	  <!-- aop支持 -->
+	<!-- aop支持 -->
   	<dependency>
   		<groupId>org.springframework.boot</groupId>
   		<artifactId>spring-boot-starter-aop</artifactId>
@@ -178,9 +172,17 @@
       	<groupId>org.springframework.boot</groupId>
       	<artifactId>spring-boot-maven-plugin</artifactId>
       	<version>${spring.boot.version}</version>
-		  <configuration>
-			  <mainClass>com.cc.Application</mainClass>
-		  </configuration>
+      	<configuration>
+		   <mainClass>com.cc.Application</mainClass>
+		   <executable>true</executable>
+		</configuration>
+		<executions>
+			<execution>
+				<goals>
+					<goal>repackage</goal>
+				</goals>
+			</execution>
+		</executions>
       </plugin>
     </plugins>
   </build>
