@@ -58,7 +58,7 @@ App({
   },
   globalData: {
     userInfo: null,
-    service: 'http://172.20.10.10:8080'
+    service: 'https://api.assistance.ccyws.cn'
   },
   ajaxGet: function (config) {
     wx.request({
