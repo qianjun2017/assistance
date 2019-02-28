@@ -28,11 +28,12 @@
     </view>
 
     <view class='share'>
-      <!-- <button class="index__share" openType="share">
-         转发给朋友
-      </button> -->
       <button bindtap="handleLottery" class='cj-btn'>
         免费抽奖x{{count}}
       </button>
+    </view>
+
+    <view class='home' bindtap='bindHomeTap'>
+      <image src='../images/home.png'></image>
     </view>
 </view>

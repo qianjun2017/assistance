@@ -64,9 +64,9 @@ Page({
     if (this.data.loading) {
       return
     }
+    wx.showNavigationBarLoading()
     this.setData({
-      lotteryPage: 1,
-      lotterys: []
+      lotteryPage: 1
     })
     this.getLotteryData()
   },
@@ -75,14 +75,23 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
+    console.log('加载更多')
     if (this.data.loading) {
       return
     }
     if (this.data.lotteryPages > this.data.lotteryPage) {
+      wx.showLoading({
+        title: '加载中...'
+      })
       this.setData({
         lotteryPage: this.data.lotteryPage + 1
       })
       this.getLotteryData()
+    } else {
+      wx.showToast({
+        title: '没有更多数据了',
+        icon: 'none'
+      })
     }
   },
 
@@ -97,22 +106,26 @@ Page({
     this.setData({
       loading: true
     })
-    wx.showLoading({
-      title: '加载中'
-    })
     app.ajaxGet({
       url: '/lottery/page',
       data: { retailerId: app.globalData.userInfo.id, sort: 'l.createTime', order: 'desc', page: this.data.lotteryPage, status: 'over' },
       success: res => {
         if (res.success) {
-          let lotterys = this.data.lotterys
+          let lotterys = []
+          if(res.page>1){
+            lotterys.concat(this.data.lotterys)
+          }
           this.setData({
             lotterys: lotterys.concat(res.data),
-            lotteryPages: res.pages,
-            loading: false
+            lotteryPages: res.pages
           })
+          wx.hideNavigationBarLoading()
+          wx.stopPullDownRefresh()
           wx.hideLoading()
         }
+        this.setData({
+          loading: false
+        })
       }
     })
   }

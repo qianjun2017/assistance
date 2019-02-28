@@ -12,7 +12,7 @@ Page({
     lotteryCustomer: {},
     showAcode: false,
     acode: '',
-    interval: undefined
+    interval: ''
   },
 
   /**
@@ -61,7 +61,7 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-
+    
   },
 
   /**
@@ -148,9 +148,12 @@ Page({
                     break;
                   }
                 }
+                if (this.data.interval!=''){
+                  clearInterval(this.data.interval)
+                }
                 self.setData({
                   showAcode: false,
-                  interval: null,
+                  interval: '',
                   lotteryCustomers: lotteryCustomers
                 })
                 wx.showToast({
@@ -162,9 +165,12 @@ Page({
             }
           },
           fail: res => {
+            if (this.data.interval != '') {
+              clearInterval(this.data.interval)
+            }
             self.setData({
               showAcode: false,
-              interval: null
+              interval: ''
             })
             wx.showToast({
               title: '出问题了，请稍后再试',
@@ -196,9 +202,12 @@ Page({
   },
 
   bindCloseTap: function () {
+    if (this.data.interval != '') {
+      clearInterval(this.data.interval)
+    }
     this.setData({
       showAcode: false,
-      interval: null
+      interval: ''
     })
   }
 })

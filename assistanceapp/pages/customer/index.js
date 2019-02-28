@@ -64,9 +64,9 @@ Page({
     if (this.data.loading) {
       return
     }
+    wx.showNavigationBarLoading()
     this.setData({
-      lotteryCustomerPage: 1,
-      lotteryCustomers: []
+      lotteryCustomerPage: 1
     })
     this.getLotteryCustomerData()
   },
@@ -79,25 +79,33 @@ Page({
       return
     }
     if (this.data.lotteryCustomerPages > this.data.lotteryCustomerPage) {
+      wx.showLoading({
+        title: '加载中...'
+      })
       this.setData({
         lotteryCustomerPage: this.data.lotteryCustomerPage + 1
       })
       this.getLotteryCustomerData()
+    }else{
+      wx.showToast({
+        title: '没有更多数据了',
+        icon: 'none'
+      })
     }
   },
   getLotteryCustomerData: function () {
     this.setData({
       loading: true
     })
-    wx.showLoading({
-      title: '加载中'
-    })
     app.ajaxGet({
       url: '/lottery/customer/page',
       data: { prize: true, customerId: app.globalData.userInfo.id, sort: 'lp.lotteryId', order: 'desc', page: this.data.lotteryCustomerPage },
       success: res => {
         if (res.success) {
-          let lotteryCustomers = this.data.lotteryCustomers
+          let lotteryCustomers = []
+          if (res.page > 1) {
+            lotteryCustomers.concat(this.data.lotteryCustomers)
+          }
           let i = 0
           for (; i < res.data.length; i++) {
             let lotteryCustomer = res.data[i]
@@ -125,12 +133,16 @@ Page({
             }
           }
           this.setData({
-            loading: false,
             lotteryCustomers: lotteryCustomers,
             lotteryCustomerPages: res.pages
           })
+          wx.hideNavigationBarLoading()
+          wx.stopPullDownRefresh()
           wx.hideLoading()
         }
+        this.setData({
+          loading: false
+        })
       }
     })
   },

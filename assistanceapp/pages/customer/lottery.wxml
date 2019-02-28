@@ -21,6 +21,6 @@
   </view>
   <view wx:if="{{showAcode}}" class='acode-box'>
     <image class='acode' src="{{acode}}"></image>
-    <button type='primary' class='close' bindtap='bindCloseTap'>取  消</button>
+    <image class='close' bindtap='bindCloseTap' src='../images/close1.png'></image>
   </view>
 </view>

@@ -209,5 +209,10 @@ Page({
         }
       }
     })
+  },
+  bindHomeTap: function () {
+    wx.redirectTo({
+      url: '../index/index'
+    })
   }
 });

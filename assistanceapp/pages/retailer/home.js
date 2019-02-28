@@ -121,20 +121,28 @@ Page({
   },
 
   bindStopTap: function(e) {
-    this.setData({
-      stoping: true
-    })
-    app.ajaxPost({
-      url: '/lottery/over/' + this.data.currentLottery.id,
+    wx.showModal({
+      title: '提示',
+      content: '确认停止活动？',
       success: res => {
-        this.setData({
-          stoping: false
-        })
-        if(res.success){
+        if (res.confirm) {
           this.setData({
-            currentLottery: {},
-            showCreate: true,
-            showCurrent: false
+            stoping: true
+          })
+          app.ajaxPost({
+            url: '/lottery/over/' + this.data.currentLottery.id,
+            success: res => {
+              this.setData({
+                stoping: false
+              })
+              if (res.success) {
+                this.setData({
+                  currentLottery: {},
+                  showCreate: true,
+                  showCurrent: false
+                })
+              }
+            }
           })
         }
       }
