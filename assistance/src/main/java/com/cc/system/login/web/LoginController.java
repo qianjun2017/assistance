@@ -52,7 +52,7 @@ public class LoginController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/login", method = RequestMethod.POST)
-	@OperationLog(module = ModuleEnum.LOGINMANAGEMENT, operType = OperTypeEnum.LOGIN, title = "登录")
+	@OperationLog(module = ModuleEnum.LOGINMANAGEMENT, operType = OperTypeEnum.LOGIN, title = "登录", excludeParamNames = {"password"})
 	public Response<String> login(@RequestBody Map<String, String> loginMap){
 		Response<String> response = new Response<String>();
 		if (StringTools.isAnyNullOrNone(new String[]{loginMap.get("userName"),loginMap.get("password")})) {

@@ -57,7 +57,7 @@ public class UserController {
 	@ResponseBody
 	@RequiresPermissions(value = { "system.user.add" })
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	@OperationLog(module = ModuleEnum.USERMANAGEMENT, operType = OperTypeEnum.ADD, title = "新增用户")
+	@OperationLog(module = ModuleEnum.USERMANAGEMENT, operType = OperTypeEnum.ADD, title = "新增用户", excludeParamNames = {"password"})
 	public Response<String> addUser(@RequestBody Map<String, String> userMap){
 		Response<String> response = new Response<String>();
 		UserBean userBean = new UserBean();
@@ -110,7 +110,7 @@ public class UserController {
 	@ResponseBody
 	@RequiresPermissions(value = { "system.user.edit" })
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	@OperationLog(module = ModuleEnum.USERMANAGEMENT, operType = OperTypeEnum.UPDATE, title = "修改用户")
+	@OperationLog(module = ModuleEnum.USERMANAGEMENT, operType = OperTypeEnum.UPDATE, title = "修改用户", excludeParamNames = {"password"})
 	public Response<String> updateUser(@RequestBody Map<String, String> userMap){
 		Response<String> response = new Response<String>();
 		String id = userMap.get("id");
@@ -298,7 +298,7 @@ public class UserController {
 	@ResponseBody
 	@RequiresPermissions(value = { "system.setting" })
 	@RequestMapping(value = "/setting/save", method = RequestMethod.POST)
-	@OperationLog(module = ModuleEnum.USERMANAGEMENT, operType = OperTypeEnum.UPDATE, title = "个人设置")
+	@OperationLog(module = ModuleEnum.USERMANAGEMENT, operType = OperTypeEnum.UPDATE, title = "个人设置", excludeParamNames = {"password"})
 	public Response<String> updateUserSetting(@RequestBody Map<String, String> userMap){
 		Response<String> response = new Response<String>();
 		String id = userMap.get("id");

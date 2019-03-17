@@ -84,9 +84,6 @@ public class LogAspect {
 					params.put((i<paramNames.length)?paramNames[i]:("param"+i), arg);
 				}
 			}
-			if(params.containsKey("password")){
-				params.remove("password");
-			}
 			for (String excludeParamName: excludeParamNames) {
 				params.remove(excludeParamName);
 			}
