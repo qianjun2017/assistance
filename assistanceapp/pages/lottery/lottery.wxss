@@ -1,5 +1,5 @@
 page {
-    background: #000 url(http://172.20.10.10:8082/files/image/bg.gif) no-repeat;
+    background: #000 url(https://file.ccyws.cn/files/image/bg.gif) no-repeat;
     padding-top: 30rpx;
     background-size: 100% 110%;
 }
@@ -11,7 +11,7 @@ page {
     width: 300px;
     height: 300px;
     border-radius: 50%;
-    background: #7d66b4 url(http://172.20.10.10:8082/files/image/dots.png) no-repeat;
+    background: #7d66b4 url(https://file.ccyws.cn/files/image/dots.png) no-repeat;
     background-size: 100% 100%;
 }
 
