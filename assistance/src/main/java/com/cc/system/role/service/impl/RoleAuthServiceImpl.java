@@ -72,4 +72,13 @@ public class RoleAuthServiceImpl implements RoleAuthService {
 		return roleAuthBeanList;
 	}
 
+	@Override
+	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
+	public void deletRoleAuth(Long roleId) {
+		Example example = new Example(RoleAuthBean.class);
+		Example.Criteria criteria = example.createCriteria();
+		criteria.andEqualTo("roleId", roleId);
+		RoleAuthBean.deleteByExample(RoleAuthBean.class, example);
+	}
+
 }

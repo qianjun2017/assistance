@@ -26,4 +26,10 @@ public interface UserRoleService {
 	 * @return
 	 */
 	List<UserRoleBean> queryUserRoleBeanList(Long userId);
+	
+	/**
+	 * 删除人员角色
+	 * @param userId
+	 */
+	void deleteUserRoleByUserId(Long userId);
 }

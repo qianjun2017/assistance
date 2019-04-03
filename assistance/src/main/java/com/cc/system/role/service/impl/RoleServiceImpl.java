@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
 import com.cc.system.role.bean.RoleBean;
 import com.cc.system.role.form.RoleQueryForm;
+import com.cc.system.role.service.RoleAuthService;
 import com.cc.system.role.service.RoleService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -31,6 +33,9 @@ import tk.mybatis.mapper.entity.Example;
  */
 @Service
 public class RoleServiceImpl implements RoleService {
+	
+	@Autowired
+	private RoleAuthService roleAuthService;
 
 	@Override
 	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
@@ -44,6 +49,7 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
 	public void deleteRole(Long id) {
+		roleAuthService.deletRoleAuth(id);
 		RoleBean roleBean = new RoleBean();
 		roleBean.setId(id);
 		int row = roleBean.delete();

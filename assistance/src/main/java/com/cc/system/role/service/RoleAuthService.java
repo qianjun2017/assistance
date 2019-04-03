@@ -26,4 +26,10 @@ public interface RoleAuthService {
 	 * @return
 	 */
 	List<RoleAuthBean> queryRoleAuthBeanList(List<Long> roleList);
+	
+	/**
+	 * 删除角色权限
+	 * @param roleId
+	 */
+	void deletRoleAuth(Long roleId);
 }

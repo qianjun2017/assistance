@@ -18,6 +18,9 @@ import com.cc.system.log.utils.LogContextUtil;
 import com.cc.system.user.bean.UserRoleBean;
 import com.cc.system.user.service.UserRoleService;
 
+import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.entity.Example.Criteria;
+
 /**
  * @author Administrator
  *
@@ -67,6 +70,15 @@ public class UserRoleServiceImpl implements UserRoleService {
 		paramMap.put("userId", userId);
 		List<UserRoleBean> userRoleBeanList = UserRoleBean.findAllByMap(UserRoleBean.class, paramMap);
 		return userRoleBeanList;
+	}
+
+	@Override
+	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
+	public void deleteUserRoleByUserId(Long userId) {
+		Example example = new Example(UserRoleBean.class);
+		Criteria criteria = example.createCriteria();
+		criteria.andEqualTo("userId", userId);
+		UserRoleBean.deleteByExample(UserRoleBean.class, example);
 	}
 
 }

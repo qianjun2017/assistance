@@ -8,10 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cc.common.Constant;
 import com.cc.common.exception.LogicException;
 import com.cc.common.tools.DateTools;
 import com.cc.common.tools.ListTools;
@@ -19,6 +21,7 @@ import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
 import com.cc.system.user.bean.UserBean;
 import com.cc.system.user.form.UserQueryForm;
+import com.cc.system.user.service.UserRoleService;
 import com.cc.system.user.service.UserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -31,6 +34,9 @@ import tk.mybatis.mapper.entity.Example;
  */
 @Service
 public class UserServiceImpl implements UserService {
+	
+	@Autowired
+	private UserRoleService userRoleService;
 
 	@Override
 	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
@@ -44,6 +50,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
 	public void deleteUser(Long id) {
+		userRoleService.deleteUserRoleByUserId(id);
 		UserBean userBean = new UserBean();
 		userBean.setId(id);
 		int row = userBean.delete();
@@ -69,6 +76,7 @@ public class UserServiceImpl implements UserService {
 		if (!StringTools.isNullOrNone(form.getPhone())) {
 			criteria.andEqualTo("phone", form.getPhone());
 		}
+		criteria.andNotEqualTo("id", Constant.SUPERUSER);
 		PageHelper.orderBy(String.format("%s %s", form.getSort(), form.getOrder()));
 		PageHelper.startPage(form.getPage(), form.getPageSize());
 		List<UserBean> userBeanList = UserBean.findByExample(UserBean.class, example);
