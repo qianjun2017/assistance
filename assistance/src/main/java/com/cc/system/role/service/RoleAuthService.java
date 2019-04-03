@@ -31,5 +31,11 @@ public interface RoleAuthService {
 	 * 删除角色权限
 	 * @param roleId
 	 */
-	void deletRoleAuth(Long roleId);
+	void deletRoleAuthByRoleId(Long roleId);
+
+	/**
+	 * 删除权限角色
+	 * @param authId
+	 */
+	void deletRoleAuthByAuthId(Long authId);
 }

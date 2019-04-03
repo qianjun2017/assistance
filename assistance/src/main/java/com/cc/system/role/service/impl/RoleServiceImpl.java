@@ -22,6 +22,7 @@ import com.cc.system.role.bean.RoleBean;
 import com.cc.system.role.form.RoleQueryForm;
 import com.cc.system.role.service.RoleAuthService;
 import com.cc.system.role.service.RoleService;
+import com.cc.system.user.service.UserRoleService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -36,6 +37,9 @@ public class RoleServiceImpl implements RoleService {
 	
 	@Autowired
 	private RoleAuthService roleAuthService;
+	
+	@Autowired
+	private UserRoleService userRoleService;
 
 	@Override
 	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
@@ -49,7 +53,8 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
 	public void deleteRole(Long id) {
-		roleAuthService.deletRoleAuth(id);
+		roleAuthService.deletRoleAuthByRoleId(id);
+		userRoleService.deleteUserRoleByRoleId(id);
 		RoleBean roleBean = new RoleBean();
 		roleBean.setId(id);
 		int row = roleBean.delete();

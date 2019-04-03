@@ -80,5 +80,14 @@ public class UserRoleServiceImpl implements UserRoleService {
 		criteria.andEqualTo("userId", userId);
 		UserRoleBean.deleteByExample(UserRoleBean.class, example);
 	}
+	
+	@Override
+	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
+	public void deleteUserRoleByRoleId(Long roleId) {
+		Example example = new Example(UserRoleBean.class);
+		Criteria criteria = example.createCriteria();
+		criteria.andEqualTo("roleId", roleId);
+		UserRoleBean.deleteByExample(UserRoleBean.class, example);
+	}
 
 }

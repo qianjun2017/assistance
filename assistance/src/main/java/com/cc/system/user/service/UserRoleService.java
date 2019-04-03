@@ -32,4 +32,10 @@ public interface UserRoleService {
 	 * @param userId
 	 */
 	void deleteUserRoleByUserId(Long userId);
+
+	/**
+	 * 删除角色人员
+	 * @param roleId
+	 */
+	void deleteUserRoleByRoleId(Long roleId);
 }

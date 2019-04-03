@@ -5,6 +5,7 @@ package com.cc.system.auth.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cc.common.exception.LogicException;
 import com.cc.system.auth.bean.AuthBean;
 import com.cc.system.auth.service.AuthService;
+import com.cc.system.role.service.RoleAuthService;
 
 import tk.mybatis.mapper.entity.Example;
 
@@ -21,6 +23,9 @@ import tk.mybatis.mapper.entity.Example;
  */
 @Service
 public class AuthServiceImpl implements AuthService {
+	
+	@Autowired
+	private RoleAuthService roleAuthService;
 
 	@Override
 	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
@@ -34,6 +39,7 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
 	public void deleteAuth(Long id) {
+		roleAuthService.deletRoleAuthByAuthId(id);
 		AuthBean authBean = new AuthBean();
 		authBean.setId(id);
 		int row = authBean.delete();
