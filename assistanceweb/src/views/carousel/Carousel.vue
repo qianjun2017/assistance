@@ -245,9 +245,9 @@
         this.editFormVisible = true
         this.$ajax.get('/carousel/get/'+row.id).then(res=>{
           if(res.success){
-            this.editForm = Object.assign({}, res.data.carouselBean);
+            this.editForm = Object.assign({}, res.data);
             this.fileList = []
-            this.fileList.push({url: res.data.carouselBean.imageUrl})
+            this.fileList.push({url: res.data.imageUrl})
             this.editFormVisible = true;
           }
         })
