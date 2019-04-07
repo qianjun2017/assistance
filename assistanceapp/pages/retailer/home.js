@@ -109,6 +109,11 @@ Page({
   },
 
   bindLotteryTap: function(e) {
+    if(!this.data.userInfo.store){
+      wx.navigateTo({
+        url: '../retailer/retailer'
+      })
+    }
     wx.navigateTo({
       url: '../retailer/lottery'
     })
