@@ -3,6 +3,7 @@
  */
 package com.cc.carousel.web;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -16,12 +17,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cc.carousel.bean.CarouselBean;
+import com.cc.carousel.bean.CarouselPlotBean;
 import com.cc.carousel.enums.CarouselStatusEnum;
 import com.cc.carousel.form.CarouselForm;
 import com.cc.carousel.form.CarouselQueryForm;
+import com.cc.carousel.result.CarouselResult;
 import com.cc.carousel.service.CarouselService;
 import com.cc.common.exception.LogicException;
 import com.cc.common.tools.JsonTools;
+import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
 import com.cc.common.web.Response;
@@ -61,6 +65,14 @@ public class CarouselController {
 			response.setMessage("请上传轮播图");
 			return response;
 		}
+		if(StringTools.isAllNullOrNone(new String[]{carousel.getPath(), carousel.getPlot()})){
+			response.setMessage("跳转路径和详情必须输入一个");
+			return response;
+		}
+		if(!StringTools.isAnyNullOrNone(new String[]{carousel.getPath(), carousel.getPlot()})){
+			response.setMessage("跳转路径和详情不能同时输入");
+			return response;
+		}
 		try {
 			carouselService.saveCarousel(carousel);
 			response.setSuccess(Boolean.TRUE);
@@ -91,6 +103,14 @@ public class CarouselController {
 		}
 		if (StringTools.isNullOrNone(carousel.getImageUrl())) {
 			response.setMessage("请上传轮播图");
+			return response;
+		}
+		if(StringTools.isAllNullOrNone(new String[]{carousel.getPath(), carousel.getPlot()})){
+			response.setMessage("跳转路径和详情必须输入一个");
+			return response;
+		}
+		if(!StringTools.isAnyNullOrNone(new String[]{carousel.getPath(), carousel.getPlot()})){
+			response.setMessage("跳转路径和详情不能同时输入");
 			return response;
 		}
 		try {
@@ -203,14 +223,22 @@ public class CarouselController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/get/{id:\\d+}", method = RequestMethod.GET)
-	public Response<CarouselBean> queryCarousel(@PathVariable Long id){
-		Response<CarouselBean> response = new Response<CarouselBean>();
+	public Response<CarouselResult> queryCarousel(@PathVariable Long id){
+		Response<CarouselResult> response = new Response<CarouselResult>();
 		CarouselBean carouselBean = CarouselBean.get(CarouselBean.class, id);
 		if (carouselBean==null) {
 			response.setMessage("轮播图不存在");
 			return response;
 		}
-		response.setData(carouselBean);
+		CarouselResult carouselResult = JsonTools.toObject(JsonTools.toJsonString(carouselBean), CarouselResult.class);
+		List<CarouselPlotBean> carouselPlotBeanList = CarouselPlotBean.findAllByParams(CarouselPlotBean.class, "carouselId", carouselBean.getId());
+		if(!ListTools.isEmptyOrNull(carouselPlotBeanList)){
+			CarouselPlotBean carouselPlotBean = carouselPlotBeanList.get(0);
+			if(carouselPlotBean.getPlot()!=null){
+				carouselResult.setPlot(new String(carouselPlotBean.getPlot()));
+			}
+		}
+		response.setData(carouselResult);
 		response.setSuccess(Boolean.TRUE);
 		return response;
 	}

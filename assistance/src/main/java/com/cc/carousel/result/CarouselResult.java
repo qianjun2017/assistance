@@ -1,17 +1,12 @@
-/**
- * 
- */
-package com.cc.carousel.form;
+package com.cc.carousel.result;
 
-import java.util.List;
+import java.util.Date;
 
-/**
- * @author Administrator
- *
- */
-public class CarouselForm {
+import com.fasterxml.jackson.annotation.JsonFormat;
 
-	private Long id;
+public class CarouselResult {
+
+private Long id;
 	
 	/**
 	 * 轮播图片
@@ -24,14 +19,25 @@ public class CarouselForm {
 	private String path;
 	
 	/**
+	 * 状态
+	 */
+	private String status;
+	
+	/**
 	 * 轮播图名称
 	 */
 	private String name;
 	
 	/**
-	 * 频道
+	 * 点击次数
 	 */
-	List<Integer> channelList;
+	private Integer clicked;
+	
+	/**
+	 * 创建时间
+	 */
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date createTime;
 	
 	/**
 	 * 轮播详情
@@ -81,6 +87,20 @@ public class CarouselForm {
 	}
 
 	/**
+	 * @return the status
+	 */
+	public String getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	/**
 	 * @return the name
 	 */
 	public String getName() {
@@ -95,17 +115,31 @@ public class CarouselForm {
 	}
 
 	/**
-	 * @return the channelList
+	 * @return the clicked
 	 */
-	public List<Integer> getChannelList() {
-		return channelList;
+	public Integer getClicked() {
+		return clicked;
 	}
 
 	/**
-	 * @param channelList the channelList to set
+	 * @param clicked the clicked to set
 	 */
-	public void setChannelList(List<Integer> channelList) {
-		this.channelList = channelList;
+	public void setClicked(Integer clicked) {
+		this.clicked = clicked;
+	}
+
+	/**
+	 * @return the createTime
+	 */
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	/**
+	 * @param createTime the createTime to set
+	 */
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 
 	/**

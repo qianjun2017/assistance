@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cc.carousel.bean.CarouselBean;
+import com.cc.carousel.bean.CarouselPlotBean;
 import com.cc.carousel.enums.CarouselStatusEnum;
 import com.cc.carousel.form.CarouselForm;
 import com.cc.carousel.form.CarouselQueryForm;
@@ -26,6 +27,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.entity.Example.Criteria;
 
 /**
  * @author Administrator
@@ -56,11 +58,41 @@ public class CarouselServiceImpl implements CarouselService {
 		if (row!=1) {
 			throw new LogicException("E002", "保存轮播图失败");
 		}
+		List<CarouselPlotBean> carouselPlotBeanList = CarouselPlotBean.findAllByParams(CarouselPlotBean.class, "carouselId", carouselBean.getId());
+		if(ListTools.isEmptyOrNull(carouselPlotBeanList)){
+			if(!StringTools.isNullOrNone(carousel.getPlot())){
+				CarouselPlotBean carouselPlotBean = new CarouselPlotBean();
+				carouselPlotBean.setCarouselId(carouselBean.getId());
+				carouselPlotBean.setPlot(carousel.getPlot().getBytes());
+				row = carouselPlotBean.save();
+				if (row!=1) {
+					throw new LogicException("E003", "保存轮播图详情失败");
+				}
+			}
+			return;
+		}
+		if(StringTools.isNullOrNone(carousel.getPlot())){
+			Example example = new Example(CarouselPlotBean.class);
+			Criteria criteria = example.createCriteria();
+			criteria.andEqualTo("carouselId", carouselBean.getId());
+			CarouselPlotBean.deleteByExample(CarouselPlotBean.class, example);
+		}else{
+			CarouselPlotBean carouselPlotBean = new CarouselPlotBean();
+			carouselPlotBean.setPlot(carousel.getPlot().getBytes());
+			Example example = new Example(CarouselPlotBean.class);
+			Criteria criteria = example.createCriteria();
+			criteria.andEqualTo("carouselId", carouselBean.getId());
+			carouselPlotBean.updateByExample(example);
+		}
 	}
 
 	@Override
 	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
 	public void deleteCarousel(Long id) {
+		Example example = new Example(CarouselPlotBean.class);
+		Criteria criteria = example.createCriteria();
+		criteria.andEqualTo("carouselId", id);
+		CarouselPlotBean.deleteByExample(CarouselPlotBean.class, example);
 		CarouselBean carouselBean = new CarouselBean();
 		carouselBean.setId(id);
 		int row = carouselBean.delete();
