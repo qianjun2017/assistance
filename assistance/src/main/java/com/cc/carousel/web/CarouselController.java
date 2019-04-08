@@ -244,6 +244,35 @@ public class CarouselController {
 	}
 	
 	/**
+	 * 查询轮播图详情
+	 * @param id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/plot/get/{id:\\d+}", method = RequestMethod.GET)
+	public Response<String> queryCarouselPlot(@PathVariable Long id){
+		Response<String> response = new Response<String>();
+		CarouselBean carouselBean = CarouselBean.get(CarouselBean.class, id);
+		if (carouselBean==null) {
+			response.setMessage("轮播图不存在");
+			return response;
+		}
+		List<CarouselPlotBean> carouselPlotBeanList = CarouselPlotBean.findAllByParams(CarouselPlotBean.class, "carouselId", carouselBean.getId());
+		if(ListTools.isEmptyOrNull(carouselPlotBeanList)){
+			response.setMessage("轮播图详情不存在");
+			return response;
+		}
+		CarouselPlotBean carouselPlotBean = carouselPlotBeanList.get(0);
+		if(carouselPlotBean.getPlot()==null){
+			response.setMessage("轮播图详情不存在");
+			return response;
+		}
+		response.setData(new String(carouselPlotBean.getPlot()));
+		response.setSuccess(Boolean.TRUE);
+		return response;
+	}
+	
+	/**
 	 * 分页查询轮播图
 	 * @param form
 	 * @return
