@@ -243,6 +243,30 @@ LOCK TABLES `t_carousel` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `t_carousel_plot`
+--
+
+DROP TABLE IF EXISTS `t_carousel_plot`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `t_carousel_plot` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `carouselId` int(11) DEFAULT NULL,
+  `plot` blob,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_carousel_plot`
+--
+
+LOCK TABLES `t_carousel_plot` WRITE;
+/*!40000 ALTER TABLE `t_carousel_plot` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_carousel_plot` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `t_interface`
 --
 
