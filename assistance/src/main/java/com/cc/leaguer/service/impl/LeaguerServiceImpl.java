@@ -33,10 +33,6 @@ import com.cc.leaguer.form.LeaguerQueryForm;
 import com.cc.leaguer.service.LeaguerService;
 import com.cc.system.location.result.LocationResult;
 import com.cc.system.location.service.LocationService;
-import com.cc.system.log.annotation.ExceptionLog;
-import com.cc.system.user.utils.PasswordUtil;
-import com.cc.user.bean.TUserBean;
-import com.cc.user.enums.UserTypeEnum;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -47,7 +43,6 @@ import tk.mybatis.mapper.entity.Example;
  *
  */
 @Service
-@ExceptionLog
 public class LeaguerServiceImpl implements LeaguerService {
 	
 	private static Logger logger = LoggerFactory.getLogger(LeaguerService.class);
@@ -65,13 +60,6 @@ public class LeaguerServiceImpl implements LeaguerService {
 	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
 	public void saveLeaguer(LeaguerBean leaguerBean) {
 		Long leaguerId = leaguerBean.getId();
-		TUserBean userBean = new TUserBean();
-		userBean.setOpenid(leaguerBean.getOpenid());
-		userBean.setUserName(leaguerBean.getLeaguerName());
-		userBean.setUserType(UserTypeEnum.LEAGUER.getCode());
-		userBean.setSalt(PasswordUtil.getSalt(5));
-		userBean.save();
-		leaguerBean.setUid(userBean.getId());
 		int row = leaguerBean.save();
 		if(row!=1){
 			throw new LogicException("E001", "保存会员失败");

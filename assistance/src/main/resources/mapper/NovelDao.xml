@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cc.novel.dao.NovelDao">
+
+	<select id="queryNovelList" resultType="com.cc.novel.bean.NovelBean" parameterType="com.cc.novel.form.NovelQueryForm" statementType="PREPARED">
+		select distinct n.id,n.name,n.imgUrl,n.createTime,n.integration,n.status,n.novelStatus,n.downloading,n.lastTime,n.lastChapter
+		from t_novel n
+		<if test="authorName!=null and authorName!=''">
+			left join t_novel_author na on na.novelId = n.id
+			left join t_author a on a.id = na.authorId
+		</if>
+		where 1=1
+		<if test="status!=null and status!=''">
+			and n.status = #{status}
+		</if>
+		<if test="downloading!=null and downloading!=''">
+			and n.downloading = #{downloading}
+		</if>
+		<if test="novelStatus!=null and novelStatus!=''">
+			and n.novelStatus = #{novelStatus}
+		</if>
+		<if test="name!=null and name!=''">
+			and n.name like concat('%',#{name},'%')
+		</if>
+		<if test="type!=null and type!=''">
+			and n.type like concat('%',#{type},'%')
+		</if>
+		<if test="lastChapter!=null and lastChapter!=''">
+			and n.lastChapter like concat('%',#{lastChapter},'%')
+		</if>
+		<if test="authorName!=null and authorName!=''">
+			and a.authorName like concat('%',#{authorName},'%')
+		</if>
+		<if test="createTimeStart!=null">
+			<![CDATA[ and n.createTime >= #{createTimeStart} ]]>
+		</if>
+		<if test="createTimeEnd!=null">
+			<![CDATA[ and n.createTime <= #{createTimeEnd} ]]>
+		</if>
+		<if test="keywords!=null and keywords!=''">
+			and (
+					n.name like concat('%',#{keywords},'%') 
+					or n.id in (
+						select distinct nau.novelId 
+						from t_novel_author nau where nau.authorId in (
+							select distinct aut.id from t_author aut where aut.authorName like concat('%',#{keywords},'%')
+						)
+					)
+				)
+		</if>
+	</select>
+	
+	<select id="queryNovelChapterList" resultType="com.cc.novel.bean.NovelChapterBean" parameterType="com.cc.novel.form.NovelChapterQueryForm" statementType="PREPARED">
+		select id,name,createTime
+		from t_novel_chapter
+		where novelId = #{novelId}
+		<if test="name!=null and name!=''">
+			and name like concat('%',#{name},'%')
+		</if>
+	</select>
+
+	<select id="queryNovelChapterContent" resultType="com.cc.novel.bean.NovelChapterContentBean" parameterType="long" statementType="PREPARED">
+		select id,chapterId,content
+		from t_novel_chapter_content
+		where chapterId = #{chapterId}
+	</select>
+
+	<select id="queryNovelOriginChapterList" resultType="com.cc.novel.bean.NovelChapterBean" parameterType="long" statementType="PREPARED">
+		select id,name
+		from t_novel_chapter
+		where novelId = #{novelId}
+		and preId is NULL
+	</select>
+
+	<select id="queryNovelMaxOrderedChapter" resultType="com.cc.novel.bean.NovelChapterBean" parameterType="long" statementType="PREPARED">
+		select id,name,nextId
+		from t_novel_chapter
+		where novelId = #{novelId}
+		and orderNo is not NULL
+		order by orderNo desc limit 0,1
+	</select>
+
+	<select id="queryExchangeNovelList" resultType="com.cc.novel.bean.NovelBean" parameterType="com.cc.novel.form.NovelExchangeQueryForm" statementType="PREPARED">
+		select n.id,n.name,n.imgUrl,n.createTime,n.integration,n.status,n.novelStatus,n.downloading
+		from t_novel n
+		inner join t_exchange e on e.itemId = n.id
+		where e.channelCode='novel'
+		and e.status in('success','pending','reject')
+		and n.status = 'on'
+		<if test="novelId!=null and novelId!=''">
+			and n.id = #{novelId}
+		</if>
+		<if test="leaguerId!=null and leaguerId!=''">
+			and e.leaguerId = #{leaguerId}
+		</if>
+	</select>
+
+	<select id="queryNovelMinOrderedChapter" resultType="com.cc.novel.bean.NovelChapterBean" parameterType="long" statementType="PREPARED">
+		select id,name
+		from t_novel_chapter
+		where novelId = #{novelId}
+		and orderNo is not NULL
+		order by orderNo asc limit 0,1
+	</select>
+	
+</mapper>

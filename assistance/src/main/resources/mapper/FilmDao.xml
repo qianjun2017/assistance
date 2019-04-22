@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cc.film.dao.FilmDao">
+
+	<select id="queryFilmList" resultType="com.cc.film.bean.FilmBean" parameterType="com.cc.film.form.FilmQueryForm" statementType="PREPARED">
+		select distinct f.id,f.name,f.listImgUrl,f.country,f.language,f.year,f.createTime,f.integration,f.thumbUp,f.thumbDown,f.status
+		from t_film f
+		<if test="actorName!=null and actorName!=''">
+			left join t_film_actor fa on fa.filmId = f.id
+			left join t_actor a on a.id = fa.actorId
+		</if>
+		<if test="directorName!=null and directorName!=''">
+			left join t_film_director fd on fd.filmId = f.id
+			left join t_director d on d.id = fd.directorId
+		</if>
+		where 1=1
+		<if test="year!=null and year!=''">
+			and f.year = #{year}
+		</if>
+		<if test="status!=null and status!=''">
+			and f.status = #{status}
+		</if>
+		<if test="name!=null and name!=''">
+			and f.name like concat('%',#{name},'%')
+		</if>
+		<if test="actorName!=null and actorName!=''">
+			and a.actorName like concat('%',#{actorName},'%')
+		</if>
+		<if test="directorName!=null and directorName!=''">
+			and d.directorName like concat('%',#{directorName},'%')
+		</if>
+		<if test="country!=null and country!=''">
+			and f.country = #{country}
+		</if>
+		<if test="language!=null and language!=''">
+			and f.language = #{language}
+		</if>
+		<if test="createTimeStart!=null">
+			<![CDATA[ and f.createTime >= #{createTimeStart} ]]>
+		</if>
+		<if test="createTimeEnd!=null">
+			<![CDATA[ and f.createTime <= #{createTimeEnd} ]]>
+		</if>
+		<if test="keywords!=null and keywords!=''">
+			and (
+					f.name like concat('%',#{keywords},'%') 
+					or f.id in (
+						select distinct fat.filmId 
+						from t_film_attribute fat 
+						where fat.attribute like concat('%',#{keywords},'%')
+					)
+					or f.id in (
+						select distinct fac.filmId 
+						from t_film_actor fac where fac.actorId in (
+							select distinct act.id from t_actor act where act.actorName like concat('%',#{keywords},'%')
+						)
+					)
+					or f.id in (
+						select distinct fdi.filmId 
+						from t_film_director fdi where fdi.directorId in (
+							select distinct di.id from t_director di where di.directorName like concat('%',#{keywords},'%')
+						)
+					)
+				)
+		</if>
+	</select>
+	
+	<select id="queryFilmActorList" resultType="com.cc.film.bean.ActorBean" parameterType="long" statementType="PREPARED">
+		select a.id, a.actorName
+		from t_actor a
+		inner join t_film_actor fa on a.id = fa.actorId
+		where fa.filmId = #{filmId}
+	</select>
+	
+	<select id="queryFilmDirectorList" resultType="com.cc.film.bean.DirectorBean" parameterType="long" statementType="PREPARED">
+		select d.id, d.directorName
+		from t_director d
+		inner join t_film_director fd on d.id = fd.directorId
+		where fd.filmId = #{filmId}
+	</select>	
+	
+	<select id="queryExchangeFilmList" resultType="com.cc.film.bean.FilmBean" parameterType="com.cc.film.form.FilmExchangeQueryForm" statementType="PREPARED">
+		select f.id,f.name,f.listImgUrl,f.country,f.language,f.year,f.createTime,f.integration,f.thumbUp,f.thumbDown,f.status
+		from t_film f
+		inner join t_exchange e on e.itemId = f.id
+		where e.channelCode='film'
+		and e.status in('success','pending','reject')
+		and f.status = 'on'
+		<if test="filmId!=null and filmId!=''">
+			and f.id = #{filmId}
+		</if>
+		<if test="leaguerId!=null and leaguerId!=''">
+			and e.leaguerId = #{leaguerId}
+		</if>
+	</select>
+	
+	<select id="queryNewFilmList" resultType="com.cc.film.bean.FilmBean" parameterType="com.cc.film.form.FilmQueryForm" statementType="PREPARED">
+		select f.id,f.name,f.listImgUrl,f.country,f.language,f.year,f.createTime,f.integration,f.thumbUp,f.thumbDown,f.status
+		from t_film f
+		where date(f.createTime) = (
+					SELECT
+						date(createTime)
+					FROM
+						t_film
+					WHERE
+						id = (SELECT max(id) FROM t_film where status = 'on')
+				)
+				and f.status = 'on'
+	</select>
+	
+	<select id="queryRecommendFilmList" resultType="com.cc.film.bean.FilmBean" parameterType="com.cc.film.form.FilmQueryForm" statementType="PREPARED">
+		select f.id,f.name,f.listImgUrl,f.country,f.language,f.year,f.createTime,f.integration,f.thumbUp,f.thumbDown,f.status
+		from t_film f
+		inner join t_film_evaluate e on e.id = f.id and e.recommend = true
+		where f.status = 'on'
+	</select>
+	
+	<select id="queryHotFilmList" resultType="com.cc.film.bean.FilmBean" parameterType="com.cc.film.form.FilmQueryForm" statementType="PREPARED">
+		select f.id,f.name,f.listImgUrl,f.country,f.language,f.year,f.createTime,f.integration,f.thumbUp,f.thumbDown,f.status
+		from t_film f
+		inner join (select substring_index(substring_index(l.params,':',-1),'}',1) as filmId, count(l.params) as cnt from t_system_operation_log l where l.module = 'film' and l.operType = 'play'
+			and l.operateTime > date_sub(now(), interval 30 day)
+			group by l.params
+			order by count(l.params) desc) t on f.id = t.filmId
+		where f.status = 'on'
+	</select>
+	
+	<select id="queryFilmPlayed" resultType="int" parameterType="long" statementType="PREPARED">
+		select count(1) 
+		from t_system_operation_log sol
+		where sol.module = 'film' 
+			and sol.operType = 'play' 
+			and sol.params like concat('%:',#{filmId},'}%')
+	</select>
+	
+	<select id="queryFilmCountryList" resultType="com.cc.film.result.FilmCountryResult" statementType="PREPARED">
+		select t.country from ( select distinct f.country from t_film f ) t
+		where t.country is not null
+	</select>
+	
+	<select id="queryFilmLanguageList" resultType="com.cc.film.result.FilmLanguageResult" statementType="PREPARED">
+		select t.language from ( select distinct f.language from t_film f ) t
+		where t.language is not null
+	</select>
+	
+	<select id="queryFilmYearList" resultType="com.cc.film.result.FilmYearResult" statementType="PREPARED">
+		select t.year from ( select distinct f.year from t_film f ) t
+		where t.year is not null
+		order by t.year desc
+	</select>
+	
+</mapper>

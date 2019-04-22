@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cc.exchange.dao.ExchangeDao">
+
+	<select id="queryExchangeList" resultType="com.cc.exchange.result.ExchangeResult" parameterType="com.cc.exchange.form.ExchangeQueryForm" statementType="PREPARED">
+		select e.id,e.itemName,e.status,l.leaguerName,e.createTime,c.channelName,e.remark
+		from t_exchange e
+		left join t_leaguer l on e.leaguerId = l.id
+		left join t_channel c on c.channelCode = e.channelCode
+		where 1=1
+		<if test="channelCode!=null and channelCode!=''">
+			and e.channelCode = #{channelCode}
+		</if>
+		<if test="leaguerId!=null and leaguerId!=''">
+			and e.leaguerId = #{leaguerId}
+		</if>
+		<if test="itemId!=null and itemId!=''">
+			and e.itemId = #{itemId}
+		</if>
+		<if test="key!=null and key!=''">
+			and (e.remark like concat('%',#{key},'%') or e.itemName like concat('%',#{key},'%'))
+		</if>
+		<if test="leaguerName!=null and leaguerName!=''">
+			and l.leaguerName like concat('%',#{leaguerName},'%')
+		</if>
+		<if test="status!=null and status!=''">
+			and e.status = #{status}
+		</if>
+		<if test="createTimeStart!=null">
+			<![CDATA[ and e.createTime >= #{createTimeStart} ]]>
+		</if>
+		<if test="createTimeEnd!=null">
+			<![CDATA[ and e.createTime <= #{createTimeEnd} ]]>
+		</if>
+	</select>
+	
+</mapper>

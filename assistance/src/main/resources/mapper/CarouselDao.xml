@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cc.carousel.dao.CarouselDao">
+
+	<select id="queryCarouselList" resultType="com.cc.carousel.bean.CarouselBean" parameterType="com.cc.carousel.form.CarouselQueryForm" statementType="PREPARED">
+		select c.id, c.imageUrl,c.status,c.path,c.name,c.createTime,c.clicked
+		from t_carousel c
+		left join t_carousel_channel cc on cc.carouselId = c.id
+		left join t_channel ch on ch.id = cc.channelId
+		where 1=1
+		<if test="channelCode!=null and channelCode!=''">
+			and ch.channelCode = #{channelCode}
+		</if>
+		<if test="name!=null and name!=''">
+			and c.name like concat('%',#{name},'%')
+		</if>
+		<if test="status!=null and status!=''">
+			and c.status = #{status}
+		</if>
+		<if test="channelId!=null and channelId!=''">
+			and cc.channelId = #{channelId}
+		</if>
+	</select>
+	
+</mapper>

@@ -25,7 +25,11 @@ public enum InterfaceEnum {
 	WXREFUNDORDERNOTIFY("wxRefundOrderNotify", "接收", "微信退款结果通知"),
 	WXQUERYORDER("wxQueryOrder", "发送", "微信查询订单接口"),
 	WXCLOSEORDER("wxCloseOrder", "发送", "微信关闭订单接口"),
-	WXQUERYREFUNDORDER("wxQueryRefundOrder", "发送", "微信查询退款接口");
+	WXQUERYREFUNDORDER("wxQueryRefundOrder", "发送", "微信查询退款接口"),
+	BDIPLOCATION("bdIpLocation", "发送", "百度IP定位接口"),
+	BDSEARCH("bdSearch", "发送", "百度地点检索接口"),
+	BDSUGGESTION("bdSuggestion", "发送", "百度地点输入提示接口"),
+	BDGEOCODER("bdGeocoder", "发送", "百度逆地理编码接口");
 
 	/**
 	 * 编码

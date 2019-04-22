@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cc.activity.dao.ActivityDao">
+
+	<select id="queryActivityParticipateList" resultType="com.cc.activity.result.ActivityParticipateResult" parameterType="com.cc.activity.form.ActivityParticipateQueryForm" statementType="PREPARED">
+		select al.id, al.leaguerId,al.activityId,al.status,l.leaguerName,a.name as activityName,al.createTime
+		from t_activity_leaguer al
+		left join t_leaguer l on al.leaguerId = l.id
+		left join t_activity a on a.id = al.activityId
+		<where>
+			<if test="type!=null and type!=''">
+				and a.type = #{type}
+			</if>
+			<if test="name!=null and name!=''">
+				and a.name like concat('%',#{name},'%')
+			</if>
+			<if test="leaguerName!=null and leaguerName!=''">
+				and l.leaguerName like concat('%',#{leaguerName},'%')
+			</if>
+			<if test="status!=null and status!=''">
+				and al.status = #{status}
+			</if>
+			<if test="createTimeStart!=null">
+				<![CDATA[ and al.createTime >= #{createTimeStart} ]]>
+			</if>
+			<if test="createTimeEnd!=null">
+				<![CDATA[ and al.createTime <= #{createTimeEnd} ]]>
+			</if>
+		</where>
+	</select>
+	
+	<select id="queryActivityParticipateStatisticsList" resultType="com.cc.activity.result.ActivityParticipateStatisticsResult" parameterType="com.cc.activity.form.ActivityParticipateStatisticsQueryForm" statementType="PREPARED">
+		select al.activityId,a.name as activityName,a.type,
+			count(*) as total,
+			sum(case al.status when 'success' then 1 else 0 end) as success,
+			sum(case al.status when 'wait' then 1 else 0 end) as unconfirmed,
+			sum(case al.status when 'pending' then 1 else 0 end) as pending,
+			sum(case al.status when 'reject' then 1 else 0 end) as reject,
+			sum(case al.status when 'fake' then 1 else 0 end) as fake
+		from t_activity_leaguer al
+		left join t_leaguer l on al.leaguerId = l.id
+		left join t_activity a on a.id = al.activityId
+		<where>
+			<if test="activityId!=null and activityId!=''">
+				and a.id = #{activityId}
+			</if>
+			<if test="type!=null and type!=''">
+				and a.type = #{type}
+			</if>
+			<if test="activityName!=null and activityName!=''">
+				and a.name like concat('%',#{activityName},'%')
+			</if>
+			<if test="leaguerName!=null and leaguerName!=''">
+				and l.leaguerName like concat('%',#{leaguerName},'%')
+			</if>
+			<if test="createTimeStart!=null">
+				<![CDATA[ and al.createTime >= #{createTimeStart} ]]>
+			</if>
+			<if test="createTimeEnd!=null">
+				<![CDATA[ and al.createTime <= #{createTimeEnd} ]]>
+			</if>
+		</where>
+		group by al.activityId
+	</select>
+	
+	<select id="queryActivityList" resultType="com.cc.activity.bean.ActivityBean" parameterType="com.cc.activity.form.ActivityQueryForm" statementType="PREPARED">
+		select a.id,a.name,a.type,a.status,a.integration,a.autoAudit,a.createTime,a.startTime,a.endTime
+		from t_activity a
+		<where>
+			<if test="type!=null and type!=''">
+				and a.type = #{type}
+			</if>
+			<if test="name!=null and name!=''">
+				and a.name like concat('%',#{name},'%')
+			</if>
+			<if test="status!=null and status!=''">
+				and a.status = #{status}
+			</if>
+			<if test="leaguerId!=null">
+				and (
+					(a.participateType = 'daily' and not exists (select * from t_activity_leaguer al1 where al1.activityId = a.id and al1.leaguerId = #{leaguerId} and (al1.status = 'wait' or al1.status = 'pending' or al1.status = 'success') and date(al1.createTime) = date(now())))
+					or (a.participateType = 'whole' and not exists (select * from t_activity_leaguer al1 where al1.activityId = a.id and al1.leaguerId = #{leaguerId} and (al1.status = 'wait' or al1.status = 'pending' or al1.status = 'success')))
+				)
+				and now() between a.startTime and a.endTime
+				and exists (select * from t_activity_channel ac inner join t_leaguer_channel lc on ac.channelId = lc.channelId where lc.leaguerId = #{leaguerId} and ac.activityId = a.id)
+				and exists (select * from t_activity_location al where al.activityId = a.id and al.locationId in
+					<foreach collection="locationIdList" item="locationId" index="index" open="(" separator="," close=")">
+						#{locationId}
+					</foreach>
+				)
+			</if>
+		</where>
+	</select>
+	
+</mapper>

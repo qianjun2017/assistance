@@ -60,8 +60,6 @@ public class LeaguerBean extends BaseOrm<LeaguerBean> implements BaseEntity {
 	 */
 	private Date createTime;
 	
-	private Long uid;
-	
 	/**
 	 * 邮箱地址
 	 */
@@ -71,6 +69,11 @@ public class LeaguerBean extends BaseOrm<LeaguerBean> implements BaseEntity {
 	 * 信誉
 	 */
 	private Float credit;
+	
+	/**
+	 * 电话
+	 */
+	private String phone;
 	/* (non-Javadoc)
 	 * @see com.cc.common.orm.BaseOrm#getId()
 	 */
@@ -157,18 +160,6 @@ public class LeaguerBean extends BaseOrm<LeaguerBean> implements BaseEntity {
 		this.createTime = createTime;
 	}
 	/**
-	 * @return the uid
-	 */
-	public Long getUid() {
-		return uid;
-	}
-	/**
-	 * @param uid the uid to set
-	 */
-	public void setUid(Long uid) {
-		this.uid = uid;
-	}
-	/**
 	 * @return the email
 	 */
 	public String getEmail() {
@@ -191,6 +182,18 @@ public class LeaguerBean extends BaseOrm<LeaguerBean> implements BaseEntity {
 	 */
 	public void setCredit(Float credit) {
 		this.credit = credit;
+	}
+	/**
+	 * @return the phone
+	 */
+	public String getPhone() {
+		return phone;
+	}
+	/**
+	 * @param phone the phone to set
+	 */
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 }

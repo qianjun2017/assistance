@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cc.common.exception.LogicException;
 import com.cc.common.tools.DateTools;
 import com.cc.common.tools.ListTools;
+import com.cc.common.tools.StringTools;
 import com.cc.integration.bean.IntegrationBean;
 import com.cc.integration.service.IntegrationService;
 import com.cc.leaguer.bean.LeaguerBean;
@@ -36,6 +37,7 @@ public class IntegrationServiceImpl implements IntegrationService {
 	public void createIntegration(Long leaguerId) {
 		IntegrationBean integrationBean = new IntegrationBean();
 		integrationBean.setLeaguerId(leaguerId);
+		integrationBean.setCardNo(StringTools.getSys36SeqNo());
 		integrationBean.setIntegration(0l);
 		integrationBean.setGradeIntegration(0l);
 		integrationBean.setCreateTime(DateTools.now());

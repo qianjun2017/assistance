@@ -8,12 +8,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cc.carousel.bean.CarouselBean;
+import com.cc.carousel.bean.CarouselChannelBean;
 import com.cc.carousel.bean.CarouselPlotBean;
+import com.cc.carousel.dao.CarouselDao;
 import com.cc.carousel.enums.CarouselStatusEnum;
 import com.cc.carousel.form.CarouselForm;
 import com.cc.carousel.form.CarouselQueryForm;
@@ -35,6 +38,9 @@ import tk.mybatis.mapper.entity.Example.Criteria;
  */
 @Service
 public class CarouselServiceImpl implements CarouselService {
+	
+	@Autowired
+	private CarouselDao carouselDao;
 
 	@Override
 	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
@@ -57,6 +63,21 @@ public class CarouselServiceImpl implements CarouselService {
 		int row = carouselBean.save();
 		if (row!=1) {
 			throw new LogicException("E002", "保存轮播图失败");
+		}
+		Example carouselChannelBeanExample = new Example(CarouselChannelBean.class);
+		Criteria carouselChannelBeanCriteria = carouselChannelBeanExample.createCriteria();
+		carouselChannelBeanCriteria.andEqualTo("carouselId", carouselBean.getId());
+		CarouselChannelBean.deleteByExample(CarouselChannelBean.class, carouselChannelBeanExample);
+		if(!ListTools.isEmptyOrNull(carousel.getChannelList())){
+			for (Integer channelId : carousel.getChannelList()) {
+				CarouselChannelBean carouselChannelBean = new CarouselChannelBean();
+				carouselChannelBean.setCarouselId(carouselBean.getId());
+				carouselChannelBean.setChannelId(new Long(channelId));
+				row = carouselChannelBean.save();
+				if (row!=1) {
+					throw new LogicException("E003", "保存轮播图失败");
+				}
+			}
 		}
 		List<CarouselPlotBean> carouselPlotBeanList = CarouselPlotBean.findAllByParams(CarouselPlotBean.class, "carouselId", carouselBean.getId());
 		if(ListTools.isEmptyOrNull(carouselPlotBeanList)){
@@ -93,6 +114,10 @@ public class CarouselServiceImpl implements CarouselService {
 		Criteria criteria = example.createCriteria();
 		criteria.andEqualTo("carouselId", id);
 		CarouselPlotBean.deleteByExample(CarouselPlotBean.class, example);
+		Example carouselChannelBeanExample = new Example(CarouselChannelBean.class);
+		Criteria carouselChannelBeanCriteria = carouselChannelBeanExample.createCriteria();
+		carouselChannelBeanCriteria.andEqualTo("carouselId", id);
+		CarouselChannelBean.deleteByExample(CarouselChannelBean.class, carouselChannelBeanExample);
 		CarouselBean carouselBean = new CarouselBean();
 		carouselBean.setId(id);
 		int row = carouselBean.delete();
@@ -104,17 +129,9 @@ public class CarouselServiceImpl implements CarouselService {
 	@Override
 	public Page<Map<String, Object>> queryCarouselPage(CarouselQueryForm form) {
 		Page<Map<String, Object>> page = new Page<Map<String,Object>>();
-		Example example = new Example(CarouselBean.class);
-		Example.Criteria criteria = example.createCriteria();
-		if(!StringTools.isNullOrNone(form.getName())){
-			criteria.andLike("name", "%"+form.getName()+"%");
-		}
-		if (!StringTools.isNullOrNone(form.getStatus())) {
-			criteria.andEqualTo("status", form.getStatus());
-		}
-		PageHelper.orderBy(String.format("%s %s", form.getSort(), form.getOrder()));
+		PageHelper.orderBy(String.format("c.%s %s", form.getSort(), form.getOrder()));
 		PageHelper.startPage(form.getPage(), form.getPageSize());
-		List<CarouselBean> carouselBeanList = CarouselBean.findByExample(CarouselBean.class, example);
+		List<CarouselBean> carouselBeanList = carouselDao.queryCarouselList(form);
 		PageInfo<CarouselBean> pageInfo = new PageInfo<CarouselBean>(carouselBeanList);
 		if (ListTools.isEmptyOrNull(carouselBeanList)) {
 			page.setMessage("没有查询到相关轮播图数据");

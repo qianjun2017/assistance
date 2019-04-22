@@ -3,13 +3,17 @@
  */
 package com.cc.leaguer.form;
 
-import com.cc.common.tools.StringTools;
+import java.util.Date;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.cc.common.web.QueryForm;
 
 /**
  * @author Administrator
  *
  */
-public class LeaguerQueryForm {
+public class LeaguerQueryForm extends QueryForm {
 	
 	/**
 	 * 会员名称
@@ -35,27 +39,34 @@ public class LeaguerQueryForm {
 	 * 会员状态
 	 */
 	private String status;
+	
+	/**
+	 * 会员手机号码
+	 */
+	private String phone;
+	
+	/**
+	 * 会员卡号
+	 */
+	private String cardNo;
+	
+	/**
+	 * 会员卡级别
+	 */
+	private String cardLevel;
 
 	/**
-	 * 页码
+	 * 开始时间
 	 */
-	private String page = "1";
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date createTimeStart;
 	
 	/**
-	 * 每页数量
+	 * 结束时间
 	 */
-	private String pageSize = "10";
-	
-	/**
-	 * 排序字段
-	 */
-	private String sort;
-	
-	/**
-	 * 排序方向
-	 */
-	private String order;
-	
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date createTimeEnd;
+
 	/**
 	 * @return the leaguerName
 	 */
@@ -127,70 +138,72 @@ public class LeaguerQueryForm {
 	}
 
 	/**
-	 * @return the page
+	 * @return the phone
 	 */
-	public int getPage() {
-		if(!StringTools.isNullOrNone(this.page) && StringTools.isNumber(this.page)){
-			return Integer.parseInt(this.page);
-		}
-		return 1;
+	public String getPhone() {
+		return phone;
 	}
 
 	/**
-	 * @param page the page to set
+	 * @param phone the phone to set
 	 */
-	public void setPage(String page) {
-		this.page = page;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 	/**
-	 * @return the pageSize
+	 * @return the cardNo
 	 */
-	public int getPageSize() {
-		if(!StringTools.isNullOrNone(this.pageSize) && StringTools.isNumber(this.pageSize)){
-			return Integer.parseInt(this.pageSize);
-		}
-		return 10;
+	public String getCardNo() {
+		return cardNo;
 	}
 
 	/**
-	 * @param pageSize the pageSize to set
+	 * @param cardNo the cardNo to set
 	 */
-	public void setPageSize(String pageSize) {
-		this.pageSize = pageSize;
+	public void setCardNo(String cardNo) {
+		this.cardNo = cardNo;
 	}
 
 	/**
-	 * @return the sort
+	 * @return the cardLevel
 	 */
-	public String getSort() {
-		if(StringTools.isNullOrNone(this.sort)){
-			return "createTime";
-		}
-		return sort;
+	public String getCardLevel() {
+		return cardLevel;
 	}
 
 	/**
-	 * @param sort the sort to set
+	 * @param cardLevel the cardLevel to set
 	 */
-	public void setSort(String sort) {
-		this.sort = sort;
+	public void setCardLevel(String cardLevel) {
+		this.cardLevel = cardLevel;
 	}
 
 	/**
-	 * @return the order
+	 * @return the createTimeStart
 	 */
-	public String getOrder() {
-		if (StringTools.isNullOrNone(this.order)) {
-			return "desc";
-		}
-		return order;
+	public Date getCreateTimeStart() {
+		return createTimeStart;
 	}
 
 	/**
-	 * @param order the order to set
+	 * @param createTimeStart the createTimeStart to set
 	 */
-	public void setOrder(String order) {
-		this.order = order;
+	public void setCreateTimeStart(Date createTimeStart) {
+		this.createTimeStart = createTimeStart;
+	}
+
+	/**
+	 * @return the createTimeEnd
+	 */
+	public Date getCreateTimeEnd() {
+		return createTimeEnd;
+	}
+
+	/**
+	 * @param createTimeEnd the createTimeEnd to set
+	 */
+	public void setCreateTimeEnd(Date createTimeEnd) {
+		this.createTimeEnd = createTimeEnd;
 	}
 }

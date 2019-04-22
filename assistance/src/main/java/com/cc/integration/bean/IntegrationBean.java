@@ -36,6 +36,11 @@ public class IntegrationBean extends BaseOrm<IntegrationBean> implements BaseEnt
 	private Long leaguerId;
 	
 	/**
+	 * 会员卡号
+	 */
+	private String cardNo;
+	
+	/**
 	 * 消费积分
 	 */
 	private Long integration;
@@ -119,6 +124,20 @@ public class IntegrationBean extends BaseOrm<IntegrationBean> implements BaseEnt
 	 */
 	public void setLeaguerId(Long leaguerId) {
 		this.leaguerId = leaguerId;
+	}
+
+	/**
+	 * @return the cardNo
+	 */
+	public String getCardNo() {
+		return cardNo;
+	}
+
+	/**
+	 * @param cardNo the cardNo to set
+	 */
+	public void setCardNo(String cardNo) {
+		this.cardNo = cardNo;
 	}
 
 }

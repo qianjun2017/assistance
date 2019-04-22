@@ -56,4 +56,20 @@ public class SecurityContextUtil {
 	public static String getDESKey(){
 		return StringTools.toString(SecurityUtils.getSubject().getSession().getAttribute("desKey"));
 	}
+	
+	/**
+	 * 缓存用户 openid
+	 * @param openid
+	 */
+	public static void setOpendid(String openid){
+		SecurityUtils.getSubject().getSession().setAttribute("openid", openid);
+	}
+
+	/**
+	 * 获取用户 openid
+	 * @return
+	 */
+	public static String getOpenid(){
+		return StringTools.toString(SecurityUtils.getSubject().getSession().getAttribute("openid"));
+	}
 }

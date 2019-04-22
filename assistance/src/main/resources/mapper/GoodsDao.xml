@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cc.goods.dao.GoodsDao">
+
+	<select id="queryGoodsList" resultType="com.cc.goods.result.GoodsListResult" parameterType="com.cc.goods.form.GoodsQueryForm" statementType="PREPARED">
+		select distinct g.id,g.name,g.code,g.status,g.createTime,g.price,(ifnull(gs.stock,0)-ifnull(gs.lockStock,0)) as stock
+		from t_goods g
+		<if test=" shopId!=null or (shopName!=null and shopName!='')">
+			left join t_goods_shop s on s.goodsId = g.id
+		</if>
+		left join t_goods_stock gs on gs.goodsId = g.id
+		where 1=1
+		<if test="sellerId!=null">
+			and g.sellerId = #{sellerId}
+		</if>
+		<if test="shopName!=null and shopName!=''">
+			and s.shopId in (
+				select id from t_shop where name like concat('%',#{shopName},'%') and status = 'normal'
+			)
+		</if>
+		<if test="shopId!=null">
+			and s.shopId = #{shopId}
+		</if>
+		<if test="categoryId!=null">
+			and g.categoryId = #{categoryId}
+		</if>
+		<if test="status!=null and status!=''">
+			and g.status = #{status}
+		</if>
+		<if test="name!=null and name!=''">
+			and g.name like concat('%',#{name},'%')
+		</if>
+		<if test="code!=null and code!=''">
+			and g.code = #{code}
+		</if>
+		<if test="createTimeStart!=null">
+			<![CDATA[ and g.createTime >= #{createTimeStart} ]]>
+		</if>
+		<if test="createTimeEnd!=null">
+			<![CDATA[ and g.createTime <= #{createTimeEnd} ]]>
+		</if>
+		<if test="sellerName!=null and sellerName!=''">
+			and g.sellerId in (
+				select id from t_seller where sellerName like concat('%',#{sellerName},'%') and status = 'normal'
+			)
+		</if>
+		<if test="locationId!=null">
+			and (not exists (select id from t_goods_location where goodsId = g.id) or exists (select id from t_goods_location where goodsId = g.id and locationId = #{locationId}))
+		</if>
+	</select>
+
+	<update id="minusGoodsStock" statementType="PREPARED">
+		<![CDATA[ update t_goods_stock set stock = stock - #{stock} where goodsId = #{goodsId} and stock >= #{stock} ]]>
+	</update>
+	
+</mapper>

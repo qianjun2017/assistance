@@ -47,8 +47,6 @@ import com.cc.system.log.enums.OperTypeEnum;
 import com.cc.system.log.form.LogQueryForm;
 import com.cc.system.log.service.LogService;
 import com.cc.system.shiro.SecurityContextUtil;
-import com.cc.user.bean.TUserBean;
-import com.cc.user.enums.UserTypeEnum;
 
 /**
  * 会员

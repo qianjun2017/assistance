@@ -7,12 +7,12 @@ package com.cc.api.form;
  * @author Administrator
  *
  */
-public class CustomerForm {
+public class LeaguerForm {
 	
 	/**
 	 * 会员
 	 */
-	private Long customerId;
+	private Long leaguerId;
 
 	/**
 	 * 会员姓名
@@ -25,17 +25,17 @@ public class CustomerForm {
 	private String phone;
 
 	/**
-	 * @return the customerId
+	 * @return the leaguerId
 	 */
-	public Long getCustomerId() {
-		return customerId;
+	public Long getLeaguerId() {
+		return leaguerId;
 	}
 
 	/**
-	 * @param customerId the customerId to set
+	 * @param leaguerId the leaguerId to set
 	 */
-	public void setCustomerId(Long customerId) {
-		this.customerId = customerId;
+	public void setLeaguerId(Long leaguerId) {
+		this.leaguerId = leaguerId;
 	}
 
 	/**

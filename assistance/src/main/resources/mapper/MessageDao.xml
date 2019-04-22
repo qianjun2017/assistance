@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cc.system.message.dao.MessageDao">
+
+	<select id="queryMessageList" resultType="com.cc.system.message.bean.MessageBean" parameterType="com.cc.system.message.form.MessageQueryForm" statementType="PREPARED">
+		select m.id,m.`status`,m.type,m.createTime,m.message,m.path
+		from t_system_message m
+		where 1=1
+		<if test="status!=null and status!=''">
+			and m.status = #{status}
+			<if test="status=='unread' and receiverId!=null">
+				and not exists (
+					select * from t_system_message_read where messageId = m.id and userId = #{receiverId}
+				)
+			</if>
+		</if>
+		<if test="channelList!=null and channelList.size()>0">
+			and (
+				m.channelId is null or m.channelId in
+				<foreach collection="channelList" item="channelId" open="(" separator="," close=")">
+					#{channelId}
+				</foreach>
+			)
+		</if>
+		<if test="receiverId!=null">
+			AND (
+				receiverId IS NULL
+				OR receiverId = #{receiverId}
+			)
+		</if>
+		<if test="receiverId!=null">
+			AND (
+				receiverAuth IS NULL
+				OR receiverAuth IN (
+					SELECT DISTINCT
+						sa.authCode
+					FROM
+						t_system_auth sa
+					INNER JOIN t_system_role_auth sra ON sa.id = sra.authId
+					INNER JOIN t_system_user_role sur ON sur.roleId = sra.roleId
+					INNER JOIN t_system_user su ON su.id = sur.userId
+					WHERE su.uid = #{receiverId}
+				)
+			)
+		</if>
+	</select>
+
+</mapper>

@@ -10,7 +10,9 @@ import com.cc.common.tools.StringTools;
 import com.cc.common.web.Response;
 import com.cc.customer.bean.CustomerBean;
 import com.cc.customer.enums.CustomerStatusEnum;
-import com.cc.customer.service.CustomerService;
+import com.cc.leaguer.bean.LeaguerBean;
+import com.cc.leaguer.enums.LeaguerStatusEnum;
+import com.cc.leaguer.service.LeaguerService;
 import com.cc.system.config.bean.SystemConfigBean;
 import com.cc.system.config.service.SystemConfigService;
 import com.cc.wx.form.CodeForm;
@@ -58,13 +60,13 @@ public class WeiXinController {
     private SystemConfigService systemConfigService;
     
     @Autowired
-	private CustomerService customerService;
+	private LeaguerService leaguerService;
     
     @Autowired
     private AccessTokenService accessTokenService;
     
     /**
-     * 微信用户登录
+     * 微信小程序用户登录
      * @param form
      * @return
      */
@@ -82,29 +84,29 @@ public class WeiXinController {
 			openidRequest.setSecret(secretSystemConfigBean.getPropertyValue());
 		}
 		openidRequest.setCode(form.getCode());
-		MiniOpenidResponse openidResponse = weiXinService.queryOpenid(openidRequest);
+		MiniOpenidResponse openidResponse = weiXinService.queryMiniOpenid(openidRequest);
 		if(!openidResponse.isSuccess()){
 			response.setMessage(openidResponse.getMessage());
 			return response;
 		}
-		List<CustomerBean> customerBeanList = CustomerBean.findAllByParams(CustomerBean.class, "openid", openidResponse.getOpenid());
-		if(!ListTools.isEmptyOrNull(customerBeanList)){
-			CustomerBean customerBean = customerBeanList.get(0);
-			CustomerStatusEnum customerStatusEnum = CustomerStatusEnum.getCustomerStatusEnumByCode(customerBean.getStatus());
-			if(CustomerStatusEnum.NORMAL.equals(customerStatusEnum)){
+		List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "openid", openidResponse.getOpenid());
+		if(!ListTools.isEmptyOrNull(leaguerBeanList)){
+			LeaguerBean leaguerBean = leaguerBeanList.get(0);
+			LeaguerStatusEnum leaguerStatusEnum = LeaguerStatusEnum.getLeaguerStatusEnumByCode(leaguerBean.getStatus());
+			if(LeaguerStatusEnum.NORMAL.equals(leaguerStatusEnum)){
 				Map<String, Object> dataMap = new HashMap<String, Object>();
-				dataMap.put("token", JwtTools.createToken(customerBean, JwtTools.JWTTTLMILLIS));
+				dataMap.put("token", JwtTools.createToken(leaguerBean, JwtTools.JWTTTLMILLIS));
 				response.setData(dataMap);
 				response.setSuccess(Boolean.TRUE);
 			}else{
-				response.setMessage("当前状态为"+customerStatusEnum.getName()+"，登录失败，请联系系统管理人员");
+				response.setMessage("当前状态为"+leaguerStatusEnum.getName()+"，登录失败，请联系系统管理人员");
 			}
 		}
 		return response;
     }
     
     /**
-     * 微信用户注册
+     * 微信小程序用户注册
      * @param form
      * @return
      */
@@ -127,7 +129,7 @@ public class WeiXinController {
 			openidRequest.setSecret(secretSystemConfigBean.getPropertyValue());
 		}
 		openidRequest.setCode(StringTools.toString(code));
-		MiniOpenidResponse openidResponse = weiXinService.queryOpenid(openidRequest);
+		MiniOpenidResponse openidResponse = weiXinService.queryMiniOpenid(openidRequest);
 		if(!openidResponse.isSuccess()){
 			response.setMessage(openidResponse.getMessage());
 			return response;
@@ -137,8 +139,8 @@ public class WeiXinController {
 			response.setMessage("您已注册，请直接登录");
 			return response;
 		}
-    	CustomerBean customerBean = JsonTools.toObject(JsonTools.toJsonString(registerMap), CustomerBean.class);
-    	customerBean.setOpenid(openidResponse.getOpenid());
+		LeaguerBean leaguerBean = JsonTools.covertObject(registerMap, LeaguerBean.class);
+		leaguerBean.setOpenid(openidResponse.getOpenid());
     	Object encryptedData = registerMap.get("encryptedData");
 		Object iv = registerMap.get("iv");
 		if(encryptedData!=null && iv!=null){
@@ -146,22 +148,20 @@ public class WeiXinController {
 			if(!StringTools.isNullOrNone(decryptedData)){
 				Phone phone = JsonTools.toObject(decryptedData, Phone.class);
 				if(phone!=null){
-					customerBean.setPhone(phone.getPurePhoneNumber());
+					leaguerBean.setPhone(phone.getPurePhoneNumber());
 				}
 			}
 		}
-		if(StringTools.isNullOrNone(customerBean.getPhone())){
+		if(StringTools.isNullOrNone(leaguerBean.getPhone())){
 			response.setMessage("请先获取手机号");
 			return response;
 		}
-		customerBean.setStatus(CustomerStatusEnum.NORMAL.getCode());
-		customerBean.setCreateTime(DateTools.now());
-		customerBean.setCardNo(StringTools.getSys36SeqNo());
-		customerBean.setPoints(0l);
+		leaguerBean.setStatus(CustomerStatusEnum.NORMAL.getCode());
+		leaguerBean.setCreateTime(DateTools.now());
 		try {
-			customerService.saveCustomer(customerBean);
+			leaguerService.saveLeaguer(leaguerBean);
 			Map<String, Object> dataMap = new HashMap<String, Object>();
-			dataMap.put("token", JwtTools.createToken(customerBean, JwtTools.JWTTTLMILLIS));
+			dataMap.put("token", JwtTools.createToken(leaguerBean, JwtTools.JWTTTLMILLIS));
 			response.setData(dataMap);
 			response.setSuccess(Boolean.TRUE);
 		} catch (LogicException e) {

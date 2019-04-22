@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cc.system.log.dao.LogDao">
+
+	<select id="querySearchKeywordsList" statementType="PREPARED" resultType="com.cc.system.log.result.SearchResult" parameterType="com.cc.system.log.form.SearchForm">
+		select sol.content as keywords, count(1) as cnt, max(sol.operateTime) as lastSearchTime
+		from t_system_operation_log sol
+		where 1=1
+		<if test="channelCode!=null and channelCode!=''">
+			and sol.module = #{channelCode}
+		</if>
+			and sol.operType = 'search'
+			and sol.operateTime > date_sub(now(), interval ${day} day)
+			and sol.content is not null
+		group by sol.content
+		order by cnt desc, lastSearchTime desc
+	</select>
+
+</mapper>

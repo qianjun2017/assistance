@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cc.channel.dao.ChannelSubjectDao">
+
+	<select id="queryChannelSubjectItemList" resultType="com.cc.channel.result.ChannelSubjectItemResult" parameterType="com.cc.channel.form.ChannelSubjectItemQueryForm" statementType="PREPARED">
+		select csi.id,item.imgUrl,item.name,concat('/',#{channelCode},'/',csi.itemId) as path,item.id as itemId,p.plot as text
+		from t_channel_subject_item csi
+		left join t_${channelCode} item on csi.itemId = item.id
+		left join t_${channelCode}_plot p on csi.itemId = p.${channelCode}Id
+		<where>
+			and csi.subjectId = ${subjectId} 
+			and item.status = 'on'
+			<if test="location">
+				and exists (select * from t_${channelCode}_location l where l.${channelCode}Id = item.id and l.locationId in
+					<foreach collection="locationIdList" item="locationId" index="index" open="(" separator="," close=")">
+						#{locationId}
+					</foreach>
+				)
+			</if>
+			<if test="ordinary">
+				and exists (select * from t_${channelCode}_channel c where  c.${channelCode}Id = item.id and c.channelId in 
+					<foreach collection="channelIdList" item="channelId" index="index" open="(" separator="," close=")">
+						#{channelId}
+					</foreach>
+				)
+			</if>
+		</where>
+	</select>
+	
+</mapper>
