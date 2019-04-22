@@ -15,7 +15,6 @@ import com.cc.common.tools.JsonTools;
 import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
-import com.cc.seller.bean.SellerBean;
 import com.cc.shop.bean.ShopBean;
 import com.cc.shop.enums.ShopStatusEnum;
 import com.cc.shop.form.ShopQueryForm;
@@ -23,8 +22,8 @@ import com.cc.shop.result.ShopResult;
 import com.cc.shop.service.ShopService;
 import com.cc.system.message.service.MessageService;
 import com.cc.system.shiro.SecurityContextUtil;
-import com.cc.user.bean.TUserBean;
-import com.cc.user.enums.UserTypeEnum;
+import com.cc.system.user.bean.UserBean;
+import com.cc.system.user.enums.UserTypeEnum;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -58,12 +57,11 @@ public class ShopServiceImpl implements ShopService {
         if(row!=1){
             throw new LogicException("E001", "关闭店铺失败");
         }
-        TUserBean currentUser = SecurityContextUtil.getCurrentUser();
-        UserTypeEnum userTypeEnum = UserTypeEnum.getUserTypeEnumByCode(currentUser.getUserType());
+        UserBean userBean = SecurityContextUtil.getCurrentUser();
+        UserTypeEnum userTypeEnum = UserTypeEnum.getUserTypeEnumByCode(userBean.getUserType());
         if(!UserTypeEnum.SELLER.equals(userTypeEnum)){
             ShopBean shop = ShopBean.get(ShopBean.class, id);
-            SellerBean seller = SellerBean.get(SellerBean.class, shop.getSellerId());
-            messageService.releaseSystemMessage(seller.getUid(),"尊敬的卖家【"+seller.getSellerName()+"】，您的店铺【"+shop.getName()+"】已被我方关闭，如有疑问请联系我们！");
+            messageService.releaseSystemMessage(userBean.getId(),"尊敬的卖家【"+userBean.getNickName()+"】，您的店铺【"+shop.getName()+"】已被我方关闭，如有疑问请联系我们！");
         }
     }
 
@@ -85,8 +83,8 @@ public class ShopServiceImpl implements ShopService {
         if(row!=1){
             throw new LogicException("E001", "审核店铺失败");
         }
-        SellerBean seller = SellerBean.get(SellerBean.class, shopBean.getSellerId());
-        messageService.releaseSystemMessage(seller.getUid(), "您的店铺【"+shopBean.getName()+"】已审核，审核结果【"+shopStatusEnum.getName()+"】"+(ShopStatusEnum.FAILURE.equals(shopStatusEnum)?("，审核说明【"+remark+"】"):""), "/shop/"+id);
+        UserBean userBean = UserBean.get(UserBean.class, shopBean.getSellerId());
+        messageService.releaseSystemMessage(userBean.getId(), "您的店铺【"+shopBean.getName()+"】已审核，审核结果【"+shopStatusEnum.getName()+"】"+(ShopStatusEnum.FAILURE.equals(shopStatusEnum)?("，审核说明【"+remark+"】"):""), "/shop/"+id);
     }
 
     @Override
@@ -119,16 +117,16 @@ public class ShopServiceImpl implements ShopService {
         page.setPageSize(pageInfo.getPageSize());
         page.setTotal(pageInfo.getTotal());
         List<ShopResult> shopResultList = new ArrayList<ShopResult>();
-        Map<Long, SellerBean> sellerBeanMap = new HashMap<Long, SellerBean>();
+        Map<Long, UserBean> userBeanMap = new HashMap<Long, UserBean>();
         for(ShopBean shopBean: shopBeanList){
         	ShopResult shopResult = JsonTools.toObject(JsonTools.toJsonString(shopBean), ShopResult.class);
-        	SellerBean sellerBean = sellerBeanMap.get(shopBean.getSellerId());
-        	if(sellerBean==null){
-        		sellerBean = SellerBean.get(SellerBean.class, shopBean.getSellerId());
-        		sellerBeanMap.put(shopBean.getSellerId(), sellerBean);
+        	UserBean userBean = userBeanMap.get(shopBean.getSellerId());
+        	if(userBean==null){
+        		userBean = UserBean.get(UserBean.class, shopBean.getSellerId());
+        		userBeanMap.put(shopBean.getSellerId(), userBean);
         	}
-        	if(sellerBean!=null){
-        		shopResult.setSellerName(sellerBean.getSellerName());
+        	if(userBean!=null){
+        		shopResult.setSellerName(userBean.getNickName());
         	}
         	shopResultList.add(shopResult);
         }

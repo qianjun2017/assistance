@@ -49,8 +49,7 @@ import com.cc.system.log.enums.ModuleEnum;
 import com.cc.system.log.enums.OperTypeEnum;
 import com.cc.system.log.utils.LogContextUtil;
 import com.cc.system.shiro.SecurityContextUtil;
-import com.cc.user.bean.TUserBean;
-import com.cc.user.enums.UserTypeEnum;
+import com.cc.system.user.bean.UserBean;
 
 /**
  * @author Administrator
@@ -488,22 +487,7 @@ public class FilmController {
 	@ResponseBody
 	@RequestMapping(value = "/exchange/page", method = RequestMethod.GET)
 	public Page<FilmBean> queryExchangeFilmPage(@ModelAttribute FilmExchangeQueryForm form){
-		Page<FilmBean> page = new Page<FilmBean>();
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			page.setMessage("请先登录");
-			return page;
-		}
-		if (UserTypeEnum.LEAGUER.getCode().equals(user.getUserType())) {
-			List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-			if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size()>1) {
-				page.setMessage("查询兑换记录失败");
-				return page;
-			}
-			form.setLeaguerId(leaguerBeanList.get(0).getId());
-		}
-		page = filmService.queryExchangeFilmPage(form);
-		return page;
+		return filmService.queryExchangeFilmPage(form);
 	}
 	
 	/**
@@ -564,12 +548,12 @@ public class FilmController {
 			response.setMessage("影片不存在");
 			return response;
 		}
-		com.cc.user.bean.TUserBean tUserBean = SecurityContextUtil.getCurrentUser();
-		if(tUserBean==null){
+		UserBean userBean = SecurityContextUtil.getCurrentUser();
+		if(userBean==null){
 			response.setMessage("未登录用户");
 			return response;
 		}
-		LogContextUtil.setOperContent("用户["+tUserBean.getUserName()+"]正在观看影片["+filmBean.getName()+"]");
+		LogContextUtil.setOperContent("用户["+userBean.getUserName()+"]正在观看影片["+filmBean.getName()+"]");
 		response.setSuccess(Boolean.TRUE);
 		return response;
 	}

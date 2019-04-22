@@ -82,6 +82,11 @@ public class UserBean extends BaseOrm<UserBean> implements BaseEntity {
 	 */
 	private String imageUrl;
 	
+	/**
+	 * 用户类型
+	 */
+	private String userType;
+	
 	/* (non-Javadoc)
 	 * @see com.cc.common.orm.BaseOrm#getId()
 	 */
@@ -235,6 +240,20 @@ public class UserBean extends BaseOrm<UserBean> implements BaseEntity {
 	 */
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	/**
+	 * @return the userType
+	 */
+	public String getUserType() {
+		return userType;
+	}
+
+	/**
+	 * @param userType the userType to set
+	 */
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 
 }

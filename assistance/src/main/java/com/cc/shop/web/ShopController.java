@@ -6,7 +6,6 @@ import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
 import com.cc.common.web.Response;
-import com.cc.seller.bean.SellerBean;
 import com.cc.shop.bean.ShopBean;
 import com.cc.shop.enums.ShopStatusEnum;
 import com.cc.shop.enums.ShopTypeEnum;
@@ -19,8 +18,9 @@ import com.cc.system.log.annotation.OperationLog;
 import com.cc.system.log.enums.ModuleEnum;
 import com.cc.system.log.enums.OperTypeEnum;
 import com.cc.system.shiro.SecurityContextUtil;
-import com.cc.user.bean.TUserBean;
-import com.cc.user.enums.UserTypeEnum;
+import com.cc.system.user.bean.UserBean;
+import com.cc.system.user.enums.UserTypeEnum;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -53,23 +53,17 @@ public class ShopController {
     @OperationLog(module = ModuleEnum.SHOPMANAGEMENT, operType = OperTypeEnum.ADD, title = "新增店铺")
     public Response<String> addShop(@RequestBody Map<String, String> shopMap){
         Response<String> response = new Response<String>();
-        TUserBean currentUser = SecurityContextUtil.getCurrentUser();
-        UserTypeEnum userTypeEnum = UserTypeEnum.getUserTypeEnumByCode(currentUser.getUserType());
+        UserBean userBean = SecurityContextUtil.getCurrentUser();
+        UserTypeEnum userTypeEnum = UserTypeEnum.getUserTypeEnumByCode(userBean.getUserType());
         if(!UserTypeEnum.SELLER.equals(userTypeEnum)){
             response.setMessage("非卖家用户不能创建店铺");
             return response;
         }
-        List<SellerBean> sellerBeanList = SellerBean.findAllByParams(SellerBean.class, "uid", currentUser.getId());
-        if(ListTools.isEmptyOrNull(sellerBeanList)){
-            response.setMessage("卖家不存在");
-            return response;
-        }
-        SellerBean sellerBean = sellerBeanList.get(0);
         SystemConfigBean systemConfigBean = systemConfigService.querySystemConfigBean("seller.shop.limit");
 		if (systemConfigBean!=null) {
 			try{
 				long limit = Long.parseLong(systemConfigBean.getPropertyValue());
-				List<ShopBean> shopBeanList = ShopBean.findAllByParams(ShopBean.class, "sellerId", sellerBean.getId());
+				List<ShopBean> shopBeanList = ShopBean.findAllByParams(ShopBean.class, "sellerId", userBean.getId());
 				if(!ListTools.isEmptyOrNull(shopBeanList) && shopBeanList.stream().filter(shop->!ShopStatusEnum.CLOSED.equals(ShopStatusEnum.getShopStatusEnumByCode(shop.getStatus()))).count()>=limit){
 					response.setMessage("您开设的店铺已达到最大限度");
 		            return response;
@@ -108,7 +102,7 @@ public class ShopController {
             shopBean.setStatus(ShopStatusEnum.PENDING.getCode());
         }
         shopBean.setImageUrl(shopMap.get("imageUrl"));
-        shopBean.setSellerId(sellerBean.getId());
+        shopBean.setSellerId(userBean.getId());
         shopBean.setCreateTime(DateTools.now());
         try{
             shopService.saveShop(shopBean);
@@ -265,16 +259,10 @@ public class ShopController {
     @ResponseBody
     @RequestMapping(value = "/page", method = RequestMethod.GET)
     public Page<ShopResult> querySellerPage(@ModelAttribute ShopQueryForm form){
-        TUserBean currentUser = SecurityContextUtil.getCurrentUser();
-        UserTypeEnum userTypeEnum = UserTypeEnum.getUserTypeEnumByCode(currentUser.getUserType());
+        UserBean userBean = SecurityContextUtil.getCurrentUser();
+        UserTypeEnum userTypeEnum = UserTypeEnum.getUserTypeEnumByCode(userBean.getUserType());
         if(UserTypeEnum.SELLER.equals(userTypeEnum)){
-            List<SellerBean> sellerBeanList = SellerBean.findAllByParams(SellerBean.class, "uid", currentUser.getId());
-            if(ListTools.isEmptyOrNull(sellerBeanList)){
-                Page<ShopResult> page = new Page<ShopResult>();
-                page.setMessage("没有查询到相关店铺数据");
-                return page;
-            }
-            form.setSellerId(sellerBeanList.get(0).getId());
+            form.setSellerId(userBean.getId());
         }
         return shopService.queryShopPage(form);
     }

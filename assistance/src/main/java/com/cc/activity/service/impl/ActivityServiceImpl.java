@@ -363,7 +363,7 @@ public class ActivityServiceImpl implements ActivityService {
 			ActivityBean activityBean = ActivityBean.get(ActivityBean.class, activityLeaguerBean.getActivityId());
 			LeaguerBean leaguerBean = LeaguerBean.get(LeaguerBean.class, activityLeaguerBean.getLeaguerId());
 			if(activityBean!=null && leaguerBean!=null){
-				messageService.releaseSystemMessage(leaguerBean.getUid(), "系统检测到您在参与活动【"+activityBean.getName()+"】时，存在欺诈参与行为【"+activityLeaguerBean.getRemark()+"】，现扣除您参与活动所得积分，并对您的信誉值进行折半处理，关闭参与活动自动审批功能。");
+				messageService.releaseSystemMessage(leaguerBean.getId(), "系统检测到您在参与活动【"+activityBean.getName()+"】时，存在欺诈参与行为【"+activityLeaguerBean.getRemark()+"】，现扣除您参与活动所得积分，并对您的信誉值进行折半处理，关闭参与活动自动审批功能。");
 			}
 		}else if (ActivityParticipateStatusEnum.SUCCESS.equals(ActivityParticipateStatusEnum.getActivityParticipateStatusEnumByCode(activityLeaguerBean.getStatus()))) {
 			SystemConfigBean systemConfigBean = systemConfigService.querySystemConfigBean("activity.credit");

@@ -3,15 +3,9 @@
  */
 package com.cc.system.message.web;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import com.cc.common.tools.ListTools;
 import com.cc.common.web.Page;
-import com.cc.leaguer.bean.LeaguerBean;
-import com.cc.leaguer.bean.LeaguerChannelBean;
-import com.cc.leaguer.service.LeaguerChannelService;
 import com.cc.system.message.form.MessageQueryForm;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +26,7 @@ import com.cc.system.message.enums.MessageStatusEnum;
 import com.cc.system.message.enums.MessageTypeEnum;
 import com.cc.system.message.service.MessageService;
 import com.cc.system.shiro.SecurityContextUtil;
-import com.cc.user.bean.TUserBean;
-import com.cc.user.enums.UserTypeEnum;
+import com.cc.system.user.bean.UserBean;
 
 /**
  * @author Administrator
@@ -45,9 +38,6 @@ public class MessageController {
 
 	@Autowired
 	private MessageService messageService;
-
-	@Autowired
-	private LeaguerChannelService leaguerChannelService;
 
 	/**
 	 * 查询消息类别
@@ -78,17 +68,9 @@ public class MessageController {
 	@OperationLog(module = ModuleEnum.MESSAGEMANAGEMENT, operType = OperTypeEnum.RELEASE, title = "发布消息")
 	public Response<String> addMessage(@RequestBody Map<String, String> messageMap){
 		Response<String> response = new Response<String>();
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			response.setMessage("请先登录");
-			return response;
-		}
-		if (!UserTypeEnum.USER.getCode().equals(user.getUserType())) {
-			response.setMessage("对不起,您无权操作");
-			return response;
-		}
+		UserBean userBean = SecurityContextUtil.getCurrentUser();
 		MessageBean messageBean = new MessageBean();
-		messageBean.setSenderId(user.getId());
+		messageBean.setSenderId(userBean.getId());
 		String type = messageMap.get("type");
 		if (StringTools.isNullOrNone(type)) {
 			response.setMessage("请选择消息类型");
@@ -150,26 +132,9 @@ public class MessageController {
 	@ResponseBody
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public Page<MessageBean> queryMessagePage(@ModelAttribute MessageQueryForm form){
-		Page<MessageBean> page = new Page<MessageBean>();
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			page.setMessage("请先登录");
-			return page;
-		}
-		form.setReceiverId(user.getId());
-		if (UserTypeEnum.LEAGUER.getCode().equals(user.getUserType())) {
-			List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-			if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size() > 1) {
-				page.setMessage("您还未注册");
-				return page;
-			}
-			List<LeaguerChannelBean> leaguerChannelBeanList = leaguerChannelService.queryLeaguerChannelBeanList(leaguerBeanList.get(0).getId());
-			if(!ListTools.isEmptyOrNull(leaguerChannelBeanList)){
-				form.setChannelList(leaguerChannelBeanList.stream().map(channel->channel.getChannelId()).collect(Collectors.toList()));
-			}
-		}
-		page = messageService.queryMessagePage(form);
-		return page;
+		UserBean userBean = SecurityContextUtil.getCurrentUser();
+		form.setReceiverId(userBean.getId());
+		return messageService.queryMessagePage(form);
 	}
 	
 	/**
@@ -181,13 +146,9 @@ public class MessageController {
 	@RequestMapping(value = "/read/{messageId:\\d+}", method = RequestMethod.POST)
 	public Response<String> readMessage(@PathVariable Long messageId){
 		Response<String> response = new Response<String>();
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			response.setMessage("请先登录");
-			return response;
-		}
+		UserBean userBean = SecurityContextUtil.getCurrentUser();
 		try {
-			messageService.readMessage(user.getId(), messageId);
+			messageService.readMessage(userBean.getId(), messageId);
 			response.setSuccess(Boolean.TRUE);
 		} catch (LogicException e) {
 			response.setMessage(e.getErrContent());
@@ -206,13 +167,9 @@ public class MessageController {
 	@RequestMapping(value = "/clear", method = RequestMethod.POST)
 	public Response<String> clearMessage(){
 		Response<String> response = new Response<String>();
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			response.setMessage("请先登录");
-			return response;
-		}
+		UserBean userBean = SecurityContextUtil.getCurrentUser();
 		try {
-			messageService.clearReadMessage(user.getId());
+			messageService.clearReadMessage(userBean.getId());
 			response.setSuccess(Boolean.TRUE);
 		} catch (LogicException e) {
 			response.setMessage(e.getErrContent());
@@ -231,24 +188,9 @@ public class MessageController {
 	@RequestMapping(value = "/readAll", method = RequestMethod.POST)
 	public Response<String> readAllMessage(){
 		Response<String> response = new Response<String>();
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			response.setMessage("请先登录");
-			return response;
-		}
+		UserBean userBean = SecurityContextUtil.getCurrentUser();
 		MessageQueryForm form = new MessageQueryForm();
-		form.setReceiverId(user.getId());
-		if (UserTypeEnum.LEAGUER.getCode().equals(user.getUserType())) {
-			List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-			if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size() > 1) {
-				response.setMessage("您还未注册");
-				return response;
-			}
-			List<LeaguerChannelBean> leaguerChannelBeanList = leaguerChannelService.queryLeaguerChannelBeanList(leaguerBeanList.get(0).getId());
-			if(!ListTools.isEmptyOrNull(leaguerChannelBeanList)){
-				form.setChannelList(leaguerChannelBeanList.stream().map(channel->channel.getChannelId()).collect(Collectors.toList()));
-			}
-		}
+		form.setReceiverId(userBean.getId());
 		try {
 			messageService.readAllMessage(form);
 			response.setSuccess(Boolean.TRUE);

@@ -14,15 +14,15 @@ import com.cc.goods.form.GoodsQueryForm;
 import com.cc.goods.result.GoodsListResult;
 import com.cc.goods.result.GoodsResult;
 import com.cc.goods.service.GoodsService;
-import com.cc.seller.bean.SellerBean;
 import com.cc.system.location.bean.LocationBean;
 import com.cc.system.log.annotation.OperationLog;
 import com.cc.system.log.enums.ModuleEnum;
 import com.cc.system.log.enums.OperTypeEnum;
 import com.cc.system.log.utils.LogContextUtil;
 import com.cc.system.shiro.SecurityContextUtil;
-import com.cc.user.bean.TUserBean;
-import com.cc.user.enums.UserTypeEnum;
+import com.cc.system.user.bean.UserBean;
+import com.cc.system.user.enums.UserTypeEnum;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -71,9 +71,8 @@ public class GoodsController {
             return response;
         }
         goodsBean.setName(goods.getName());
-        TUserBean currentUser = SecurityContextUtil.getCurrentUser();
-        List<SellerBean> sellerBeanList = SellerBean.findAllByParams(SellerBean.class, "uid", currentUser.getId());
-        goodsBean.setSellerId(sellerBeanList.get(0).getId());
+        UserBean userBean = SecurityContextUtil.getCurrentUser();
+        goodsBean.setSellerId(userBean.getId());
         if (StringTools.isNullOrNone(goods.getPrice())) {
             response.setMessage("请输入商品价格");
             return response;
@@ -180,9 +179,8 @@ public class GoodsController {
             return response;
         }
         goodsBean.setName(goods.getName());
-        TUserBean currentUser = SecurityContextUtil.getCurrentUser();
-        List<SellerBean> sellerBeanList = SellerBean.findAllByParams(SellerBean.class, "uid", currentUser.getId());
-        goodsBean.setSellerId(sellerBeanList.get(0).getId());
+        UserBean userBean = SecurityContextUtil.getCurrentUser();
+        goodsBean.setSellerId(userBean.getId());
         if (StringTools.isNullOrNone(goods.getPrice())) {
             response.setMessage("请输入商品价格");
             return response;
@@ -345,21 +343,15 @@ public class GoodsController {
     @ResponseBody
     @RequestMapping(value = "/page", method = RequestMethod.GET)
     public Page<GoodsListResult> queryGoodsPage(@ModelAttribute GoodsQueryForm form){
-        TUserBean currentUser = SecurityContextUtil.getCurrentUser();
-        if(currentUser==null){
+        UserBean userBean = SecurityContextUtil.getCurrentUser();
+        if(userBean==null){
         	Page<GoodsListResult> page = new Page<GoodsListResult>();
             page.setMessage("没有查询到相关商品数据");
             return page;
         }
-        UserTypeEnum userTypeEnum = UserTypeEnum.getUserTypeEnumByCode(currentUser.getUserType());
+        UserTypeEnum userTypeEnum = UserTypeEnum.getUserTypeEnumByCode(userBean.getUserType());
         if(UserTypeEnum.SELLER.equals(userTypeEnum)){
-            List<SellerBean> sellerBeanList = SellerBean.findAllByParams(SellerBean.class, "uid", currentUser.getId());
-            if(ListTools.isEmptyOrNull(sellerBeanList)){
-                Page<GoodsListResult> page = new Page<GoodsListResult>();
-                page.setMessage("没有查询到相关商品数据");
-                return page;
-            }
-            form.setSellerId(sellerBeanList.get(0).getId());
+            form.setSellerId(userBean.getId());
         }
         return goodsService.queryGoodsPage(form);
     }
@@ -406,7 +398,7 @@ public class GoodsController {
         }
         List<GoodsShopBean> goodsShopBeanList = GoodsShopBean.findAllByParams(GoodsShopBean.class, "goodsId", goodsBean.getId());
         goodsResult.setGoodsShopBeanList(goodsShopBeanList);
-        goodsResult.setSellerBean(SellerBean.get(SellerBean.class, goodsBean.getSellerId()));
+        goodsResult.setUserBean(UserBean.get(UserBean.class, goodsBean.getSellerId()));
         List<GoodsLocationBean> goodsLocationBeanList = GoodsLocationBean.findAllByParams(GoodsLocationBean.class, "goodsId", goodsBean.getId());
         if(!ListTools.isEmptyOrNull(goodsLocationBeanList)){
             GoodsLocationBean goodsLocationBean = goodsLocationBeanList.get(0);

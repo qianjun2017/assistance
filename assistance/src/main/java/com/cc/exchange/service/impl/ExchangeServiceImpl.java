@@ -135,7 +135,7 @@ public class ExchangeServiceImpl implements ExchangeService {
 		}else{
 			LeaguerBean leaguerBean = LeaguerBean.get(LeaguerBean.class, exchangeBean.getLeaguerId());
 			if(leaguerBean!=null){
-				messageService.releaseSystemMessage(leaguerBean.getUid(), "您关于【"+exchangeBean.getItemName()+"】的取消兑换申请已驳回，驳回原因【"+exchangeBean.getRemark()+"】");
+				messageService.releaseSystemMessage(leaguerBean.getId(), "您关于【"+exchangeBean.getItemName()+"】的取消兑换申请已驳回，驳回原因【"+exchangeBean.getRemark()+"】");
 			}
 		}
 	}

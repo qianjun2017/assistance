@@ -3,7 +3,6 @@
  */
 package com.cc.exchange.web;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cc.common.exception.LogicException;
-import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
 import com.cc.common.web.Response;
@@ -26,13 +24,9 @@ import com.cc.exchange.enums.ExchangeStatusEnum;
 import com.cc.exchange.form.ExchangeQueryForm;
 import com.cc.exchange.result.ExchangeResult;
 import com.cc.exchange.service.ExchangeService;
-import com.cc.leaguer.bean.LeaguerBean;
 import com.cc.system.log.annotation.OperationLog;
 import com.cc.system.log.enums.ModuleEnum;
 import com.cc.system.log.enums.OperTypeEnum;
-import com.cc.system.shiro.SecurityContextUtil;
-import com.cc.user.bean.TUserBean;
-import com.cc.user.enums.UserTypeEnum;
 
 /**
  * @author Administrator
@@ -53,20 +47,6 @@ public class ExchangeController {
 	@ResponseBody
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public Page<ExchangeResult> queryExchangePage(@ModelAttribute ExchangeQueryForm form){
-		Page<ExchangeResult> page = new Page<ExchangeResult>();
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			page.setMessage("请先登录");
-			return page;
-		}
-		if (UserTypeEnum.LEAGUER.getCode().equals(user.getUserType())) {
-			List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-			if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size()>1) {
-				page.setMessage("查询兑换记录失败");
-				return page;
-			}
-			form.setLeaguerId(leaguerBeanList.get(0).getId());
-		}
 		return exchangeService.queryExchangePage(form);
 	}
 	

@@ -6,7 +6,6 @@ package com.cc.channel.web;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,17 +33,13 @@ import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
 import com.cc.common.web.Response;
-import com.cc.leaguer.bean.LeaguerBean;
-import com.cc.leaguer.bean.LeaguerChannelBean;
-import com.cc.leaguer.service.LeaguerChannelService;
 import com.cc.system.location.bean.LocationBean;
 import com.cc.system.log.annotation.OperationLog;
 import com.cc.system.log.enums.ModuleEnum;
 import com.cc.system.log.enums.OperTypeEnum;
 import com.cc.system.log.utils.LogContextUtil;
 import com.cc.system.shiro.SecurityContextUtil;
-import com.cc.user.bean.TUserBean;
-import com.cc.user.enums.UserTypeEnum;
+import com.cc.system.user.bean.UserBean;
 
 /**
  * @author Administrator
@@ -56,9 +51,6 @@ public class ChannelSubjectController {
 
 	@Autowired
 	private ChannelSubjectService channelSubjectService;
-	
-	@Autowired
-	private LeaguerChannelService leaguerChannelService;
 	
 	/**
 	 * 新增频道专题
@@ -381,61 +373,28 @@ public class ChannelSubjectController {
 	@RequestMapping(value = "/item/list", method = RequestMethod.GET)
 	public Response<Object> queryChannelSubjectItemList(@ModelAttribute ChannelSubjectItemQueryForm form){
 		Response<Object> response = new Response<Object>();
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
+		UserBean userBean = SecurityContextUtil.getCurrentUser();
+		if (userBean==null) {
 			response.setMessage("请先登录");
 			return response;
 		}
-		if (UserTypeEnum.LEAGUER.getCode().equals(user.getUserType())) {
-			List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-			if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size()>1) {
-				response.setMessage("查询活动失败");
+		if(form.getLocation()){
+			Long locationId = form.getLocationId();
+			List<Long> locationIdList = new ArrayList<Long>();
+			while(locationId!=null){
+				LocationBean locationBean = LocationBean.get(LocationBean.class, locationId);
+				if(locationBean!=null){
+					locationIdList.add(locationBean.getId());
+					locationId = locationBean.getParentId();
+				}else{
+					break;
+				}
+			}
+			if(ListTools.isEmptyOrNull(locationIdList)){
+				response.setMessage("没有查询到符合条件的活动数据");
 				return response;
 			}
-			LeaguerBean leaguerBean = leaguerBeanList.get(0);
-			if(form.getLocation()){
-				Long locationId = leaguerBean.getLocationId();
-				List<Long> locationIdList = new ArrayList<Long>();
-				while(locationId!=null){
-					LocationBean locationBean = LocationBean.get(LocationBean.class, locationId);
-					if(locationBean!=null){
-						locationIdList.add(locationBean.getId());
-						locationId = locationBean.getParentId();
-					}else{
-						break;
-					}
-				}
-				if(ListTools.isEmptyOrNull(locationIdList)){
-					response.setMessage("没有查询到符合条件的活动数据");
-					return response;
-				}
-				form.setLocationIdList(locationIdList);
-			}
-			if(form.getOrdinary()){
-				List<LeaguerChannelBean> leaguerChannelList = leaguerChannelService.queryLeaguerChannelBeanList(leaguerBean.getId());
-				if(!ListTools.isEmptyOrNull(leaguerChannelList)){
-					form.setChannelIdList(leaguerChannelList.stream().map(channel->channel.getChannelId()).collect(Collectors.toList()));
-				}
-			}
-		}else{
-			if(form.getLocation()){
-				Long locationId = form.getLocationId();
-				List<Long> locationIdList = new ArrayList<Long>();
-				while(locationId!=null){
-					LocationBean locationBean = LocationBean.get(LocationBean.class, locationId);
-					if(locationBean!=null){
-						locationIdList.add(locationBean.getId());
-						locationId = locationBean.getParentId();
-					}else{
-						break;
-					}
-				}
-				if(ListTools.isEmptyOrNull(locationIdList)){
-					response.setMessage("没有查询到符合条件的活动数据");
-					return response;
-				}
-				form.setLocationIdList(locationIdList);
-			}
+			form.setLocationIdList(locationIdList);
 		}
 		List<ChannelSubjectItemResult> channelSubjectItemList = channelSubjectService.queryChannelSubjectItemList(form);
 		if(ListTools.isEmptyOrNull(channelSubjectItemList)) {

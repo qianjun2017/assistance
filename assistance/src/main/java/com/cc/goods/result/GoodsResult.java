@@ -3,8 +3,8 @@ package com.cc.goods.result;
 import com.cc.goods.bean.GoodsCategoryBean;
 import com.cc.goods.bean.GoodsImageBean;
 import com.cc.goods.bean.GoodsShopBean;
-import com.cc.seller.bean.SellerBean;
 import com.cc.system.location.bean.LocationBean;
+import com.cc.system.user.bean.UserBean;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
@@ -30,7 +30,7 @@ public class GoodsResult {
     /**
      * 卖家
      */
-    private SellerBean sellerBean;
+    private UserBean userBean;
 
     /**
      * 店铺
@@ -112,15 +112,15 @@ public class GoodsResult {
         this.name = name;
     }
 
-    public SellerBean getSellerBean() {
-        return sellerBean;
-    }
+    public UserBean getUserBean() {
+		return userBean;
+	}
 
-    public void setSellerBean(SellerBean sellerBean) {
-        this.sellerBean = sellerBean;
-    }
+	public void setUserBean(UserBean userBean) {
+		this.userBean = userBean;
+	}
 
-    public GoodsCategoryBean getGoodsCategoryBean() {
+	public GoodsCategoryBean getGoodsCategoryBean() {
         return goodsCategoryBean;
     }
 

@@ -56,8 +56,6 @@ import com.cc.system.log.enums.ModuleEnum;
 import com.cc.system.log.enums.OperTypeEnum;
 import com.cc.system.log.utils.LogContextUtil;
 import com.cc.system.shiro.SecurityContextUtil;
-import com.cc.user.bean.TUserBean;
-import com.cc.user.enums.UserTypeEnum;
 
 /**
  * @author Administrator
@@ -275,40 +273,7 @@ public class ActivityController {
 	@ResponseBody
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public Page<Map<String, Object>> queryActivityPage(@ModelAttribute ActivityQueryForm form){
-		Page<Map<String, Object>> page = new Page<Map<String,Object>>();
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			page.setMessage("请先登录");
-			return page;
-		}
-		if (UserTypeEnum.LEAGUER.getCode().equals(user.getUserType())) {
-			List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-			if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size()>1) {
-				page.setMessage("查询活动失败");
-				return page;
-			}
-			form.setStatus(ActivityStatusEnum.ON.getCode());
-			LeaguerBean leaguerBean = leaguerBeanList.get(0);
-			form.setLeaguerId(leaguerBean.getId());
-			Long locationId = leaguerBean.getLocationId();
-			List<Long> locationIdList = new ArrayList<Long>();
-			while(locationId!=null){
-				LocationBean locationBean = LocationBean.get(LocationBean.class, locationId);
-				if(locationBean!=null){
-					locationIdList.add(locationBean.getId());
-					locationId = locationBean.getParentId();
-				}else{
-					break;
-				}
-			}
-			if(ListTools.isEmptyOrNull(locationIdList)){
-				page.setMessage("没有查询到符合条件的活动数据");
-				return page;
-			}
-			form.setLocationIdList(locationIdList);
-		}
-		page = activityService.queryActivityPage(form);
-		return page;
+		return activityService.queryActivityPage(form);
 	}
 	
 	/**
