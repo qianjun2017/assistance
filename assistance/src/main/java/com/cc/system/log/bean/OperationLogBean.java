@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  * @author Administrator
  *
  */
-@Table(name = "t_system_operation_log")
+@Table(name = "t_system_log")
 public class OperationLogBean extends BaseOrm<OperationLogBean> implements BaseEntity{
 
 	/**

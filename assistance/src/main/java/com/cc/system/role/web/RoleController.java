@@ -134,6 +134,7 @@ public class RoleController {
 	 * @return
 	 */
 	@ResponseBody
+	@RequiresPermissions(value = { "system.role.edit" })
 	@RequestMapping(value = "/get/{id:\\d+}", method = RequestMethod.GET)
 	public Response<RoleBean> queryRole(@PathVariable Long id){
 		Response<RoleBean> response = new Response<RoleBean>();
@@ -181,6 +182,7 @@ public class RoleController {
 	 * @return
 	 */
 	@ResponseBody
+	@RequiresPermissions(value = { "system.role" })
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public Page<Map<String, Object>> queryRolePage(@ModelAttribute RoleQueryForm form){
 		Page<Map<String, Object>> page = roleService.queryRolePage(form);
@@ -256,6 +258,7 @@ public class RoleController {
 	 * @return
 	 */
 	@ResponseBody
+	@RequiresPermissions(value = { "system.role.authorize" })
 	@RequestMapping(value = "/{roleId}/auths", method = RequestMethod.GET)
 	public Response<Object> queryUserRoles(@PathVariable Long roleId){
 		Response<Object> response = new Response<Object>();

@@ -3,10 +3,8 @@
  */
 package com.cc.common.tools;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -88,10 +86,26 @@ public class StringTools {
 	 */
 	public static synchronized String getSeqNo() {
 		StringBuffer buffer = new StringBuffer();
-		Calendar calendar = Calendar.getInstance();
-		DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-		String date = df.format(calendar.getTime());
-		buffer.append(date);
+		buffer.append(DateTools.getFormatDate(new Date(), DateTools.DATEFORMAT2));
+		int _int = 0;
+		while(_int<4){
+			Random random = new Random();
+			buffer.append(random.nextInt(10));
+			_int++;
+		}
+		return buffer.substring(0);
+	}
+	
+	public static synchronized String getSys36SeqNo() {
+		String chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		StringBuffer buffer = new StringBuffer();
+		String date = DateTools.getFormatDate(new Date(), DateTools.DATEFORMAT2);
+		buffer.append(chars.charAt(Integer.parseInt(date.substring(2, 3))%chars.length()));
+		buffer.append(chars.charAt(Integer.parseInt(date.substring(4, 5))%12));
+		buffer.append(chars.charAt(Integer.parseInt(date.substring(6, 7))%31));
+		buffer.append(chars.charAt(Integer.parseInt(date.substring(8, 9))%24));
+		buffer.append(chars.charAt(Integer.parseInt(date.substring(10, 11))%chars.length()));
+		buffer.append(chars.charAt(Integer.parseInt(date.substring(12, 13))%chars.length()));
 		int _int = 0;
 		while(_int<4){
 			Random random = new Random();

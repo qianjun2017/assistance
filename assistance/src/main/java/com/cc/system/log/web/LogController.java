@@ -5,6 +5,7 @@ package com.cc.system.log.web;
 
 import java.util.Map;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -37,6 +38,7 @@ public class LogController {
 	 * @return
 	 */
 	@ResponseBody
+	@RequiresPermissions(value = { "system.log" })
 	@RequestMapping(value = "/module", method = RequestMethod.GET)
 	public Response<Map<String, String>> queryOperationLogModule(){
 		Response<Map<String, String>> response = new Response<Map<String,String>>();
@@ -55,6 +57,7 @@ public class LogController {
 	 * @return
 	 */
 	@ResponseBody
+	@RequiresPermissions(value = { "system.log" })
 	@RequestMapping(value = "/operType", method = RequestMethod.GET)
 	public Response<Map<String, String>> queryOperationLogOperType(){
 		Response<Map<String, String>> response = new Response<Map<String,String>>();
@@ -74,6 +77,7 @@ public class LogController {
 	 * @return
 	 */
 	@ResponseBody
+	@RequiresPermissions(value = { "system.log.detail" })
 	@RequestMapping(value = "/get/{id:\\d+}")
 	public Response<OperationLogBean> queryOperationLog(@PathVariable Long id){
 		Response<OperationLogBean> response = new Response<OperationLogBean>();
@@ -93,7 +97,8 @@ public class LogController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/operation/page", method = RequestMethod.GET)
+	@RequiresPermissions(value = { "system.log" })
+	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public Page<Map<String, Object>> queryOperationLogPage(@ModelAttribute LogQueryForm form){
 		Page<Map<String, Object>> page = logService.queryOperationLogPage(form);
 		return page;

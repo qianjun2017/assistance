@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cc.push.dao.PushDao">
+
+	<select id="queryPushList" resultType="com.cc.push.result.PushListResult" parameterType="com.cc.push.form.PushQueryForm" statementType="PREPARED">
+		select p.id, p.title, p.status, p.createTime, (select count(pu.id) from t_push_user pu where pu.pushId = p.id) as num
+		from t_push p
+		<where>
+			<if test="title!=null and title!=''">
+				and p.title like concat('%',#{title},'%')
+			</if>
+		</where>
+	</select>
+	
+</mapper>

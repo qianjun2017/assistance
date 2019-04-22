@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cc.common.exception.LogicException;
 import com.cc.common.tools.ListTools;
@@ -18,8 +20,6 @@ import com.cc.common.web.Tree;
 import com.cc.system.location.bean.LocationBean;
 import com.cc.system.location.result.LocationResult;
 import com.cc.system.location.service.LocationService;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Administrator

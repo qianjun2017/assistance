@@ -129,7 +129,7 @@ public class SystemConfigController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@RequestMapping(value = "/all", method = RequestMethod.GET)
 	public Response<Map<String, Object>> queryProperties(){
 		Response<Map<String, Object>> response = new Response<Map<String,Object>>();
 		Map<String, Object> systemConfigMap = new HashMap<String, Object>();
@@ -147,11 +147,53 @@ public class SystemConfigController {
 	}
 	
 	/**
+	 * 获取相同前缀的系统参数
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/prefix", method = RequestMethod.GET)
+	public Response<Map<String, Object>> queryProperties(@ModelAttribute ConfigQueryForm form){
+		Response<Map<String, Object>> response = new Response<Map<String,Object>>();
+		Map<String, Object> systemConfigMap = new HashMap<String, Object>();
+		List<SystemConfigBean> systemConfigBeanList = systemConfigService.querySystemConfigBeanList(form.getPropertyName());
+		if (ListTools.isEmptyOrNull(systemConfigBeanList)) {
+			response.setMessage("没有设置系统参数");
+			return response;
+		}
+		for (SystemConfigBean systemConfigBean : systemConfigBeanList) {
+			systemConfigMap.put(systemConfigBean.getPropertyName(), systemConfigBean.getPropertyValue());
+		}
+		response.setData(systemConfigMap);
+		response.setSuccess(Boolean.TRUE);
+		return response;
+	}
+	
+	/**
+	 * 查询系统参数
+	 * @param form
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/name", method = RequestMethod.GET)
+	public Response<String> querySystemConfigBean(@ModelAttribute ConfigQueryForm form){
+		Response<String> response = new Response<String>();
+		List<SystemConfigBean> systemConfigBeanList = SystemConfigBean.findAllByParams(SystemConfigBean.class, "propertyName", form.getPropertyName());
+		if(ListTools.isEmptyOrNull(systemConfigBeanList)){
+			response.setMessage("没有设置系统参数");
+			return response;
+		}
+		response.setData(systemConfigBeanList.get(0).getPropertyValue());
+		response.setSuccess(Boolean.TRUE);
+		return response;
+	}
+	
+	/**
 	 * 分页查询系统参数
 	 * @param form
 	 * @return
 	 */
 	@ResponseBody
+	@RequiresPermissions(value = { "system.config" })
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public Page<SystemConfigBean> querySystemConfigBeanPage(@ModelAttribute ConfigQueryForm form){
 		Page<SystemConfigBean> page = systemConfigService.querySystemConfigBeanPage(form);

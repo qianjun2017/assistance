@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cc.push.dao.FormDao">
+
+	<select id="queryFormList" resultType="com.cc.push.result.FormResult" parameterType="com.cc.push.form.FormQueryForm" statementType="PREPARED">
+		select f.id, f.userId, c.name as userName, c.openid, f.formId, f.createTime
+		from t_form f
+		inner join (
+			select min(t.id) as id from t_form t
+			where t.createTime &gt; #{createTimeStart}
+			<if test="userId!=null">
+				and t.userId = #{userId}
+			</if>
+			group by t.userId
+		) w on w.id = f.id
+		left join t_customer c on c.id = f.userId
+		where f.createTime &gt; #{createTimeStart}
+		and c.status = 'normal'
+	</select>
+	
+</mapper>

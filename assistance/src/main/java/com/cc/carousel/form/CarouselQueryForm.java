@@ -3,13 +3,13 @@
  */
 package com.cc.carousel.form;
 
-import com.cc.common.tools.StringTools;
+import com.cc.common.web.QueryForm;
 
 /**
  * @author Administrator
  *
  */
-public class CarouselQueryForm {
+public class CarouselQueryForm extends QueryForm {
 
 	
 	/**
@@ -23,93 +23,15 @@ public class CarouselQueryForm {
 	private String status;
 	
 	/**
-	 * 页码
+	 * 频道
 	 */
-	private String page = "1";
+	private String channelCode;
 	
 	/**
-	 * 每页数量
+	 * 频道
 	 */
-	private String pageSize = "10";
+	private Long channelId;
 	
-	/**
-	 * 排序字段
-	 */
-	private String sort;
-	
-	/**
-	 * 排序方向
-	 */
-	private String order;
-	
-	/**
-	 * @return the page
-	 */
-	public int getPage() {
-		if(!StringTools.isNullOrNone(this.page) && StringTools.isNumber(this.page)){
-			return Integer.parseInt(this.page);
-		}
-		return 1;
-	}
-
-	/**
-	 * @param page the page to set
-	 */
-	public void setPage(String page) {
-		this.page = page;
-	}
-
-	/**
-	 * @return the pageSize
-	 */
-	public int getPageSize() {
-		if(!StringTools.isNullOrNone(this.pageSize) && StringTools.isNumber(this.pageSize)){
-			return Integer.parseInt(this.pageSize);
-		}
-		return 10;
-	}
-
-	/**
-	 * @param pageSize the pageSize to set
-	 */
-	public void setPageSize(String pageSize) {
-		this.pageSize = pageSize;
-	}
-
-	/**
-	 * @return the sort
-	 */
-	public String getSort() {
-		if(StringTools.isNullOrNone(this.sort)){
-			return "status";
-		}
-		return sort;
-	}
-
-	/**
-	 * @param sort the sort to set
-	 */
-	public void setSort(String sort) {
-		this.sort = sort;
-	}
-
-	/**
-	 * @return the order
-	 */
-	public String getOrder() {
-		if (StringTools.isNullOrNone(this.order)) {
-			return "desc";
-		}
-		return order;
-	}
-
-	/**
-	 * @param order the order to set
-	 */
-	public void setOrder(String order) {
-		this.order = order;
-	}
-
 	/**
 	 * @return the name
 	 */
@@ -136,6 +58,34 @@ public class CarouselQueryForm {
 	 */
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	/**
+	 * @return the channelCode
+	 */
+	public String getChannelCode() {
+		return channelCode;
+	}
+
+	/**
+	 * @param channelCode the channelCode to set
+	 */
+	public void setChannelCode(String channelCode) {
+		this.channelCode = channelCode;
+	}
+
+	/**
+	 * @return the channelId
+	 */
+	public Long getChannelId() {
+		return channelId;
+	}
+
+	/**
+	 * @param channelId the channelId to set
+	 */
+	public void setChannelId(Long channelId) {
+		this.channelId = channelId;
 	}
 
 }

@@ -45,4 +45,17 @@ public class SHA1Tools {
 			throw new LogicException("E001", "不支持SHA1加密方式");
 		}
 	}
+	
+	/**
+     * SHA1校验
+     * @param content 待校验内容
+     * @param sha1 sha1值
+     * @return
+     */
+    public static Boolean check(String content, String sha1){
+        if (StringTools.isAnyNullOrNone(new String[]{content, sha1})) {
+            return false;
+        }
+        return sha1.equals(SHA1Tools.encrypt(content));
+    }
 }

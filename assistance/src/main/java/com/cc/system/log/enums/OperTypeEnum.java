@@ -28,7 +28,9 @@ public enum OperTypeEnum {
 	LOCK("lock", "锁定"),
 	UNLOCK("unlock", "解锁"),
 	UP("up", "上架"),
-	DOWN("down", "下架");
+	DOWN("down", "下架"),
+	SYNC("sync", "同步"),
+	PUSH("push", "推送");
 	
 	/**
 	 * 编码

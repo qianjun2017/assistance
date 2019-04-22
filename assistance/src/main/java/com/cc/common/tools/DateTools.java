@@ -67,7 +67,7 @@ public class DateTools {
 	 * @param dateString
 	 * @return
 	 */
-	public static java.util.Date getDate(String dateString) {
+	public static Date getDate(String dateString) {
 		if ((dateString == null) || ("".equals(dateString))) {
 			return null;
 		}

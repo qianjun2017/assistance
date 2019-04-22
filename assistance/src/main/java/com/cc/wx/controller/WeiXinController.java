@@ -1,23 +1,33 @@
 package com.cc.wx.controller;
 
+import com.cc.common.exception.LogicException;
+import com.cc.common.tools.AESTools;
+import com.cc.common.tools.DateTools;
+import com.cc.common.tools.JsonTools;
+import com.cc.common.tools.JwtTools;
+import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.web.Response;
+import com.cc.customer.bean.CustomerBean;
+import com.cc.customer.enums.CustomerStatusEnum;
+import com.cc.customer.service.CustomerService;
 import com.cc.system.config.bean.SystemConfigBean;
 import com.cc.system.config.service.SystemConfigService;
 import com.cc.wx.form.CodeForm;
 import com.cc.wx.form.WXACodeForm;
-import com.cc.wx.http.request.AccessTokenRequest;
-import com.cc.wx.http.request.OpenidRequest;
+import com.cc.wx.http.request.MiniOpenidRequest;
 import com.cc.wx.http.request.WXACodeRequest;
 import com.cc.wx.http.request.model.Color;
-import com.cc.wx.http.response.AccessTokenResponse;
-import com.cc.wx.http.response.OpenidResponse;
+import com.cc.wx.http.request.model.Phone;
+import com.cc.wx.http.response.MiniOpenidResponse;
 import com.cc.wx.http.response.WXACodeResponse;
+import com.cc.wx.service.AccessTokenService;
 import com.cc.wx.service.WeiXinService;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -46,26 +57,22 @@ public class WeiXinController {
     @Autowired
     private SystemConfigService systemConfigService;
     
-    /**
-	 * 小程序调用凭证
-	 */
-	private String accessToken;
-	
-	/**
-	 * 小程序调用凭证过期时间
-	 */
-	private Date accessTokenExpired;
+    @Autowired
+	private CustomerService customerService;
+    
+    @Autowired
+    private AccessTokenService accessTokenService;
     
     /**
-     * 获取微信用户的openid
+     * 微信用户登录
      * @param form
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/openid", method = RequestMethod.GET)
-    public Response<String> queryUserOpenid(@ModelAttribute CodeForm form){
-    	Response<String> response = new Response<String>();
-    	OpenidRequest openidRequest = new OpenidRequest();
+    @RequestMapping(value="/login", method = RequestMethod.POST)
+    public Response<Map<String, Object>> login(@RequestBody CodeForm form){
+    	Response<Map<String, Object>> response = new Response<Map<String, Object>>();
+    	MiniOpenidRequest openidRequest = new MiniOpenidRequest();
 		SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.appid");
 		if(appidSystemConfigBean!=null){
 			openidRequest.setAppid(appidSystemConfigBean.getPropertyValue());
@@ -75,46 +82,96 @@ public class WeiXinController {
 			openidRequest.setSecret(secretSystemConfigBean.getPropertyValue());
 		}
 		openidRequest.setCode(form.getCode());
-		OpenidResponse openidResponse = weiXinService.queryOpenid(openidRequest);
+		MiniOpenidResponse openidResponse = weiXinService.queryOpenid(openidRequest);
 		if(!openidResponse.isSuccess()){
 			response.setMessage(openidResponse.getMessage());
 			return response;
 		}
-		response.setData(openidResponse.getOpenid());
-		response.setSuccess(Boolean.TRUE);
+		List<CustomerBean> customerBeanList = CustomerBean.findAllByParams(CustomerBean.class, "openid", openidResponse.getOpenid());
+		if(!ListTools.isEmptyOrNull(customerBeanList)){
+			CustomerBean customerBean = customerBeanList.get(0);
+			CustomerStatusEnum customerStatusEnum = CustomerStatusEnum.getCustomerStatusEnumByCode(customerBean.getStatus());
+			if(CustomerStatusEnum.NORMAL.equals(customerStatusEnum)){
+				Map<String, Object> dataMap = new HashMap<String, Object>();
+				dataMap.put("token", JwtTools.createToken(customerBean, JwtTools.JWTTTLMILLIS));
+				response.setData(dataMap);
+				response.setSuccess(Boolean.TRUE);
+			}else{
+				response.setMessage("当前状态为"+customerStatusEnum.getName()+"，登录失败，请联系系统管理人员");
+			}
+		}
 		return response;
     }
     
     /**
-	 * 获取access_token
-	 * @return
-	 */
-	private String fetchAccessToken(){
-		if(!StringTools.isNullOrNone(accessToken) && accessTokenExpired!=null && accessTokenExpired.after(new Date())){
-			return accessToken;
-		}else{
-			Calendar calendar = Calendar.getInstance();
-			AccessTokenRequest accessTokenRequest = new AccessTokenRequest();
-			SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.appid");
-			if(appidSystemConfigBean!=null){
-				accessTokenRequest.setAppid(appidSystemConfigBean.getPropertyValue());
-			}
-			SystemConfigBean secretSystemConfigBean = systemConfigService.querySystemConfigBean("wx.secret");
-			if(secretSystemConfigBean!=null){
-				accessTokenRequest.setSecret(secretSystemConfigBean.getPropertyValue());
-			}
-			AccessTokenResponse accessTokenResponse = weiXinService.queryAccessToken(accessTokenRequest);
-			if(accessTokenResponse.isSuccess()){
-				accessToken = accessTokenResponse.getAccessToken();
-				calendar.add(Calendar.SECOND, accessTokenResponse.getExpiresIn());
-				accessTokenExpired = calendar.getTime();
-			}else{
-				logger.info("获取access_token错误---"+accessTokenResponse.getMessage());
-				accessToken = null;
-			}
-			return accessToken;
+     * 微信用户注册
+     * @param form
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="/register", method = RequestMethod.POST)
+    public Response<Map<String, Object>> register(@RequestBody Map<String, Object> registerMap){
+    	Response<Map<String, Object>> response = new Response<Map<String, Object>>();
+    	Object code = registerMap.get("code");
+    	if(code==null){
+    		response.setMessage("请先登录微信获取CODE值");
+			return response;
+    	}
+    	MiniOpenidRequest openidRequest = new MiniOpenidRequest();
+		SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.appid");
+		if(appidSystemConfigBean!=null){
+			openidRequest.setAppid(appidSystemConfigBean.getPropertyValue());
 		}
-	}
+		SystemConfigBean secretSystemConfigBean = systemConfigService.querySystemConfigBean("wx.secret");
+		if(secretSystemConfigBean!=null){
+			openidRequest.setSecret(secretSystemConfigBean.getPropertyValue());
+		}
+		openidRequest.setCode(StringTools.toString(code));
+		MiniOpenidResponse openidResponse = weiXinService.queryOpenid(openidRequest);
+		if(!openidResponse.isSuccess()){
+			response.setMessage(openidResponse.getMessage());
+			return response;
+		}
+		List<CustomerBean> customerBeanList = CustomerBean.findAllByParams(CustomerBean.class, "openid", openidResponse.getOpenid());
+		if(!ListTools.isEmptyOrNull(customerBeanList)){
+			response.setMessage("您已注册，请直接登录");
+			return response;
+		}
+    	CustomerBean customerBean = JsonTools.toObject(JsonTools.toJsonString(registerMap), CustomerBean.class);
+    	customerBean.setOpenid(openidResponse.getOpenid());
+    	Object encryptedData = registerMap.get("encryptedData");
+		Object iv = registerMap.get("iv");
+		if(encryptedData!=null && iv!=null){
+			String decryptedData = AESTools.decrypt(StringTools.toString(encryptedData), openidResponse.getSessionKey(), StringTools.toString(iv));
+			if(!StringTools.isNullOrNone(decryptedData)){
+				Phone phone = JsonTools.toObject(decryptedData, Phone.class);
+				if(phone!=null){
+					customerBean.setPhone(phone.getPurePhoneNumber());
+				}
+			}
+		}
+		if(StringTools.isNullOrNone(customerBean.getPhone())){
+			response.setMessage("请先获取手机号");
+			return response;
+		}
+		customerBean.setStatus(CustomerStatusEnum.NORMAL.getCode());
+		customerBean.setCreateTime(DateTools.now());
+		customerBean.setCardNo(StringTools.getSys36SeqNo());
+		customerBean.setPoints(0l);
+		try {
+			customerService.saveCustomer(customerBean);
+			Map<String, Object> dataMap = new HashMap<String, Object>();
+			dataMap.put("token", JwtTools.createToken(customerBean, JwtTools.JWTTTLMILLIS));
+			response.setData(dataMap);
+			response.setSuccess(Boolean.TRUE);
+		} catch (LogicException e) {
+			response.setMessage(e.getErrContent());
+		} catch (Exception e) {
+			response.setMessage("系统内部错误");
+			e.printStackTrace();
+		}
+		return response;
+    }
 	
 	/**
 	 * 生成小程序码
@@ -126,7 +183,7 @@ public class WeiXinController {
 	@RequestMapping(value="/acode", method = RequestMethod.GET)
 	public void createWXACode(@ModelAttribute WXACodeForm form, HttpServletResponse response) throws IOException{
 		WXACodeRequest wxaCodeRequest = new WXACodeRequest();
-		wxaCodeRequest.setAccessToken(fetchAccessToken());
+		wxaCodeRequest.setAccessToken(accessTokenService.queryAccessToken());
 		wxaCodeRequest.setScene(form.getScene());
 		wxaCodeRequest.setPage(form.getPage());
 		wxaCodeRequest.setAutoColor(form.getAutoColor());

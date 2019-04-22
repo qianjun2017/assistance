@@ -6,6 +6,7 @@ package com.cc.system.location.web;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -179,6 +180,7 @@ public class LocationController {
 	 * @return
 	 */
 	@ResponseBody
+	@RequiresPermissions(value = { "system.location.update", "system.location.detail" }, logical = Logical.OR)
 	@RequestMapping(value = "/get/{id:\\d+}", method = RequestMethod.GET)
 	public Response<Map<String, Object>> queryLocation(@PathVariable Long id){
 		Response<Map<String, Object>> response = new Response<Map<String, Object>>();
@@ -220,6 +222,7 @@ public class LocationController {
 	 * @return
 	 */
 	@ResponseBody
+	@RequiresPermissions(value = { "system.location" })
 	@RequestMapping(value = "/tree", method = RequestMethod.GET)
 	public Tree<Map<String, Object>> queryLocationTree(){
 		Tree<Map<String, Object>> tree = locationService.queryLocationTree();

@@ -41,14 +41,8 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/static/**", "anon");
 		filterChainDefinitionMap.put("/key", "anon");
 		filterChainDefinitionMap.put("/login", "anon");
-		filterChainDefinitionMap.put("/wx/acode", "anon");
-		filterChainDefinitionMap.put("/wx/openid", "anon");
-		filterChainDefinitionMap.put("/customer/register", "anon");
-		filterChainDefinitionMap.put("/customer/info", "anon");
-		filterChainDefinitionMap.put("/customer/retailer", "anon");
-		filterChainDefinitionMap.put("/carousel/page", "anon");
-		filterChainDefinitionMap.put("/lottery/**", "anon");
-		filterChainDefinitionMap.put("/lottery/over/**", "anon");
+		filterChainDefinitionMap.put("/wx/**", "anon");
+		filterChainDefinitionMap.put("/api/**", "anon");
 		filterChainDefinitionMap.put("/**", "authc");
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 		return shiroFilterFactoryBean;

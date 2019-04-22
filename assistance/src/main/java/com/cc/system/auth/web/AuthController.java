@@ -9,6 +9,8 @@ import java.util.Map;
 import com.cc.system.shiro.SecurityContextUtil;
 import com.cc.system.user.bean.UserBean;
 import com.cc.system.user.service.UserAuthService;
+
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -204,7 +206,7 @@ public class AuthController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequiresPermissions(value = { "system.auth.detail" })
+	@RequiresPermissions(value = { "system.auth.detail", "system.auth.update" }, logical = Logical.OR)
 	@RequestMapping(value = "/get/{id:\\d+}", method = RequestMethod.GET)
 	public Response<Map<String, Object>> queryAuth(@PathVariable Long id){
 		Response<Map<String, Object>> response = new Response<Map<String, Object>>();
@@ -248,6 +250,7 @@ public class AuthController {
 	 * @return
 	 */
 	@ResponseBody
+	@RequiresPermissions(value = { "system.auth" })
 	@RequestMapping(value = "/tree", method = RequestMethod.GET)
 	public Tree<Map<String, Object>> queryAuthTree(){
 		UserBean userBean = SecurityContextUtil.getCurrentUser();

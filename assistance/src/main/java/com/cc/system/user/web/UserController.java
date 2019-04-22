@@ -168,6 +168,7 @@ public class UserController {
 	 * @return
 	 */
 	@ResponseBody
+	@RequiresPermissions(value = { "system.user.edit" })
 	@RequestMapping(value = "/get/{id:\\d+}", method = RequestMethod.GET)
 	public Response<UserBean> queryUser(@PathVariable Long id){
 		Response<UserBean> response = new Response<UserBean>();
@@ -216,6 +217,7 @@ public class UserController {
 	 * @return
 	 */
 	@ResponseBody
+	@RequiresPermissions(value = { "system.user" })
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public Page<Map<String, Object>> queryUserPage(@ModelAttribute UserQueryForm form){
 		Page<Map<String, Object>> page = userService.queryUserPage(form);

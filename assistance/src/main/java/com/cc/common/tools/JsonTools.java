@@ -74,4 +74,14 @@ public class JsonTools {
             throw new RuntimeException("网络连接异常",e);
         }
     }
+	
+	/**
+	 * 类型转换
+	 * @param object
+	 * @param clazz
+	 * @return
+	 */
+	public static <T> T covertObject(Object object, Class<T> clazz){
+		return JsonTools.toObject(JsonTools.toJsonString(object), clazz);
+	}
 }
