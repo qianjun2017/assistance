@@ -236,11 +236,14 @@ public class ApiFilter implements Filter {
 			}
 		}
 		if(!StringTools.isNullOrNone(requestBean.getFormId())){
-			FormBean formBean = new FormBean();
-			formBean.setFormId(requestBean.getFormId());
-			formBean.setUserId(customerBean.getId());
-			formBean.setCreateTime(DateTools.now());
-			formBean.save();
+			String[] formIds = requestBean.getFormId().split(",");
+			for(String formId: formIds){
+				FormBean formBean = new FormBean();
+				formBean.setFormId(formId);
+				formBean.setUserId(customerBean.getId());
+				formBean.setCreateTime(DateTools.now());
+				formBean.save();
+			}
 		}
 		Map<String, Object> bodyMap = JsonTools.toObject(body, HashMap.class);
 		bodyMap.put("customerId", customerBean.getId());
