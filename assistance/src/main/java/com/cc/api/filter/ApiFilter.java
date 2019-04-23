@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +23,6 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.cc.push.bean.FormBean;
 import com.cc.api.bean.RequestBean;
 import com.cc.api.enums.ApiVersionEnum;
 import com.cc.common.exception.LogicException;
@@ -40,7 +40,8 @@ import com.cc.common.web.RequestContextUtil;
 import com.cc.common.web.RequestWrapper;
 import com.cc.common.web.Response;
 import com.cc.common.web.ResponseWrapper;
-import com.cc.customer.bean.CustomerBean;
+import com.cc.leaguer.bean.LeaguerBean;
+import com.cc.push.bean.FormBean;
 import com.cc.system.config.bean.SystemConfigBean;
 
 /**
@@ -77,7 +78,13 @@ public class ApiFilter implements Filter {
 		}
 		RequestBean requestBean = null;
 		try {
-			requestBean = JsonTools.toObject(body, RequestBean.class);
+			Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
+			Map<String, Object> headerMap = new HashMap<String, Object>();
+			while (headerNames.hasMoreElements()) {
+				String key = (String) headerNames.nextElement();
+				headerMap.put(key, httpServletRequest.getHeader(key));
+			}
+			requestBean = JsonTools.covertObject(headerMap, RequestBean.class);
 		} catch (Exception e) {
 			result.setMessage("请求参数格式错误");
 			response.getWriter().write(JsonTools.toJsonString(result));
@@ -98,8 +105,8 @@ public class ApiFilter implements Filter {
 			response.getWriter().write(JsonTools.toJsonString(result));
 			return;
 		}
-		CustomerBean customerBean = JwtTools.validToken(requestBean.getToken(), CustomerBean.class);
-		if(customerBean==null){
+		LeaguerBean leaguerBean = JwtTools.validToken(requestBean.getToken(), LeaguerBean.class);
+		if(leaguerBean==null){
 			result.setMessage("无效令牌，请重新登录");
 			result.setData(400);
 			response.getWriter().write(JsonTools.toJsonString(result));
@@ -187,7 +194,7 @@ public class ApiFilter implements Filter {
 				return;
 			}
 			try {
-				body = RSATools.privateDecrypt(requestBean.geteValue(), privateKey);
+				body = RSATools.privateDecrypt(body, privateKey);
 			} catch (LogicException e) {
 				result.setMessage(e.getErrContent());
 				response.getWriter().write(JsonTools.toJsonString(result));
@@ -201,7 +208,7 @@ public class ApiFilter implements Filter {
 				return;
 			}
 			try {
-				body = DESTools.decrypt(requestBean.geteValue(), key);
+				body = DESTools.decrypt(body, key);
 			} catch (LogicException e) {
 				result.setMessage(e.getErrContent());
 				response.getWriter().write(JsonTools.toJsonString(result));
@@ -215,7 +222,7 @@ public class ApiFilter implements Filter {
 				return;
 			}
 			try {
-				body = AESTools.decrypt(requestBean.geteValue(), key);
+				body = AESTools.decrypt(body, key);
 			} catch (LogicException e) {
 				result.setMessage(e.getErrContent());
 				response.getWriter().write(JsonTools.toJsonString(result));
@@ -240,18 +247,17 @@ public class ApiFilter implements Filter {
 			for(String formId: formIds){
 				FormBean formBean = new FormBean();
 				formBean.setFormId(formId);
-				formBean.setUserId(customerBean.getId());
+				formBean.setUserId(leaguerBean.getId());
 				formBean.setCreateTime(DateTools.now());
 				formBean.save();
 			}
 		}
 		Map<String, Object> bodyMap = JsonTools.toObject(body, HashMap.class);
-		bodyMap.put("customerId", customerBean.getId());
+		bodyMap.put("leaguerId", leaguerBean.getId());
 		requestWrapper.setBody(JsonTools.toJsonString(bodyMap));
 		ResponseWrapper responseWrapper = new ResponseWrapper((HttpServletResponse) response);
 		chain.doFilter(requestWrapper, responseWrapper);
 		String responseData = responseWrapper.getResponseData();
-		Map<String, Object> responseMap = JsonTools.toObject(responseData, HashMap.class);
 		if(ApiVersionEnum.V2.equals(apiVersionEnum)){
 			String secretKey = keySystemConfigBeanList.get(0).getPropertyValue();
 			StringBuffer buffer = new StringBuffer();
@@ -260,7 +266,7 @@ public class ApiFilter implements Filter {
 				buffer.append(paramterString);
 			}
 			buffer.append(secretKey);
-			responseMap.put("sign", MD5Tools.encrypt(buffer.substring(0)));
+			responseWrapper.addHeader("sign", MD5Tools.encrypt(buffer.substring(0)));
 		}else if(ApiVersionEnum.V3.equals(apiVersionEnum)){
 			String secretKey = keySystemConfigBeanList.get(0).getPropertyValue();
 			StringBuffer buffer = new StringBuffer();
@@ -269,18 +275,18 @@ public class ApiFilter implements Filter {
 				buffer.append(paramterString);
 			}
 			buffer.append(secretKey);
-			responseMap.put("sign", SHA1Tools.encrypt(buffer.substring(0)));
+			responseWrapper.addHeader("sign", SHA1Tools.encrypt(buffer.substring(0)));
 		}else if(ApiVersionEnum.V4.equals(apiVersionEnum)){
 			String privateKey = keySystemConfigBeanList.get(0).getPropertyValue();
-			responseMap.put("data", RSATools.privateEncrypt(StringTools.toString(responseMap.get("data")), privateKey));
+			responseData = RSATools.privateEncrypt(responseData, privateKey);
 		}else if(ApiVersionEnum.V5.equals(apiVersionEnum)){
 			String key = keySystemConfigBeanList.get(0).getPropertyValue();
-			responseMap.put("data", DESTools.encrypt(StringTools.toString(responseMap.get("data")), key));
+			responseData = DESTools.encrypt(responseData, key);
 		}else if(ApiVersionEnum.V6.equals(apiVersionEnum)){
 			String key = keySystemConfigBeanList.get(0).getPropertyValue();
-			responseMap.put("data", AESTools.encrypt(StringTools.toString(responseMap.get("data")), key));
+			responseData = AESTools.encrypt(responseData, key);
 		}
-		response.getWriter().write(JsonTools.toJsonString(responseMap));
+		response.getWriter().write(responseData);
 	}
 
 	/* (non-Javadoc)
@@ -301,10 +307,7 @@ public class ApiFilter implements Filter {
 		Iterator<String> iterator = map.keySet().iterator();
 		List<String> list = new ArrayList<String>();
 		while(iterator.hasNext()){
-			String key = iterator.next();
-			if(!"sign".equalsIgnoreCase(key)){
-				list.add(key);
-			}
+			list.add(iterator.next());
 		}
 		Collections.sort(list);
 		StringBuffer buffer = new StringBuffer();

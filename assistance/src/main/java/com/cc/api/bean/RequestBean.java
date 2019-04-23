@@ -30,11 +30,6 @@ public class RequestBean {
 	private String sign;
 	
 	/**
-	 * 加密参数
-	 */
-	private String eValue;
-	
-	/**
 	 * 访问令牌
 	 */
 	private String token;
@@ -98,20 +93,6 @@ public class RequestBean {
 	 */
 	public void setSign(String sign) {
 		this.sign = sign;
-	}
-
-	/**
-	 * @return the eValue
-	 */
-	public String geteValue() {
-		return eValue;
-	}
-
-	/**
-	 * @param eValue the eValue to set
-	 */
-	public void seteValue(String eValue) {
-		this.eValue = eValue;
 	}
 
 	/**
