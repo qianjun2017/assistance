@@ -34,15 +34,17 @@ public class ShiroConfig {
 	public ShiroFilterFactoryBean shrioFilter(SecurityManager securityManager){
 		ShiroFilterFactoryBean shiroFilterFactoryBean = new MyShiroFilterFactoryBean();
 		shiroFilterFactoryBean.setSecurityManager(securityManager);
-		shiroFilterFactoryBean.setLoginUrl("/");
+		shiroFilterFactoryBean.setLoginUrl("/unLogin");
 		shiroFilterFactoryBean.setSuccessUrl("/index");
-		shiroFilterFactoryBean.setUnauthorizedUrl("/unauth");
+		shiroFilterFactoryBean.setUnauthorizedUrl("/unAuth");
 		Map<String,String> filterChainDefinitionMap = new LinkedHashMap<String,String>();
 		filterChainDefinitionMap.put("/static/**", "anon");
 		filterChainDefinitionMap.put("/key", "anon");
 		filterChainDefinitionMap.put("/login", "anon");
 		filterChainDefinitionMap.put("/wx/**", "anon");
 		filterChainDefinitionMap.put("/api/**", "anon");
+		filterChainDefinitionMap.put("/unAuth", "ssl");
+		filterChainDefinitionMap.put("/unLogin", "ssl");
 		filterChainDefinitionMap.put("/**", "authc");
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 		return shiroFilterFactoryBean;
