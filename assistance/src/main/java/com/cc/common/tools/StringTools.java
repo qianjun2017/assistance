@@ -100,12 +100,12 @@ public class StringTools {
 		String chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		StringBuffer buffer = new StringBuffer();
 		String date = DateTools.getFormatDate(new Date(), DateTools.DATEFORMAT2);
-		buffer.append(chars.charAt(Integer.parseInt(date.substring(2, 3))%chars.length()));
-		buffer.append(chars.charAt(Integer.parseInt(date.substring(4, 5))%12));
-		buffer.append(chars.charAt(Integer.parseInt(date.substring(6, 7))%31));
-		buffer.append(chars.charAt(Integer.parseInt(date.substring(8, 9))%24));
-		buffer.append(chars.charAt(Integer.parseInt(date.substring(10, 11))%chars.length()));
-		buffer.append(chars.charAt(Integer.parseInt(date.substring(12, 13))%chars.length()));
+		buffer.append(chars.charAt(Integer.parseInt(date.substring(2, 4))%chars.length()));
+		buffer.append(chars.charAt(Integer.parseInt(date.substring(4, 6))%12));
+		buffer.append(chars.charAt(Integer.parseInt(date.substring(6, 8))%31));
+		buffer.append(chars.charAt(Integer.parseInt(date.substring(8, 10))%24));
+		buffer.append(chars.charAt(Integer.parseInt(date.substring(10, 12))%chars.length()));
+		buffer.append(chars.charAt(Integer.parseInt(date.substring(12, 14))%chars.length()));
 		int _int = 0;
 		while(_int<4){
 			Random random = new Random();
