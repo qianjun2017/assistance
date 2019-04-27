@@ -40,7 +40,7 @@ public class ApiCarouselController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/page", method = RequestMethod.POST)
+	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public Page<Map<String, Object>> queryCarouselPage(@ModelAttribute CarouselQueryForm form){
 		form.setStatus(CarouselStatusEnum.ON.getCode());
 		return carouselService.queryCarouselPage(form);
@@ -52,7 +52,7 @@ public class ApiCarouselController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/plot/get/{id:\\d+}", method = RequestMethod.POST)
+	@RequestMapping(value = "/plot/get/{id:\\d+}", method = RequestMethod.GET)
 	public Response<String> queryCarouselPlot(@PathVariable Long id){
 		Response<String> response = new Response<String>();
 		CarouselBean carouselBean = CarouselBean.get(CarouselBean.class, id);

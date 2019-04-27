@@ -30,7 +30,7 @@ public class ApiLocationController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/tree", method = RequestMethod.POST)
+	@RequestMapping(value = "/tree", method = RequestMethod.GET)
 	public Tree<Map<String, Object>> queryLocationTree(){
 		Tree<Map<String, Object>> tree = locationService.queryLocationTree();
 		return tree;

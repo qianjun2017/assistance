@@ -44,7 +44,7 @@ public class ApiLeaguerController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/info", method = RequestMethod.POST)
+	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public Response<Object> queryLeaguerInfo(@RequestBody LeaguerForm form){
 		Response<Object> response = new Response<Object>();
 		LeaguerBean leaguerBean = LeaguerBean.get(LeaguerBean.class, form.getLeaguerId());
