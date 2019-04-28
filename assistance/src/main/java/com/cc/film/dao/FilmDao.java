@@ -54,24 +54,21 @@ public interface FilmDao extends CrudDao {
 
 	/**
 	 * 查询最新影片列表
-	 * @param form
 	 * @return
 	 */
-	List<FilmBean> queryNewFilmList(FilmQueryForm form);
+	List<FilmBean> queryNewFilmList();
 	
 	/**
 	 * 查询推荐影片列表
-	 * @param form
 	 * @return
 	 */
-	List<FilmBean> queryRecommendFilmList(FilmQueryForm form);
+	List<FilmBean> queryRecommendFilmList();
 	
 	/**
 	 * 查询热播影片列表
-	 * @param form
 	 * @return
 	 */
-	List<FilmBean> queryHotFilmList(FilmQueryForm form);
+	List<FilmBean> queryHotFilmList();
 	
 	/**
 	 * 查询影片播放次数

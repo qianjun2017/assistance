@@ -6,6 +6,7 @@ package com.cc.film.service;
 import java.util.List;
 
 import com.cc.common.web.Page;
+import com.cc.common.form.QueryForm;
 import com.cc.film.bean.ActorBean;
 import com.cc.film.bean.DirectorBean;
 import com.cc.film.bean.FilmAttributeBean;
@@ -150,21 +151,21 @@ public interface FilmService {
 	 * @param form
 	 * @return
 	 */
-	Page<FilmBean> queryNewFilmBeanPage(FilmQueryForm form);
+	Page<FilmBean> queryNewFilmBeanPage(QueryForm form);
 	
 	/**
 	 * 分页查询推荐影片
 	 * @param form
 	 * @return
 	 */
-	Page<FilmBean> queryRecommendFilmBeanPage(FilmQueryForm form);
+	Page<FilmBean> queryRecommendFilmBeanPage(QueryForm form);
 	
 	/**
 	 * 分页查询热播影片
 	 * @param form
 	 * @return
 	 */
-	Page<FilmBean> queryHotFilmBeanPage(FilmQueryForm form);
+	Page<FilmBean> queryHotFilmBeanPage(QueryForm form);
 	
 	/**
 	 * 查询影片播放次数

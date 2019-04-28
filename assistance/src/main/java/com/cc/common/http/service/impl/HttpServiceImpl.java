@@ -174,4 +174,39 @@ public class HttpServiceImpl implements HttpService {
 		}
 		return null;
 	}
+	
+	@Override
+	public String postSoap(String url, String soap, String encoding) {
+		HttpPost httpPost = new HttpPost(url);
+		if(!StringTools.isNullOrNone(soap)){
+			StringEntity stringEntity = new StringEntity(soap, encoding);
+			httpPost.setEntity(stringEntity);
+		}
+		httpPost.setHeader("Content-type", "text/xml; charset=UTF-8");
+		httpPost.setHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
+		CloseableHttpResponse response = null;
+		try {
+			response = httpClient.getObject().execute(httpPost);
+			StatusLine status = response.getStatusLine();
+            int state = status.getStatusCode();
+            if (state == HttpStatus.SC_OK) {
+            	HttpEntity entity = response.getEntity();
+    			if (entity != null) {
+    				return EntityUtils.toString(entity);
+    			}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (response!=null) {
+				try {
+					response.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			httpPost.releaseConnection();
+		}
+		return null;
+	}
 }

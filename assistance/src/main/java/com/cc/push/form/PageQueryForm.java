@@ -3,7 +3,7 @@
  */
 package com.cc.push.form;
 
-import com.cc.common.web.QueryForm;
+import com.cc.common.form.QueryForm;
 
 /**
  * @author Administrator

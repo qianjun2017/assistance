@@ -19,6 +19,7 @@ import com.cc.common.tools.ListTools;
 import com.cc.common.tools.SetTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
+import com.cc.common.form.QueryForm;
 import com.cc.film.bean.ActorBean;
 import com.cc.film.bean.DirectorBean;
 import com.cc.film.bean.FilmActorBean;
@@ -593,11 +594,11 @@ public class FilmServiceImpl implements FilmService {
 	}
 
 	@Override
-	public Page<FilmBean> queryNewFilmBeanPage(FilmQueryForm form) {
+	public Page<FilmBean> queryNewFilmBeanPage(QueryForm form) {
 		Page<FilmBean> page = new Page<FilmBean>(); 
 		PageHelper.orderBy(String.format("f.%s %s", form.getSort(), form.getOrder()));
 		PageHelper.startPage(form.getPage(), form.getPageSize());
-		List<FilmBean> filmList = filmDao.queryNewFilmList(form);
+		List<FilmBean> filmList = filmDao.queryNewFilmList();
 		PageInfo<FilmBean> pageInfo = new PageInfo<FilmBean>(filmList);
 		if (ListTools.isEmptyOrNull(filmList)) {
 			page.setMessage("没有查询到相关影片数据");
@@ -613,11 +614,11 @@ public class FilmServiceImpl implements FilmService {
 	}
 	
 	@Override
-	public Page<FilmBean> queryRecommendFilmBeanPage(FilmQueryForm form) {
+	public Page<FilmBean> queryRecommendFilmBeanPage(QueryForm form) {
 		Page<FilmBean> page = new Page<FilmBean>(); 
 		PageHelper.orderBy(String.format("e.%s %s", form.getSort(), form.getOrder()));
 		PageHelper.startPage(form.getPage(), form.getPageSize());
-		List<FilmBean> filmList = filmDao.queryRecommendFilmList(form);
+		List<FilmBean> filmList = filmDao.queryRecommendFilmList();
 		PageInfo<FilmBean> pageInfo = new PageInfo<FilmBean>(filmList);
 		if (ListTools.isEmptyOrNull(filmList)) {
 			page.setMessage("没有查询到相关影片数据");
@@ -633,10 +634,10 @@ public class FilmServiceImpl implements FilmService {
 	}
 	
 	@Override
-	public Page<FilmBean> queryHotFilmBeanPage(FilmQueryForm form) {
+	public Page<FilmBean> queryHotFilmBeanPage(QueryForm form) {
 		Page<FilmBean> page = new Page<FilmBean>(); 
 		PageHelper.startPage(form.getPage(), form.getPageSize());
-		List<FilmBean> filmList = filmDao.queryHotFilmList(form);
+		List<FilmBean> filmList = filmDao.queryHotFilmList();
 		PageInfo<FilmBean> pageInfo = new PageInfo<FilmBean>(filmList);
 		if (ListTools.isEmptyOrNull(filmList)) {
 			page.setMessage("没有查询到相关影片数据");

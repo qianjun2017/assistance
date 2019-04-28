@@ -96,7 +96,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</if>
 	</select>
 	
-	<select id="queryNewFilmList" resultType="com.cc.film.bean.FilmBean" parameterType="com.cc.film.form.FilmQueryForm" statementType="PREPARED">
+	<select id="queryNewFilmList" resultType="com.cc.film.bean.FilmBean" statementType="PREPARED">
 		select f.id,f.name,f.listImgUrl,f.country,f.language,f.year,f.createTime,f.integration,f.thumbUp,f.thumbDown,f.status
 		from t_film f
 		where date(f.createTime) = (
@@ -110,14 +110,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				and f.status = 'on'
 	</select>
 	
-	<select id="queryRecommendFilmList" resultType="com.cc.film.bean.FilmBean" parameterType="com.cc.film.form.FilmQueryForm" statementType="PREPARED">
+	<select id="queryRecommendFilmList" resultType="com.cc.film.bean.FilmBean" statementType="PREPARED">
 		select f.id,f.name,f.listImgUrl,f.country,f.language,f.year,f.createTime,f.integration,f.thumbUp,f.thumbDown,f.status
 		from t_film f
 		inner join t_film_evaluate e on e.id = f.id and e.recommend = true
 		where f.status = 'on'
 	</select>
 	
-	<select id="queryHotFilmList" resultType="com.cc.film.bean.FilmBean" parameterType="com.cc.film.form.FilmQueryForm" statementType="PREPARED">
+	<select id="queryHotFilmList" resultType="com.cc.film.bean.FilmBean" statementType="PREPARED">
 		select f.id,f.name,f.listImgUrl,f.country,f.language,f.year,f.createTime,f.integration,f.thumbUp,f.thumbDown,f.status
 		from t_film f
 		inner join (select substring_index(substring_index(l.params,':',-1),'}',1) as filmId, count(l.params) as cnt from t_system_operation_log l where l.module = 'film' and l.operType = 'play'

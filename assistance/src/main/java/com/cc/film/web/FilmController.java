@@ -20,18 +20,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cc.common.exception.LogicException;
-import com.cc.common.tools.DateTools;
 import com.cc.common.tools.JsonTools;
 import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
 import com.cc.common.web.Response;
-import com.cc.exchange.bean.ExchangeBean;
-import com.cc.exchange.enums.ExchangeStatusEnum;
-import com.cc.exchange.service.ExchangeService;
 import com.cc.film.bean.FilmAttributeBean;
 import com.cc.film.bean.FilmBean;
-import com.cc.film.bean.FilmCommentBean;
 import com.cc.film.bean.FilmEvaluateBean;
 import com.cc.film.bean.FilmPlotBean;
 import com.cc.film.bean.FilmStillBean;
@@ -43,7 +38,6 @@ import com.cc.film.form.FilmQueryForm;
 import com.cc.film.result.FilmCommentResult;
 import com.cc.film.result.FilmResult;
 import com.cc.film.service.FilmService;
-import com.cc.leaguer.bean.LeaguerBean;
 import com.cc.system.log.annotation.OperationLog;
 import com.cc.system.log.enums.ModuleEnum;
 import com.cc.system.log.enums.OperTypeEnum;
@@ -61,9 +55,6 @@ public class FilmController {
 
 	@Autowired
 	private FilmService filmService;
-	
-	@Autowired
-	private ExchangeService exchangeService;
 	
 	/**
 	 * 查询影片年份、语言、国家枚举值
@@ -89,51 +80,8 @@ public class FilmController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
-	@OperationLog(module = ModuleEnum.FILMMANAGEMENT, operType = OperTypeEnum.SEARCH, title = "电影检索")
 	public Page<FilmBean> queryFilmBeanPage(@ModelAttribute FilmQueryForm form){
-		if(!StringTools.isNullOrNone(form.getKeywords())){
-			LogContextUtil.setOperContent(form.getKeywords());
-		}else{
-			LogContextUtil.setRecordLog(Boolean.FALSE);
-		}
-		Page<FilmBean> page = filmService.queryFilmBeanPage(form);
-		return page;
-	}
-	
-	/**
-	 * 分页查询最新影片
-	 * @param form 只接受page和pageSize参数 
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/new/page", method = RequestMethod.GET)
-	public Page<FilmBean> queryNewFilmBeanPage(@ModelAttribute FilmQueryForm form){
-		Page<FilmBean> page = filmService.queryNewFilmBeanPage(form);
-		return page;
-	}
-	
-	/**
-	 * 分页查询推荐影片
-	 * @param form 只接受page和pageSize参数 
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/recommend/page", method = RequestMethod.GET)
-	public Page<FilmBean> queryRecommendFilmBeanPage(@ModelAttribute FilmQueryForm form){
-		Page<FilmBean> page = filmService.queryRecommendFilmBeanPage(form);
-		return page;
-	}
-	
-	/**
-	 * 分页查询热播影片
-	 * @param form 只接受page和pageSize参数 
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/hot/page", method = RequestMethod.GET)
-	public Page<FilmBean> queryHotFilmBeanPage(@ModelAttribute FilmQueryForm form){
-		Page<FilmBean> page = filmService.queryHotFilmBeanPage(form);
-		return page;
+		return filmService.queryFilmBeanPage(form);
 	}
 	
 	/**
@@ -148,7 +96,7 @@ public class FilmController {
 		Response<FilmResult> response = new Response<FilmResult>();
 		FilmBean filmBean = FilmBean.get(FilmBean.class, id);
 		if (filmBean==null) {
-			response.setMessage("影片不存在");
+			response.setMessage("影片不存在或已删除");
 			return response;
 		}
 		FilmResult filmResult = new FilmResult();
@@ -311,61 +259,6 @@ public class FilmController {
 	}
 	
 	/**
-	 * 评论
-	 * @param commentMap
-	 * @return
-	 */
-	@ResponseBody
-	@RequiresPermissions(value = { "leaguer.film" })
-	@RequestMapping(value="/comment/add", method = RequestMethod.POST)
-	@OperationLog(module = ModuleEnum.FILMMANAGEMENT, operType = OperTypeEnum.COMMENT, title = "新增评论")
-	public Response<String> addFileComment(@RequestBody Map<String, String> commentMap){
-		Response<String> response = new Response<String>();
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			response.setMessage("请先登录");
-			return response;
-		}
-		List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-		if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size()>1) {
-			response.setMessage("评论失败");
-			return response;
-		}
-		String filmId = commentMap.get("filmId");
-		if (StringTools.isNullOrNone(filmId)) {
-			response.setMessage("评论失败");
-			return response;
-		}
-		FilmBean filmBean = FilmBean.get(FilmBean.class, Long.valueOf(filmId));
-		if(filmBean==null){
-			response.setMessage("评论失败");
-			return response;
-		}
-		String comment = commentMap.get("comment");
-		if (StringTools.isNullOrNone(comment)) {
-			response.setMessage("请输入评论");
-			return response;
-		}
-		FilmCommentBean filmCommentBean = new FilmCommentBean();
-		filmCommentBean.setFilmId(Long.valueOf(filmId));
-		filmCommentBean.setFilmName(filmBean.getName());
-		filmCommentBean.setLeaguerId(leaguerBeanList.get(0).getId());
-		filmCommentBean.setLeaguerName(leaguerBeanList.get(0).getLeaguerName());
-		filmCommentBean.setComment(comment.getBytes());
-		filmCommentBean.setCreateTime(DateTools.now());
-		try {
-			filmService.saveFilmComment(filmCommentBean);
-			response.setSuccess(Boolean.TRUE);
-		} catch (LogicException e) {
-			response.setMessage(e.getErrContent());
-		} catch (Exception e) {
-			response.setMessage("系统内部错误");
-			e.printStackTrace();
-		}
-		return response;
-	}
-	
-	/**
 	 * 删除评论
 	 * @param id
 	 * @return
@@ -378,97 +271,6 @@ public class FilmController {
 		Response<String> response = new Response<String>();
 		try {
 			filmService.deleteFilmComment(id);
-			response.setSuccess(Boolean.TRUE);
-		} catch (LogicException e) {
-			response.setMessage(e.getErrContent());
-		} catch (Exception e) {
-			response.setMessage("系统内部错误");
-			e.printStackTrace();
-		}
-		return response;
-	}
-	
-	/**
-	 * 点赞
-	 * @param id
-	 * @return
-	 */
-	@ResponseBody
-	@RequiresPermissions(value = { "leaguer.film" })
-	@RequestMapping(value = "/thumb/up/{id:\\d+}", method = RequestMethod.POST)
-	@OperationLog(module = ModuleEnum.FILMMANAGEMENT, operType = OperTypeEnum.THUMB, title = "点赞", paramNames = {"id"})
-	public Response<String> gaveThumbUp(@PathVariable Long id){
-		Response<String> response = new Response<String>();
-		try {
-			filmService.gaveAThumbUp(id);
-			response.setSuccess(Boolean.TRUE);
-		} catch (LogicException e) {
-			response.setMessage(e.getErrContent());
-		} catch (Exception e) {
-			response.setMessage("系统内部错误");
-			e.printStackTrace();
-		}
-		return response;
-	}
-	
-	/**
-	 * 踩一脚
-	 * @param id
-	 * @return
-	 */
-	@ResponseBody
-	@RequiresPermissions(value = { "leaguer.film" })
-	@RequestMapping(value = "/thumb/down/{id:\\d+}", method = RequestMethod.POST)
-	@OperationLog(module = ModuleEnum.FILMMANAGEMENT, operType = OperTypeEnum.THUMB, title = "踩一脚", paramNames = {"id"})
-	public Response<String> gaveThumbDown(@PathVariable Long id){
-		Response<String> response = new Response<String>();
-		try {
-			filmService.gaveAThumbDown(id);
-			response.setSuccess(Boolean.TRUE);
-		} catch (LogicException e) {
-			response.setMessage(e.getErrContent());
-		} catch (Exception e) {
-			response.setMessage("系统内部错误");
-			e.printStackTrace();
-		}
-		return response;
-	}
-	
-	/**
-	 * 兑换影片
-	 * @param id
-	 * @return
-	 */
-	@ResponseBody
-	@RequiresPermissions(value = { "leaguer.film" })
-	@RequestMapping(value = "/exchange/{id:\\d+}", method = RequestMethod.POST)
-	@OperationLog(module = ModuleEnum.FILMMANAGEMENT, operType = OperTypeEnum.EXCHANGE, title = "兑换", paramNames = {"id"})
-	public Response<String> exchange(@PathVariable Long id){
-		Response<String> response = new Response<String>();
-		FilmBean filmBean = FilmBean.get(FilmBean.class, id);
-		if (filmBean==null) {
-			response.setMessage("影片不存在");
-			return response;
-		}
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			response.setMessage("请先登录");
-			return response;
-		}
-		List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-		if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size()>1) {
-			response.setMessage("兑换失败");
-			return response;
-		}
-		ExchangeBean exchangeBean = new ExchangeBean();
-		exchangeBean.setChannelCode("film");
-		exchangeBean.setCreateTime(DateTools.now());
-		exchangeBean.setIntegration(filmBean.getIntegration());
-		exchangeBean.setItemId(filmBean.getId());
-		exchangeBean.setItemName(filmBean.getName());
-		exchangeBean.setLeaguerId(leaguerBeanList.get(0).getId());
-		try {
-			exchangeService.saveExchange(exchangeBean);
 			response.setSuccess(Boolean.TRUE);
 		} catch (LogicException e) {
 			response.setMessage(e.getErrContent());
@@ -765,52 +567,6 @@ public class FilmController {
 		}
 		response.setData(filmStillBeanList);
 		response.setSuccess(Boolean.TRUE);
-		return response;
-	}
-	
-	/**
-	 * 取消兑换申请
-	 * @param filmId
-	 * @return
-	 */
-	@ResponseBody
-	@RequiresPermissions(value = { "leaguer.film" })
-	@RequestMapping(value = "/exchange/cancel/{filmId:\\d+}", method = RequestMethod.POST)
-	public Response<Object> requestCancelExchange(@PathVariable Long filmId){
-		Response<Object> response = new Response<Object>();
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			response.setMessage("请先登录");
-			return response;
-		}
-		List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-		if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size()>1) {
-			response.setMessage("取消兑换申请失败");
-			return response;
-		}
-		List<ExchangeBean> exchangeBeanList = ExchangeBean.findAllByParams(ExchangeBean.class, "itemId", filmId, "leaguerId", leaguerBeanList.get(0).getId(), "channelCode", "film", "sort", "createTime", "order", "desc");
-		if (ListTools.isEmptyOrNull(exchangeBeanList)) {
-			response.setMessage("您还未兑换影片");
-			return response;
-		}
-		ExchangeBean exchangeBean = exchangeBeanList.get(0);
-		ExchangeStatusEnum exchangeStatusEnum = ExchangeStatusEnum.getExchangeStatusEnumByCode(exchangeBean.getStatus());
-		if (ExchangeStatusEnum.PENDING.equals(exchangeStatusEnum)) {
-			response.setMessage("取消兑换申请处理中");
-			return response;
-		}
-		if (ExchangeStatusEnum.CANCELLED.equals(exchangeStatusEnum)) {
-			response.setMessage("兑换已取消");
-			return response;
-		}
-		try {
-			exchangeService.requestCancelExchange(exchangeBean.getId());
-			response.setSuccess(Boolean.TRUE);
-		} catch (LogicException e) {
-			response.setMessage(e.getErrContent());
-		} catch (Exception e) {
-			response.setMessage("系统内部错误");
-		}
 		return response;
 	}
 	

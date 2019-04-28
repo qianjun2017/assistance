@@ -22,7 +22,7 @@ import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
 import com.cc.common.web.Response;
-import com.cc.customer.bean.CustomerBean;
+import com.cc.leaguer.bean.LeaguerBean;
 import com.cc.push.bean.PageBean;
 import com.cc.push.bean.PushBean;
 import com.cc.push.bean.PushUserBean;
@@ -159,12 +159,12 @@ public class PushController {
 			}
 			pushService.savePush(pushBean);
 			for(Long userId: form.getUserList()){
-				CustomerBean customerBean = CustomerBean.get(CustomerBean.class, userId);
-				if(customerBean!=null){
+				LeaguerBean leaguerBean = LeaguerBean.get(LeaguerBean.class, userId);
+				if(leaguerBean!=null){
 					PushUserBean pushUserBean = new PushUserBean();
-					pushUserBean.setName(customerBean.getName());
-					pushUserBean.setOpenid(customerBean.getOpenid());
-					pushUserBean.setUserId(customerBean.getId());
+					pushUserBean.setName(leaguerBean.getLeaguerName());
+					pushUserBean.setOpenid(leaguerBean.getOpenid());
+					pushUserBean.setUserId(leaguerBean.getId());
 					pushUserBean.setPushId(pushBean.getId());
 					pushService.savePushUser(pushUserBean);
 				}

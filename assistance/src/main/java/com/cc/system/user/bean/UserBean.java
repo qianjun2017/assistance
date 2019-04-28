@@ -87,6 +87,11 @@ public class UserBean extends BaseOrm<UserBean> implements BaseEntity {
 	 */
 	private String userType;
 	
+	/**
+	 * 用户状态
+	 */
+	private String status;
+	
 	/* (non-Javadoc)
 	 * @see com.cc.common.orm.BaseOrm#getId()
 	 */
@@ -254,6 +259,14 @@ public class UserBean extends BaseOrm<UserBean> implements BaseEntity {
 	 */
 	public void setUserType(String userType) {
 		this.userType = userType;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }

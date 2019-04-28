@@ -37,4 +37,13 @@ public interface HttpService {
 	 * @return
 	 */
 	byte[] postForBytes(String url, Map<String, Object> paramMap, String encoding);
+
+	/**
+	 * post请求
+	 * @param url 资源地址
+	 * @param soap 请求数据
+	 * @param encoding 编码
+	 * @return
+	 */
+	String postSoap(String url, String soap, String encoding);
 }

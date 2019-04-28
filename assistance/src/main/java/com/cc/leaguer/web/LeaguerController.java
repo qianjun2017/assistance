@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,27 +24,21 @@ import com.cc.common.tools.DateTools;
 import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
-import com.cc.common.web.RequestContextUtil;
 import com.cc.common.web.Response;
+import com.cc.integration.bean.IntegrationBean;
+import com.cc.leaguer.bean.CardLevelBean;
 import com.cc.leaguer.bean.LeaguerBean;
 import com.cc.leaguer.bean.LeaguerChannelBean;
 import com.cc.leaguer.enums.LeaguerStatusEnum;
 import com.cc.leaguer.form.LeaguerQueryForm;
+import com.cc.leaguer.service.CardService;
 import com.cc.leaguer.service.LeaguerChannelService;
 import com.cc.leaguer.service.LeaguerService;
-import com.cc.map.http.request.IpLocationRequest;
-import com.cc.map.http.response.IpLocationResponse;
-import com.cc.map.service.MapService;
-import com.cc.system.config.bean.SystemConfigBean;
-import com.cc.system.config.service.SystemConfigService;
 import com.cc.system.location.result.LocationResult;
 import com.cc.system.location.service.LocationService;
 import com.cc.system.log.annotation.OperationLog;
 import com.cc.system.log.enums.ModuleEnum;
 import com.cc.system.log.enums.OperTypeEnum;
-import com.cc.system.log.form.LogQueryForm;
-import com.cc.system.log.service.LogService;
-import com.cc.system.shiro.SecurityContextUtil;
 
 /**
  * 会员
@@ -65,15 +57,9 @@ public class LeaguerController {
 	
 	@Autowired
 	private LocationService locationService;
-	
+
 	@Autowired
-	private MapService mapService;
-	
-	@Autowired
-	private LogService logService;
-	
-	@Autowired
-	private SystemConfigService systemConfigService;
+	private CardService cardService;
 	
 	/**
 	 * 查询会员信息
@@ -84,24 +70,9 @@ public class LeaguerController {
 	@RequestMapping(value = "/get/{id:\\d+}", method = RequestMethod.GET)
 	public Response<Map<String, Object>> queryLeaguer(@PathVariable Long id){
 		Response<Map<String, Object>> response = new Response<Map<String, Object>>();
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			response.setMessage("请先登录");
-			return response;
-		}
-		LeaguerBean leaguerBean = null;
-		if (UserTypeEnum.LEAGUER.getCode().equals(user.getUserType())) {
-			List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-			if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size()>1) {
-				response.setMessage("您还未注册");
-				return response;
-			}
-			leaguerBean = leaguerBeanList.get(0);
-		}else{
-			leaguerBean = LeaguerBean.get(LeaguerBean.class, id);
-		}
+		LeaguerBean leaguerBean = LeaguerBean.get(LeaguerBean.class, id);
 		if (leaguerBean == null) {
-			response.setMessage("会员不存在");
+			response.setMessage("会员不存在或已删除");
 			return response;
 		}
 		Map<String, Object> leaguer = new HashMap<String, Object>();
@@ -121,6 +92,17 @@ public class LeaguerController {
 		if(!ListTools.isEmptyOrNull(leaguerChannelBeanList)){
 			leaguer.put("channelList", leaguerChannelBeanList.stream().map(channel->channel.getChannelId()).collect(Collectors.toList()));
 		}
+		List<IntegrationBean> integrationBeanList = IntegrationBean.findAllByParams(IntegrationBean.class, "leaguerId", leaguerBean.getId());
+		if(!ListTools.isEmptyOrNull(integrationBeanList)){
+			IntegrationBean integrationBean = integrationBeanList.get(0);
+			leaguer.put("cardNo", integrationBean.getCardNo());
+			CardLevelBean cardLevelBean = cardService.queryCardLevelByGradeIntegration(integrationBean.getGradeIntegration());
+			if(cardLevelBean!=null){
+				leaguer.put("cardLevel", cardLevelBean.getName());
+				leaguer.put("cardImage", cardLevelBean.getImageUrl());
+				leaguer.put("ardColor", cardLevelBean.getColor());
+			}
+		}
 		response.setData(leaguer);
 		response.setSuccess(Boolean.TRUE);
 		return response;
@@ -139,7 +121,7 @@ public class LeaguerController {
 		Response<String> response = new Response<String>();
 		LeaguerBean leaguerBean = LeaguerBean.get(LeaguerBean.class, id);
 		if (leaguerBean == null) {
-			response.setMessage("会员不存在");
+			response.setMessage("会员不存在或已删除");
 			return response;
 		}
 		try {
@@ -167,7 +149,7 @@ public class LeaguerController {
 		Response<String> response = new Response<String>();
 		LeaguerBean leaguerBean = LeaguerBean.get(LeaguerBean.class, id);
 		if (leaguerBean == null) {
-			response.setMessage("会员不存在");
+			response.setMessage("会员不存在或已删除");
 			return response;
 		}
 		try {
@@ -192,42 +174,6 @@ public class LeaguerController {
 	public Page<Map<String, Object>> queryLeaguerPage(@ModelAttribute LeaguerQueryForm form){
 		Page<Map<String, Object>> page = leaguerService.queryLeaguerPage(form);
 		return page;
-	}
-	
-	/**
-	 * 绑定邮箱
-	 * @param email
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/email", method = RequestMethod.POST)
-	@OperationLog(module = ModuleEnum.LEAGUERMANAGEMENT, operType = OperTypeEnum.BIND, title = "绑定邮箱")
-	public Response<String> bindLeaguerEmail(String email){
-		Response<String> response = new Response<String>();
-		if (StringTools.isNullOrNone(email)) {
-			response.setMessage("请输入邮箱");
-			return response;
-		}
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			response.setMessage("请先登录");
-			return response;
-		}
-		List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-		if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size()>1) {
-			response.setMessage("绑定邮箱失败");
-			return response;
-		}
-		try {
-			leaguerService.bindEmail(leaguerBeanList.get(0).getId(), email);
-			response.setSuccess(Boolean.TRUE);
-		} catch (LogicException e) {
-			response.setMessage(e.getErrContent());
-		} catch (Exception e) {
-			response.setMessage("系统内部错误");
-			e.printStackTrace();
-		}
-		return response;
 	}
 	
 	/**
@@ -274,136 +220,6 @@ public class LeaguerController {
 			response.setMessage("系统内部错误");
 			e.printStackTrace();
 		}
-		return response;
-	}
-	
-	/**
-	 * 会员签到
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value="/checkin", method = RequestMethod.POST)
-	@OperationLog(module = ModuleEnum.LEAGUERMANAGEMENT, operType = OperTypeEnum.CHECKIN, title = "会员签到")
-	public Response<Object> checkin(){
-		Response<Object> response = new Response<Object>();
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			response.setMessage("请先登录");
-			return response;
-		}
-		if (UserTypeEnum.LEAGUER.getCode().equals(user.getUserType())) {
-			List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-			if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size()>1) {
-				response.setMessage("您还未注册");
-				return response;
-			}
-			try {
-				leaguerService.checkin(leaguerBeanList.get(0).getId());
-				response.setSuccess(Boolean.TRUE);
-			} catch (LogicException e) {
-				response.setMessage(e.getErrContent());
-				return response;
-			} catch (Exception e) {
-				response.setMessage("系统内部错误");
-				return response;
-			}
-		}else{
-			response.setMessage("对不起,您无权操作");
-		}
-		return response;
-	}
-	
-	/**
-	 * 会员定位
-	 * @param request
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value="/locate", method = RequestMethod.POST)
-	public Response<Object> locateLeaguer(HttpServletRequest request){
-		Response<Object> response = new Response<Object>();
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			response.setMessage("请先登录");
-			return response;
-		}
-		if (!UserTypeEnum.LEAGUER.getCode().equals(user.getUserType())) {
-			response.setMessage("暂不支持定位功能");
-			return response;
-		}
-		List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-		if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size()>1) {
-			response.setMessage("您还未注册");
-			return response;
-		}
-		LeaguerBean leaguerBean = leaguerBeanList.get(0);
-		IpLocationRequest ipLocationRequest = new IpLocationRequest();
-		SystemConfigBean akSystemConfigBean = systemConfigService.querySystemConfigBean("map.ak");
-		if(akSystemConfigBean==null){
-			response.setMessage("系统内部错误");
-			return response;
-		}
-		ipLocationRequest.setAk(akSystemConfigBean.getPropertyValue());
-		SystemConfigBean skSystemConfigBean = systemConfigService.querySystemConfigBean("map.sk");
-		if(skSystemConfigBean!=null){
-			ipLocationRequest.setSk(skSystemConfigBean.getPropertyValue());
-		}
-		ipLocationRequest.setIp(RequestContextUtil.getIpAddr(request));
-		IpLocationResponse ipLocationResponse = mapService.queryIpLocation(ipLocationRequest);
-		if(!ipLocationResponse.isSuccess()){
-			response.setMessage(ipLocationResponse.getMessage());
-			return response;
-		}
-		leaguerBean.setLocationId(locationService.saveLocation("中国", ipLocationResponse.getContent().getAddressDetail().getProvince(), ipLocationResponse.getContent().getAddressDetail().getCity(), ipLocationResponse.getContent().getAddressDetail().getDistrict()));
-		leaguerBean.update();
-		response.setSuccess(Boolean.TRUE);
-		return response;
-	}
-	
-	/**
-	 * 定位会员
-	 * @param id
-	 * @return
-	 */
-	@ResponseBody
-	@RequiresPermissions(value = { "leaguer.locate" })
-	@RequestMapping(value="/locate/{id:\\d+}", method = RequestMethod.POST)
-	@OperationLog(module = ModuleEnum.LEAGUERMANAGEMENT, operType = OperTypeEnum.LOCATE, title = "定位会员", paramNames = {"id"})
-	public Response<Object> locateLeaguer(@PathVariable Long id){
-		Response<Object> response = new Response<Object>();
-		LeaguerBean leaguerBean = LeaguerBean.get(LeaguerBean.class, id);
-		if(leaguerBean==null){
-			response.setMessage("会员不存在");
-			return response;
-		}
-		IpLocationRequest ipLocationRequest = new IpLocationRequest();
-		SystemConfigBean akSystemConfigBean = systemConfigService.querySystemConfigBean("map.ak");
-		if(akSystemConfigBean==null){
-			response.setMessage("请配置百度开发者ak");
-			return response;
-		}
-		ipLocationRequest.setAk(akSystemConfigBean.getPropertyValue());
-		SystemConfigBean skSystemConfigBean = systemConfigService.querySystemConfigBean("map.sk");
-		if(skSystemConfigBean!=null){
-			ipLocationRequest.setSk(skSystemConfigBean.getPropertyValue());
-		}
-		LogQueryForm form = new LogQueryForm();
-		form.setUserId(leaguerBean.getUid());
-		form.setPageSize("1");
-		Page<Map<String, Object>> page = logService.queryOperationLogPage(form);
-		if(!page.isSuccess() || ListTools.isEmptyOrNull(page.getData())){
-			response.setMessage("暂未查询到会员的操作日志记录");
-			return response;
-		}
-		ipLocationRequest.setIp(logService.getOperationLogBeanById(Long.valueOf(String.valueOf(page.getData().get(0).get("id")))).getClientIp());
-		IpLocationResponse ipLocationResponse = mapService.queryIpLocation(ipLocationRequest);
-		if(!ipLocationResponse.isSuccess()){
-			response.setMessage(ipLocationResponse.getMessage());
-			return response;
-		}
-		leaguerBean.setLocationId(locationService.saveLocation("中国", ipLocationResponse.getContent().getAddressDetail().getProvince(), ipLocationResponse.getContent().getAddressDetail().getCity(), ipLocationResponse.getContent().getAddressDetail().getDistrict()));
-		leaguerBean.update();
-		response.setSuccess(Boolean.TRUE);
 		return response;
 	}
 }

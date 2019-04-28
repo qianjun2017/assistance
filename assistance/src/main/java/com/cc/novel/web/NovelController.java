@@ -6,18 +6,9 @@ package com.cc.novel.web;
 import java.util.List;
 import java.util.Map;
 
-import com.cc.common.tools.DateTools;
-import com.cc.exchange.bean.ExchangeBean;
-import com.cc.exchange.enums.ExchangeStatusEnum;
-import com.cc.exchange.service.ExchangeService;
-import com.cc.leaguer.bean.LeaguerBean;
 import com.cc.novel.bean.*;
 import com.cc.novel.enums.SpiderTypeEnum;
-import com.cc.novel.form.NovelExchangeQueryForm;
 import com.cc.novel.result.NovelChapterResult;
-import com.cc.system.shiro.SecurityContextUtil;
-import com.cc.user.bean.TUserBean;
-import com.cc.user.enums.UserTypeEnum;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +42,6 @@ public class NovelController {
 	@Autowired
 	private NovelService novelService;
 
-	@Autowired
-	private ExchangeService exchangeService;
-
 	/**
 	 * 查询爬虫类型
 	 * @return
@@ -79,15 +67,8 @@ public class NovelController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
-	@OperationLog(module = ModuleEnum.NOVELMANAGEMENT, operType = OperTypeEnum.SEARCH, title = "小说检索")
 	public Page<NovelBean> queryNovelBeanPage(@ModelAttribute NovelQueryForm form){
-		if(!StringTools.isNullOrNone(form.getKeywords())){
-			LogContextUtil.setOperContent(form.getKeywords());
-		}else{
-			LogContextUtil.setRecordLog(Boolean.FALSE);
-		}
-		Page<NovelBean> page = novelService.queryNovelBeanPage(form);
-		return page;
+		return novelService.queryNovelBeanPage(form);
 	}
 	
 	/**
@@ -102,7 +83,7 @@ public class NovelController {
 		Response<NovelResult> response = new Response<NovelResult>();
 		NovelBean novelBean = NovelBean.get(NovelBean.class, id);
 		if (novelBean==null) {
-			response.setMessage("小说不存在");
+			response.setMessage("小说不存在或已删除");
 			return response;
 		}
 		NovelResult novelResult = new NovelResult();
@@ -145,7 +126,7 @@ public class NovelController {
 		Response<String> response = new Response<String>();
 		NovelBean novelBean = NovelBean.get(NovelBean.class, id);
 		if (novelBean==null) {
-			response.setMessage("小说不存在");
+			response.setMessage("小说不存在或已删除");
 			return response;
 		}
 		try {
@@ -174,7 +155,7 @@ public class NovelController {
 		Response<String> response = new Response<String>();
 		NovelBean novelBean = NovelBean.get(NovelBean.class, id);
 		if (novelBean==null) {
-			response.setMessage("小说不存在");
+			response.setMessage("小说不存在或已删除");
 			return response;
 		}
 		try {
@@ -223,7 +204,7 @@ public class NovelController {
 		Response<NovelChapterResult> response = new Response<NovelChapterResult>();
 		NovelChapterBean novelChapterBean = NovelChapterBean.get(NovelChapterBean.class, id);
 		if (novelChapterBean==null){
-			response.setMessage("章节不存在");
+			response.setMessage("章节不存在或已删除");
 			return response;
 		}
 		NovelChapterResult novelChapterResult = new NovelChapterResult();
@@ -271,7 +252,7 @@ public class NovelController {
 		}
 		NovelChapterBean novelChapterBean = NovelChapterBean.get(NovelChapterBean.class, Long.valueOf(id));
 		if (novelChapterBean==null){
-			response.setMessage("章节不存在");
+			response.setMessage("章节不存在或已删除");
 			return response;
 		}
 		String preId = chapterMap.get("preId");
@@ -396,7 +377,7 @@ public class NovelController {
 		Long novelId = Long.valueOf(orderMap.get("novelId"));
 		NovelBean novelBean = NovelBean.get(NovelBean.class, novelId);
 		if (novelBean==null) {
-			response.setMessage("小说不存在");
+			response.setMessage("小说不存在或已删除");
 			return response;
 		}
 		Long chapterId;
@@ -428,221 +409,6 @@ public class NovelController {
 			e.printStackTrace();
 		}
 		return response;
-	}
-
-	/**
-	 * 取消兑换申请
-	 * @param novelId
-	 * @return
-	 */
-	@ResponseBody
-	@RequiresPermissions(value = { "leaguer.novel" })
-	@RequestMapping(value = "/exchange/cancel/{novelId:\\d+}", method = RequestMethod.POST)
-	public Response<Object> requestCancelExchange(@PathVariable Long novelId){
-		Response<Object> response = new Response<Object>();
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			response.setMessage("请先登录");
-			return response;
-		}
-		List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-		if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size()>1) {
-			response.setMessage("取消兑换申请失败");
-			return response;
-		}
-		List<ExchangeBean> exchangeBeanList = ExchangeBean.findAllByParams(ExchangeBean.class, "itemId", novelId, "leaguerId", leaguerBeanList.get(0).getId(), "channelCode", "novel", "sort", "createTime", "order", "desc");
-		if (ListTools.isEmptyOrNull(exchangeBeanList)) {
-			response.setMessage("您还未兑换小说");
-			return response;
-		}
-		ExchangeBean exchangeBean = exchangeBeanList.get(0);
-		ExchangeStatusEnum exchangeStatusEnum = ExchangeStatusEnum.getExchangeStatusEnumByCode(exchangeBean.getStatus());
-		if (ExchangeStatusEnum.PENDING.equals(exchangeStatusEnum)) {
-			response.setMessage("取消兑换申请处理中");
-			return response;
-		}
-		if (ExchangeStatusEnum.CANCELLED.equals(exchangeStatusEnum)) {
-			response.setMessage("兑换已取消");
-			return response;
-		}
-		try {
-			exchangeService.requestCancelExchange(exchangeBean.getId());
-			response.setSuccess(Boolean.TRUE);
-		} catch (LogicException e) {
-			response.setMessage(e.getErrContent());
-		} catch (Exception e) {
-			response.setMessage("系统内部错误");
-		}
-		return response;
-	}
-
-	/**
-	 * 阅读小说
-	 * @param novelId
-	 * @param chapterId
-	 * @return
-	 */
-	@ResponseBody
-	@RequiresPermissions(value = { "leaguer.novel" })
-	@RequestMapping(value = "/read", method = RequestMethod.GET)
-	@OperationLog(module = ModuleEnum.NOVELMANAGEMENT, operType = OperTypeEnum.READ, title = "阅读小说", paramNames = {"novelId", "chapterId"})
-	public Response<Long> readNovel(Long novelId, Long chapterId){
-		LogContextUtil.setRecordLog(Boolean.FALSE);
-		Response<Long> response = new Response<Long>();
-		NovelBean novelBean = NovelBean.get(NovelBean.class, novelId);
-		if (novelBean==null) {
-			response.setMessage("小说不存在");
-			return response;
-		}
-		com.cc.user.bean.TUserBean tUserBean = SecurityContextUtil.getCurrentUser();
-		if(tUserBean==null){
-			response.setMessage("未登录用户");
-			return response;
-		}
-		if (chapterId!=null){
-			response.setData(chapterId);
-		}else{
-			List<NovelChapterUserBean> novelChapterUserBeanList = NovelChapterUserBean.findAllByParams(NovelChapterUserBean.class, "userId", tUserBean.getId(), "novelId", novelId);
-			if (ListTools.isEmptyOrNull(novelChapterUserBeanList)){
-				NovelChapterBean novelChapterBean = novelService.queryNovelMinOrderedChapter(novelId);
-				if(novelChapterBean!=null){
-					response.setData(novelChapterBean.getId());
-				}else{
-					response.setMessage("章节维护中，请通过章节列表选择具体章节");
-					return response;
-				}
-			}else{
-				response.setData(novelChapterUserBeanList.get(0).getChapterId());
-			}
-		}
-		LogContextUtil.setOperContent("用户["+tUserBean.getUserName()+"]正在阅读小说["+novelBean.getName()+"]");
-		LogContextUtil.setRecordLog(Boolean.TRUE);
-		response.setSuccess(Boolean.TRUE);
-		return response;
-	}
-	
-	/**
-	 * 阅读小说章节，记录阅读位置
-	 * @param id
-	 * @return
-	 */
-	@ResponseBody
-	@RequiresPermissions(value = { "leaguer.novel" })
-	@RequestMapping(value = "/chapter/read/{id:\\d+}", method = RequestMethod.POST)
-	public Response<String> readNovelChapter(@PathVariable Long id){
-		Response<String> response = new Response<String>();
-		NovelChapterBean novelChapterBean = NovelChapterBean.get(NovelChapterBean.class, id);
-		if (novelChapterBean==null) {
-			response.setMessage("小说章节不存在");
-			return response;
-		}
-		com.cc.user.bean.TUserBean tUserBean = SecurityContextUtil.getCurrentUser();
-		if(tUserBean==null){
-			response.setMessage("未登录用户");
-			return response;
-		}
-		NovelChapterUserBean novelChapterUserBean;
-		List<NovelChapterUserBean> novelChapterUserBeanList = NovelChapterUserBean.findAllByParams(NovelChapterUserBean.class, "userId", tUserBean.getId(), "novelId", novelChapterBean.getNovelId());
-		if(ListTools.isEmptyOrNull(novelChapterUserBeanList)){
-			novelChapterUserBean = new NovelChapterUserBean();
-			novelChapterUserBean.setNovelId(novelChapterBean.getNovelId());
-			novelChapterUserBean.setUserId(tUserBean.getId());
-		}else{
-			novelChapterUserBean = novelChapterUserBeanList.get(0);
-			
-		}
-		novelChapterUserBean.setChapterId(id);
-		try {
-			novelService.saveNovelChapterUserBean(novelChapterUserBean);
-			response.setSuccess(Boolean.TRUE);
-		} catch (LogicException e) {
-			response.setMessage(e.getErrContent());
-		} catch (Exception e) {
-			response.setMessage("系统内部错误");
-			e.printStackTrace();
-		}
-		return response;
-	}
-
-	/**
-	 * 兑换小说
-	 * @param id
-	 * @return
-	 */
-	@ResponseBody
-	@RequiresPermissions(value = { "leaguer.novel" })
-	@RequestMapping(value = "/exchange/{id:\\d+}", method = RequestMethod.POST)
-	@OperationLog(module = ModuleEnum.NOVELMANAGEMENT, operType = OperTypeEnum.EXCHANGE, title = "兑换", paramNames = {"id"})
-	public Response<String> exchange(@PathVariable Long id){
-		Response<String> response = new Response<String>();
-		NovelBean novelBean = NovelBean.get(NovelBean.class, id);
-		if (novelBean==null) {
-			response.setMessage("小说不存在");
-			return response;
-		}
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			response.setMessage("请先登录");
-			return response;
-		}
-		List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-		if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size()>1) {
-			response.setMessage("兑换失败");
-			return response;
-		}
-		ExchangeBean exchangeBean = new ExchangeBean();
-		exchangeBean.setChannelCode("novel");
-		exchangeBean.setCreateTime(DateTools.now());
-		exchangeBean.setIntegration(novelBean.getIntegration());
-		exchangeBean.setItemId(novelBean.getId());
-		exchangeBean.setItemName(novelBean.getName());
-		exchangeBean.setLeaguerId(leaguerBeanList.get(0).getId());
-		try {
-			exchangeService.saveExchange(exchangeBean);
-			response.setSuccess(Boolean.TRUE);
-			if(NovelLoadingStatusEnum.UNLOAD.equals(NovelLoadingStatusEnum.getNovelLoadingStatusEnumByCode(novelBean.getDownloading()))){
-				try {
-					novelService.downloadNovel(novelBean.getId(), Boolean.FALSE);
-					LogContextUtil.setOperContent("已发送下载请求");
-				} catch (LogicException e) {
-					LogContextUtil.setOperContent(e.getErrContent());
-				} catch (Exception e) {
-					LogContextUtil.setOperContent("下载小说时发生系统内部错误");
-				}
-			}
-		} catch (LogicException e) {
-			response.setMessage(e.getErrContent());
-		} catch (Exception e) {
-			response.setMessage("系统内部错误");
-			e.printStackTrace();
-		}
-		return response;
-	}
-
-	/**
-	 * 获取兑换小说
-	 * @param form
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/exchange/page", method = RequestMethod.GET)
-	public Page<NovelBean> queryExchangeNovelPage(@ModelAttribute NovelExchangeQueryForm form){
-		Page<NovelBean> page = new Page<NovelBean>();
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			page.setMessage("请先登录");
-			return page;
-		}
-		if (UserTypeEnum.LEAGUER.getCode().equals(user.getUserType())) {
-			List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-			if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size()>1) {
-				page.setMessage("查询兑换记录失败");
-				return page;
-			}
-			form.setLeaguerId(leaguerBeanList.get(0).getId());
-		}
-		page = novelService.queryExchangeNovelPage(form);
-		return page;
 	}
 	
 	/**
@@ -681,7 +447,7 @@ public class NovelController {
 		Response<Object> response = new Response<Object>();
 		NovelBean novelBean = NovelBean.get(NovelBean.class, id);
 		if (novelBean==null) {
-			response.setMessage("小说不存在");
+			response.setMessage("小说不存在或已删除");
 			return response;
 		}
 		try {

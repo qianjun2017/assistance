@@ -25,13 +25,9 @@ import com.cc.integration.event.Event;
 import com.cc.integration.event.EventFactory;
 import com.cc.integration.service.IntegrationEventService;
 import com.cc.integration.service.IntegrationService;
-import com.cc.leaguer.bean.LeaguerBean;
 import com.cc.system.log.annotation.OperationLog;
 import com.cc.system.log.enums.ModuleEnum;
 import com.cc.system.log.enums.OperTypeEnum;
-import com.cc.system.shiro.SecurityContextUtil;
-import com.cc.user.bean.TUserBean;
-import com.cc.user.enums.UserTypeEnum;
 
 /**
  * @author Administrator
@@ -106,38 +102,6 @@ public class IntegrationController {
 			response.setMessage("创建积分账户异常");
 			e.printStackTrace();
 		}
-		return response;
-	}
-	
-	/**
-	 * 获取会员积分
-	 * @param leaguerId
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/get/{leaguerId}", method = RequestMethod.GET)
-	public Response<IntegrationBean> queryIntegration(@PathVariable Long leaguerId){
-		Response<IntegrationBean> response = new Response<IntegrationBean>();
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			response.setMessage("请先登录");
-			return response;
-		}
-		if (UserTypeEnum.LEAGUER.getCode().equals(user.getUserType())) {
-			List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-			if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size()>1) {
-				response.setMessage("您还未注册");
-				return response;
-			}
-			leaguerId = leaguerBeanList.get(0).getId();
-		}
-		List<IntegrationBean> integrationBeanList = IntegrationBean.findAllByParams(IntegrationBean.class, "leaguerId", leaguerId);
-		if (ListTools.isEmptyOrNull(integrationBeanList)) {
-			response.setMessage("尚未创建积分账户");
-			return response;
-		}
-		response.setData(integrationBeanList.get(0));
-		response.setSuccess(Boolean.TRUE);
 		return response;
 	}
 	

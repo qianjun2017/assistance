@@ -7,7 +7,7 @@ import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.cc.common.web.QueryForm;
+import com.cc.common.form.QueryForm;
 
 /**
  * @author Administrator

@@ -5,7 +5,7 @@ package com.cc.activity.form;
 
 import java.util.Date;
 
-import com.cc.common.web.QueryForm;
+import com.cc.common.form.QueryForm;
 
 /**
  * @author Administrator

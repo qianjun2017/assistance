@@ -1,4 +1,4 @@
-package com.cc.common.web;
+package com.cc.common.form;
 
 import com.cc.common.tools.StringTools;
 

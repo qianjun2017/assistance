@@ -33,13 +33,10 @@ import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
 import com.cc.common.web.Response;
-import com.cc.system.location.bean.LocationBean;
 import com.cc.system.log.annotation.OperationLog;
 import com.cc.system.log.enums.ModuleEnum;
 import com.cc.system.log.enums.OperTypeEnum;
 import com.cc.system.log.utils.LogContextUtil;
-import com.cc.system.shiro.SecurityContextUtil;
-import com.cc.system.user.bean.UserBean;
 
 /**
  * @author Administrator
