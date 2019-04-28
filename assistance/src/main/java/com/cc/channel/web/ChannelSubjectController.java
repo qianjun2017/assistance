@@ -261,7 +261,7 @@ public class ChannelSubjectController {
 		try {
 			ChannelSubjectBean channelSubjectBean = ChannelSubjectBean.get(ChannelSubjectBean.class, id);
 			if (channelSubjectBean==null) {
-				response.setMessage("专题不存在");
+				response.setMessage("专题不存在或已删除");
 				return response;
 			}
 			response.setData(channelSubjectBean);
@@ -310,7 +310,7 @@ public class ChannelSubjectController {
 		Long subjectId = Long.valueOf(StringTools.toString(subject));
 		ChannelSubjectBean channelSubjectBean = ChannelSubjectBean.get(ChannelSubjectBean.class, subjectId);
 		if(channelSubjectBean==null){
-			response.setMessage("专题不存在");
+			response.setMessage("专题不存在或已删除");
 			return response;
 		}
 		Object object = subjectItemMap.get("subjectItemList");
@@ -373,11 +373,6 @@ public class ChannelSubjectController {
 	@RequestMapping(value = "/item/list", method = RequestMethod.GET)
 	public Response<Object> queryChannelSubjectItemList(@ModelAttribute ChannelSubjectItemQueryForm form){
 		Response<Object> response = new Response<Object>();
-		UserBean userBean = SecurityContextUtil.getCurrentUser();
-		if (userBean==null) {
-			response.setMessage("请先登录");
-			return response;
-		}
 		if(form.getLocation()){
 			Long locationId = form.getLocationId();
 			List<Long> locationIdList = new ArrayList<Long>();
@@ -391,14 +386,14 @@ public class ChannelSubjectController {
 				}
 			}
 			if(ListTools.isEmptyOrNull(locationIdList)){
-				response.setMessage("没有查询到符合条件的活动数据");
+				response.setMessage("没有查询到符合条件的专题数据");
 				return response;
 			}
 			form.setLocationIdList(locationIdList);
 		}
 		List<ChannelSubjectItemResult> channelSubjectItemList = channelSubjectService.queryChannelSubjectItemList(form);
 		if(ListTools.isEmptyOrNull(channelSubjectItemList)) {
-			response.setMessage("没有查询到专题内容");
+			response.setMessage("没有查询到符合条件的专题数据");
 			return response;
 		}
 		response.setData(channelSubjectItemList);
@@ -419,7 +414,7 @@ public class ChannelSubjectController {
 		Response<String> response = new Response<String>();
 		ChannelSubjectBean channelSubjectBean = ChannelSubjectBean.get(ChannelSubjectBean.class, id);
 		if (channelSubjectBean==null) {
-			response.setMessage("专题不存在");
+			response.setMessage("专题不存在或已删除");
 			return response;
 		}
 		try {
@@ -448,7 +443,7 @@ public class ChannelSubjectController {
 		Response<String> response = new Response<String>();
 		ChannelSubjectBean channelSubjectBean = ChannelSubjectBean.get(ChannelSubjectBean.class, id);
 		if (channelSubjectBean==null) {
-			response.setMessage("专题不存在");
+			response.setMessage("专题不存在或已删除");
 			return response;
 		}
 		try {

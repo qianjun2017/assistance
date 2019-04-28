@@ -52,6 +52,13 @@ public interface ChannelSubjectService {
 	Page<ChannelSubjectResult> queryChannelSubjectPage(ChannelSubjectQueryForm form);
 	
 	/**
+	 * 查询频道专题列表
+	 * @param channelId
+	 * @return
+	 */
+	List<ChannelSubjectBean> queryChannelSubjectList(Long channelId);
+	
+	/**
 	 * 查询专题内容
 	 * @param form
 	 * @return

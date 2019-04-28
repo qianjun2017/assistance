@@ -184,4 +184,11 @@ public class CarouselServiceImpl implements CarouselService {
 		}
 	}
 
+	@Override
+	public List<CarouselBean> queryCarouselList(CarouselQueryForm form) {
+		PageHelper.orderBy(String.format("c.%s %s", form.getSort(), form.getOrder()));
+		List<CarouselBean> carouselBeanList = carouselDao.queryCarouselList(form);
+		return carouselBeanList;
+	}
+
 }

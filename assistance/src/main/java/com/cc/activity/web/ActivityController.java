@@ -3,7 +3,6 @@
  */
 package com.cc.activity.web;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,6 @@ import com.cc.activity.enums.ActivityStatusEnum;
 import com.cc.activity.enums.ActivityTypeEnum;
 import com.cc.activity.form.ActivityForm;
 import com.cc.activity.form.ActivityImageSampleForm;
-import com.cc.activity.form.ActivityParticipateForm;
 import com.cc.activity.form.ActivityParticipateQueryForm;
 import com.cc.activity.form.ActivityParticipateStatisticsQueryForm;
 import com.cc.activity.form.ActivityQueryForm;
@@ -48,14 +46,11 @@ import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
 import com.cc.common.web.Response;
 import com.cc.leaguer.bean.LeaguerBean;
-import com.cc.system.config.bean.SystemConfigBean;
-import com.cc.system.config.service.SystemConfigService;
 import com.cc.system.location.bean.LocationBean;
 import com.cc.system.log.annotation.OperationLog;
 import com.cc.system.log.enums.ModuleEnum;
 import com.cc.system.log.enums.OperTypeEnum;
 import com.cc.system.log.utils.LogContextUtil;
-import com.cc.system.shiro.SecurityContextUtil;
 
 /**
  * @author Administrator
@@ -67,9 +62,6 @@ public class ActivityController {
 
 	@Autowired 
 	private ActivityService activityService;
-	
-	@Autowired
-	private SystemConfigService systemConfigService;
 	
 	/**
 	 * 查活动类型
@@ -221,7 +213,7 @@ public class ActivityController {
 		Response<ActivityResult> response = new Response<ActivityResult>();
 		ActivityBean activityBean = ActivityBean.get(ActivityBean.class, id);
 		if (activityBean==null) {
-			response.setMessage("活动不存在");
+			response.setMessage("活动不存在或已删除");
 			return response;
 		}
 		ActivityResult activityResult = new ActivityResult();
@@ -274,65 +266,6 @@ public class ActivityController {
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public Page<Map<String, Object>> queryActivityPage(@ModelAttribute ActivityQueryForm form){
 		return activityService.queryActivityPage(form);
-	}
-	
-	/**
-	 * 参与活动
-	 * @param participateMap
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/participate", method = RequestMethod.POST)
-	@OperationLog(module = ModuleEnum.ACTIVITYMANAGEMENT, operType = OperTypeEnum.PARTICIPATE, title="参与活动")
-	public Response<String> participateActivity(@RequestBody Map<String, Object> participateMap){
-		Response<String> response = new Response<String>();
-		ActivityParticipateForm activityParticipate = JsonTools.toObject(JsonTools.toJsonString(participateMap), ActivityParticipateForm.class);
-		if (activityParticipate.getActivityId()==null) {
-			response.setMessage("请选择活动");
-			return response;
-		}
-		ActivityBean activityBean = ActivityBean.get(ActivityBean.class, activityParticipate.getActivityId());
-		if (activityBean==null) {
-			response.setMessage("活动不存在");
-			return response;
-		}
-		TUserBean user = SecurityContextUtil.getCurrentUser();
-		if (user==null) {
-			response.setMessage("请先登录");
-			return response;
-		}
-		if (UserTypeEnum.LEAGUER.getCode().equals(user.getUserType())) {
-			List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "uid", user.getId());
-			if (ListTools.isEmptyOrNull(leaguerBeanList) || leaguerBeanList.size()>1) {
-				response.setMessage("参与活动失败");
-				return response;
-			}
-			LeaguerBean leaguerBean = leaguerBeanList.get(0);
-			activityParticipate.setLeaguerId(leaguerBean.getId());
-			Float credit = 0f;
-			SystemConfigBean systemConfigBean = systemConfigService.querySystemConfigBean("credit.autoAudit");
-			if (systemConfigBean!=null) {
-				credit = Float.parseFloat(systemConfigBean.getPropertyValue());
-			}
-			if (activityBean.getAutoAudit() && credit.compareTo(leaguerBean.getCredit())<=0) {
-				activityParticipate.setAutoAudit(Boolean.TRUE);
-			}else {
-				activityParticipate.setAutoAudit(Boolean.FALSE);
-			}
-		}else {
-			response.setMessage("参与活动失败");
-			return response;
-		}
-		try {
-			activityService.participateActivity(activityParticipate);
-			response.setSuccess(Boolean.TRUE);
-		} catch (LogicException e) {
-			response.setMessage(e.getErrContent());
-		} catch (Exception e) {
-			response.setMessage("系统内部错误");
-			e.printStackTrace();
-		}
-		return response;
 	}
 	
 	/**

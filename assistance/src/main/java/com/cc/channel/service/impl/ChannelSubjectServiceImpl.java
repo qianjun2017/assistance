@@ -160,4 +160,9 @@ public class ChannelSubjectServiceImpl implements ChannelSubjectService {
 		}
 	}
 
+	@Override
+	public List<ChannelSubjectBean> queryChannelSubjectList(Long channelId) {
+		return ChannelSubjectBean.findAllByParams(ChannelSubjectBean.class, "channelId", channelId, "sort", "createTime", "order", "desc");
+	}
+
 }

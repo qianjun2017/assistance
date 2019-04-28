@@ -3,8 +3,10 @@
  */
 package com.cc.carousel.service;
 
+import java.util.List;
 import java.util.Map;
 
+import com.cc.carousel.bean.CarouselBean;
 import com.cc.carousel.enums.CarouselStatusEnum;
 import com.cc.carousel.form.CarouselForm;
 import com.cc.carousel.form.CarouselQueryForm;
@@ -34,6 +36,13 @@ public interface CarouselService {
 	 * @return
 	 */
 	Page<Map<String, Object>> queryCarouselPage(CarouselQueryForm form);
+	
+	/**
+	 * 查询轮播图列表
+	 * @param form
+	 * @return
+	 */
+	List<CarouselBean> queryCarouselList(CarouselQueryForm form);
 	
 	/**
 	 * 改变轮播图状态

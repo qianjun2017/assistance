@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cc.api.form.LeaguerForm;
@@ -45,13 +46,9 @@ public class ApiLeaguerController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public Response<Object> queryLeaguerInfo(@RequestBody LeaguerForm form){
+	public Response<Object> queryLeaguerInfo(@RequestParam Long leaguerId){
 		Response<Object> response = new Response<Object>();
-		LeaguerBean leaguerBean = LeaguerBean.get(LeaguerBean.class, form.getLeaguerId());
-		if (leaguerBean == null) {
-			response.setMessage("会员不存在");
-			return response;
-		}
+		LeaguerBean leaguerBean = LeaguerBean.get(LeaguerBean.class, leaguerId);
 		LeaguerResult leaguerResult = JsonTools.covertObject(leaguerBean, LeaguerResult.class);
 		List<IntegrationBean> integrationBeanList = IntegrationBean.findAllByParams(IntegrationBean.class, "leaguerId", leaguerBean.getId());
 		if(!ListTools.isEmptyOrNull(integrationBeanList)){
@@ -78,11 +75,6 @@ public class ApiLeaguerController {
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public Response<Object> updateLeaguerInfo(@RequestBody LeaguerForm form){
 		Response<Object> response = new Response<Object>();
-		LeaguerBean leaguerBean = LeaguerBean.get(LeaguerBean.class, form.getLeaguerId());
-		if (leaguerBean == null) {
-			response.setMessage("会员不存在");
-			return response;
-		}
 		if(StringTools.isNullOrNone(form.getName())){
 			response.setMessage("姓名不能为空");
 			return response;
@@ -95,11 +87,13 @@ public class ApiLeaguerController {
 			response.setMessage("请输入11位有效手机号码");
             return response;
 		}
+		LeaguerBean leaguerBean = new LeaguerBean();
+		leaguerBean.setId(form.getLeaguerId());
 		leaguerBean.setLeaguerName(form.getName());
 		leaguerBean.setPhone(form.getPhone());
 		try {
 			leaguerService.saveLeaguer(leaguerBean);
-			LeaguerResult leaguerResult = JsonTools.covertObject(leaguerBean, LeaguerResult.class);
+			LeaguerResult leaguerResult = JsonTools.covertObject(LeaguerBean.get(LeaguerBean.class, form.getLeaguerId()), LeaguerResult.class);
 			List<IntegrationBean> integrationBeanList = IntegrationBean.findAllByParams(IntegrationBean.class, "leaguerId", leaguerBean.getId());
 			if(!ListTools.isEmptyOrNull(integrationBeanList)){
 				IntegrationBean integrationBean = integrationBeanList.get(0);

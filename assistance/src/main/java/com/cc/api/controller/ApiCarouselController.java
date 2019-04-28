@@ -4,14 +4,13 @@
 package com.cc.api.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cc.carousel.bean.CarouselBean;
@@ -20,7 +19,6 @@ import com.cc.carousel.enums.CarouselStatusEnum;
 import com.cc.carousel.form.CarouselQueryForm;
 import com.cc.carousel.service.CarouselService;
 import com.cc.common.tools.ListTools;
-import com.cc.common.web.Page;
 import com.cc.common.web.Response;
 
 /**
@@ -35,15 +33,25 @@ public class ApiCarouselController {
 	private CarouselService carouselService;
 	
 	/**
-	 * 分页查询轮播图
+	 * 查询轮播图
 	 * @param form
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public Page<Map<String, Object>> queryCarouselPage(@ModelAttribute CarouselQueryForm form){
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public Response<Object> queryCarouselList(@RequestParam Long channelId){
+		Response<Object> response = new Response<Object>();
+		CarouselQueryForm form = new CarouselQueryForm();
+		form.setChannelId(channelId);
 		form.setStatus(CarouselStatusEnum.ON.getCode());
-		return carouselService.queryCarouselPage(form);
+		List<CarouselBean> carouselBeanList = carouselService.queryCarouselList(form);
+		if(ListTools.isEmptyOrNull(carouselBeanList)){
+			response.setMessage("没有查询到相关轮播图数据");
+			return response;
+		}
+		response.setData(carouselBeanList);
+		response.setSuccess(Boolean.TRUE);
+		return response;
 	}
 	
 	/**

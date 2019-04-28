@@ -71,11 +71,6 @@ public class ApiFilter implements Filter {
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		RequestWrapper requestWrapper = new RequestWrapper(httpServletRequest);
 		String body = requestWrapper.getBody();
-		if(StringTools.isNullOrNone(body)){
-			result.setMessage("请求参数为空");
-			response.getWriter().write(JsonTools.toJsonString(result));
-			return;
-		}
 		RequestBean requestBean = null;
 		try {
 			Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
@@ -102,6 +97,7 @@ public class ApiFilter implements Filter {
 		}
 		if(StringTools.isNullOrNone(requestBean.getToken())){
 			result.setMessage("请求参数访问令牌为空");
+			result.setData(400);
 			response.getWriter().write(JsonTools.toJsonString(result));
 			return;
 		}
@@ -120,6 +116,11 @@ public class ApiFilter implements Filter {
 		Date timestamp = DateTools.getDate(StringTools.toString(requestBean.getTimestamp()));
 		if(timestamp == null){
 			result.setMessage("请求参数时间戳格式错误");
+			response.getWriter().write(JsonTools.toJsonString(result));
+			return;
+		}
+		if(DateTools.getInterval(DateTools.now(), timestamp)>10000){
+			result.setMessage("请求过期，请重新请求");
 			response.getWriter().write(JsonTools.toJsonString(result));
 			return;
 		}
