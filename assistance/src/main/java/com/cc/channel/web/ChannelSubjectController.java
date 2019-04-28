@@ -373,23 +373,12 @@ public class ChannelSubjectController {
 	@RequestMapping(value = "/item/list", method = RequestMethod.GET)
 	public Response<Object> queryChannelSubjectItemList(@ModelAttribute ChannelSubjectItemQueryForm form){
 		Response<Object> response = new Response<Object>();
-		if(form.getLocation()){
-			Long locationId = form.getLocationId();
-			List<Long> locationIdList = new ArrayList<Long>();
-			while(locationId!=null){
-				LocationBean locationBean = LocationBean.get(LocationBean.class, locationId);
-				if(locationBean!=null){
-					locationIdList.add(locationBean.getId());
-					locationId = locationBean.getParentId();
-				}else{
-					break;
-				}
+		ChannelSubjectBean channelSubjectBean = ChannelSubjectBean.get(ChannelSubjectBean.class, form.getSubjectId());
+		if(channelSubjectBean!=null){
+			ChannelBean channelBean = ChannelBean.get(ChannelBean.class, channelSubjectBean.getChannelId());
+			if(channelBean!=null){
+				form.setChannelCode(channelBean.getChannelCode());
 			}
-			if(ListTools.isEmptyOrNull(locationIdList)){
-				response.setMessage("没有查询到符合条件的专题数据");
-				return response;
-			}
-			form.setLocationIdList(locationIdList);
 		}
 		List<ChannelSubjectItemResult> channelSubjectItemList = channelSubjectService.queryChannelSubjectItemList(form);
 		if(ListTools.isEmptyOrNull(channelSubjectItemList)) {

@@ -137,15 +137,7 @@ public class ChannelSubjectServiceImpl implements ChannelSubjectService {
 
 	@Override
 	public List<ChannelSubjectItemResult> queryChannelSubjectItemList(ChannelSubjectItemQueryForm form) {
-		ChannelSubjectBean channelSubjectBean = ChannelSubjectBean.get(ChannelSubjectBean.class, form.getSubjectId());
-		if(channelSubjectBean!=null){
-			ChannelBean channelBean = ChannelBean.get(ChannelBean.class, channelSubjectBean.getChannelId());
-			if(channelBean!=null){
-				form.setChannelCode(channelBean.getChannelCode());
-				return channelSubjectDao.queryChannelSubjectItemList(form);
-			}
-		}
-		return null;
+		return channelSubjectDao.queryChannelSubjectItemList(form);
 	}
 
 	@Override
