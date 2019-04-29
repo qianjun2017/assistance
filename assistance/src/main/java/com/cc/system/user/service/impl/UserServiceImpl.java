@@ -20,6 +20,8 @@ import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
 import com.cc.system.user.bean.UserBean;
+import com.cc.system.user.enums.UserStatusEnum;
+import com.cc.system.user.enums.UserTypeEnum;
 import com.cc.system.user.form.UserQueryForm;
 import com.cc.system.user.service.UserRoleService;
 import com.cc.system.user.service.UserService;
@@ -77,6 +79,7 @@ public class UserServiceImpl implements UserService {
 			criteria.andEqualTo("phone", form.getPhone());
 		}
 		criteria.andNotEqualTo("id", Constant.SUPERUSER);
+		criteria.andEqualTo("userType", UserTypeEnum.USER.getCode());
 		PageHelper.orderBy(String.format("%s %s", form.getSort(), form.getOrder()));
 		PageHelper.startPage(form.getPage(), form.getPageSize());
 		List<UserBean> userBeanList = UserBean.findByExample(UserBean.class, example);
@@ -115,5 +118,29 @@ public class UserServiceImpl implements UserService {
 			throw new LogicException("E001", "更新用户失败");
 		}
 	}
+	
+	@Override
+    @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
+    public void lockUser(Long id) {
+        UserBean userBean = new UserBean();
+        userBean.setId(id);
+        userBean.setStatus(UserStatusEnum.LOCKED.getCode());
+        int row =  userBean.update();
+        if(row!=1){
+            throw new LogicException("E001", "锁定用户失败");
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
+    public void unLockUser(Long id) {
+        UserBean userBean = new UserBean();
+        userBean.setId(id);
+        userBean.setStatus(UserStatusEnum.NORMAL.getCode());
+        int row =  userBean.update();
+        if(row!=1){
+            throw new LogicException("E001", "解锁用户失败");
+        }
+    }
 
 }

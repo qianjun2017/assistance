@@ -39,4 +39,16 @@ public interface UserService {
 	 * @param userBean
 	 */
 	void updateUser(UserBean userBean);
+	
+	/**
+     * 锁定用户
+     * @param id
+     */
+    void lockUser(Long id);
+
+    /**
+     * 解锁用户
+     * @param id
+     */
+    void unLockUser(Long id);
 }
