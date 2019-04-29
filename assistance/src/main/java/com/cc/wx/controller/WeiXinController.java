@@ -9,7 +9,6 @@ import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.utils.UUIDUtils;
 import com.cc.common.web.Response;
-import com.cc.customer.bean.CustomerBean;
 import com.cc.customer.enums.CustomerStatusEnum;
 import com.cc.leaguer.bean.LeaguerBean;
 import com.cc.leaguer.enums.LeaguerStatusEnum;
@@ -207,8 +206,8 @@ public class WeiXinController {
 			response.setMessage(openidResponse.getMessage());
 			return response;
 		}
-		List<CustomerBean> customerBeanList = CustomerBean.findAllByParams(CustomerBean.class, "openid", openidResponse.getOpenid());
-		if(!ListTools.isEmptyOrNull(customerBeanList)){
+		List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "openid", openidResponse.getOpenid());
+		if(!ListTools.isEmptyOrNull(leaguerBeanList)){
 			response.setMessage("您已注册，请直接登录");
 			return response;
 		}
@@ -224,10 +223,6 @@ public class WeiXinController {
 					leaguerBean.setPhone(phone.getPurePhoneNumber());
 				}
 			}
-		}
-		if(StringTools.isNullOrNone(leaguerBean.getPhone())){
-			response.setMessage("请先获取手机号");
-			return response;
 		}
 		leaguerBean.setStatus(CustomerStatusEnum.NORMAL.getCode());
 		leaguerBean.setCreateTime(DateTools.now());

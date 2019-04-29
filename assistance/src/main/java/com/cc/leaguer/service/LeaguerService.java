@@ -65,11 +65,4 @@ public interface LeaguerService {
 	 * @param id
 	 */
 	void checkin(Long id);
-	
-	/**
-	 * 是否已注册
-	 * @param openid
-	 * @return
-	 */
-	Boolean hasLeaguerRegister(String openid);
 }

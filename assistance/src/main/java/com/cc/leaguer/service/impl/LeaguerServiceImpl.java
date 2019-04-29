@@ -227,10 +227,4 @@ public class LeaguerServiceImpl implements LeaguerService {
 		}
 	}
 
-	@Override
-	public Boolean hasLeaguerRegister(String openid) {
-		List<LeaguerBean> leaguerBeanList = LeaguerBean.findAllByParams(LeaguerBean.class, "openid", openid);
-		return !ListTools.isEmptyOrNull(leaguerBeanList);
-	}
-
 }
