@@ -7,6 +7,7 @@ import com.cc.common.tools.JsonTools;
 import com.cc.common.tools.JwtTools;
 import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
+import com.cc.common.utils.UUIDUtils;
 import com.cc.common.web.Response;
 import com.cc.customer.bean.CustomerBean;
 import com.cc.customer.enums.CustomerStatusEnum;
@@ -15,6 +16,7 @@ import com.cc.leaguer.enums.LeaguerStatusEnum;
 import com.cc.leaguer.service.LeaguerService;
 import com.cc.system.config.bean.SystemConfigBean;
 import com.cc.system.config.service.SystemConfigService;
+import com.cc.wx.form.AuthorizeForm;
 import com.cc.wx.form.CodeForm;
 import com.cc.wx.form.WXACodeForm;
 import com.cc.wx.http.request.MiniOpenidRequest;
@@ -27,11 +29,13 @@ import com.cc.wx.service.AccessTokenService;
 import com.cc.wx.service.WeiXinService;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -66,6 +70,75 @@ public class WeiXinController {
     private AccessTokenService accessTokenService;
     
     /**
+     * 微信公众号签名校验
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @ResponseBody
+    @RequestMapping(value="/check", method = RequestMethod.GET)
+    public void checkToken(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        PrintWriter writer = response.getWriter();
+        try{
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
+            String signature = request.getParameter("signature");// 微信加密签名
+            String timestamp = request.getParameter("timestamp");// 时间戳
+            String nonce = request.getParameter("nonce");// 随机数
+            String echostr = request.getParameter("echostr");//随机字符串
+            SystemConfigBean tokenSystemConfigBean = systemConfigService.querySystemConfigBean("token");
+            if(tokenSystemConfigBean!=null){
+                if(Boolean.TRUE.equals(weiXinService.checkSignature(tokenSystemConfigBean.getPropertyValue(), timestamp, nonce, signature))){
+                    writer.write(echostr);
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            writer.close();
+        }
+    }
+
+    /**
+     * 微信公众号用户授权
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="/authorize", method = RequestMethod.GET)
+    public Response<String> authorize(@ModelAttribute AuthorizeForm form){
+        Response<String> response = new Response<String>();
+        try {
+        	if(StringTools.isNullOrNone(form.getType())){
+        		response.setMessage("请输入授权用户类型");
+			    return response;
+        	}
+			SystemConfigBean openidUrlSystemConfigBean = systemConfigService.querySystemConfigBean("wx.gzh."+form.getType()+".openid.url");
+			if(openidUrlSystemConfigBean==null){
+			    response.setMessage("请设置微信回调地址");
+			    return response;
+			}
+			SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.gzh.appid");
+			if(appidSystemConfigBean==null){
+			    response.setMessage("请设置微信公众号appid");
+			    return response;
+			}
+			StringBuffer buffer = new StringBuffer("https://open.weixin.qq.com/connect/oauth2/authorize?");
+			buffer.append("appid="+appidSystemConfigBean.getPropertyValue());
+			buffer.append("&redirect_uri="+openidUrlSystemConfigBean.getPropertyValue());
+			buffer.append("&response_type=code&scope=snsapi_userinfo");
+			buffer.append("&state="+ UUIDUtils.getUuid()+"#wechat_redirect");
+			response.setSuccess(Boolean.TRUE);
+			response.setData(buffer.substring(0));
+		} catch (LogicException e) {
+			response.setMessage(e.getErrContent());
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setMessage("系统内部错误");
+		}
+        return response;
+    }
+    
+    /**
      * 微信小程序用户登录
      * @param form
      * @return
@@ -75,11 +148,11 @@ public class WeiXinController {
     public Response<Map<String, Object>> login(@RequestBody CodeForm form){
     	Response<Map<String, Object>> response = new Response<Map<String, Object>>();
     	MiniOpenidRequest openidRequest = new MiniOpenidRequest();
-		SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.appid");
+		SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.app.appid");
 		if(appidSystemConfigBean!=null){
 			openidRequest.setAppid(appidSystemConfigBean.getPropertyValue());
 		}
-		SystemConfigBean secretSystemConfigBean = systemConfigService.querySystemConfigBean("wx.secret");
+		SystemConfigBean secretSystemConfigBean = systemConfigService.querySystemConfigBean("wx.app.secret");
 		if(secretSystemConfigBean!=null){
 			openidRequest.setSecret(secretSystemConfigBean.getPropertyValue());
 		}
@@ -120,11 +193,11 @@ public class WeiXinController {
 			return response;
     	}
     	MiniOpenidRequest openidRequest = new MiniOpenidRequest();
-		SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.appid");
+		SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.app.appid");
 		if(appidSystemConfigBean!=null){
 			openidRequest.setAppid(appidSystemConfigBean.getPropertyValue());
 		}
-		SystemConfigBean secretSystemConfigBean = systemConfigService.querySystemConfigBean("wx.secret");
+		SystemConfigBean secretSystemConfigBean = systemConfigService.querySystemConfigBean("wx.app.secret");
 		if(secretSystemConfigBean!=null){
 			openidRequest.setSecret(secretSystemConfigBean.getPropertyValue());
 		}

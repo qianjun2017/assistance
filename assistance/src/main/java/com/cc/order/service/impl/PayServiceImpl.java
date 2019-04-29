@@ -69,9 +69,9 @@ public class PayServiceImpl implements PayService {
 		PayMethodEnum payMethodEnum = PayMethodEnum.getPayMethodEnumByCode(payBean.getMethod());
 		switch (payMethodEnum) {
 			case WECHAT:
-				SystemConfigBean keySystemConfigBean = systemConfigService.querySystemConfigBean("wx.key");
-				SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.appid");
-				SystemConfigBean mchIdSystemConfigBean = systemConfigService.querySystemConfigBean("wx.mchId");
+				SystemConfigBean keySystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.key");
+				SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.appid");
+				SystemConfigBean mchIdSystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.mchId");
 				if(PayStatusEnum.PAYING.equals(payStatusEnum)){
 					queryPay(payBean);
 					payStatusEnum = PayStatusEnum.getPayStatusEnumByCode(payBean.getStatus());
@@ -99,10 +99,10 @@ public class PayServiceImpl implements PayService {
 					request.setMchId(mchIdSystemConfigBean.getPropertyValue());
 					request.setTradeType("JSAPI");
 					request.setOpenid("");
-					SystemConfigBean notifyUrlSystemConfigBean = systemConfigService.querySystemConfigBean("wx.unifiedOrder.notifyUrl");
+					SystemConfigBean notifyUrlSystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.unifiedOrder.notifyUrl");
 					request.setNotifyUrl(notifyUrlSystemConfigBean.getPropertyValue());
 					request.setSpbillCreateIp(RequestContextUtil.getIpAddr(RequestContextUtil.httpServletRequest()));
-					SystemConfigBean bodySystemConfigBean = systemConfigService.querySystemConfigBean("wx.body");
+					SystemConfigBean bodySystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.body");
 					request.setBody(bodySystemConfigBean.getPropertyValue());
 					UnifiedOrderResponse response = weiXinService.unifiedOrder(request);
 					if(response.isSuccess()){
@@ -150,9 +150,9 @@ public class PayServiceImpl implements PayService {
 		PayMethodEnum payMethodEnum = PayMethodEnum.getPayMethodEnumByCode(payBean.getMethod());
 		switch (payMethodEnum) {
 			case WECHAT:
-				SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.appid");
-				SystemConfigBean mchIdSystemConfigBean = systemConfigService.querySystemConfigBean("wx.mchId");
-				SystemConfigBean keySystemConfigBean = systemConfigService.querySystemConfigBean("wx.key");
+				SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.appid");
+				SystemConfigBean mchIdSystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.mchId");
+				SystemConfigBean keySystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.key");
 				RefundRequest request = new RefundRequest();
 				request.setAppid(appidSystemConfigBean.getPropertyValue());
 				request.setMchId(mchIdSystemConfigBean.getPropertyValue());
@@ -163,7 +163,7 @@ public class PayServiceImpl implements PayService {
 				request.setTotalFee(payBean.getReceivable().intValue());
 				request.setRefundFee(refundBean.getRefundable().intValue());
 				request.setRefundDesc("取消订单");
-				SystemConfigBean notifyUrlSystemConfigBean = systemConfigService.querySystemConfigBean("wx.refund.notifyUrl");
+				SystemConfigBean notifyUrlSystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.refund.notifyUrl");
 				request.setNotifyUrl(notifyUrlSystemConfigBean.getPropertyValue());
 				RefundResponse response = weiXinService.refund(request);
 				if(response.isSuccess()){
@@ -201,9 +201,9 @@ public class PayServiceImpl implements PayService {
 		PayMethodEnum payMethodEnum = PayMethodEnum.getPayMethodEnumByCode(payBean.getMethod());
 		switch (payMethodEnum) {
 			case WECHAT:
-				SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.appid");
-				SystemConfigBean mchIdSystemConfigBean = systemConfigService.querySystemConfigBean("wx.mchId");
-				SystemConfigBean keySystemConfigBean = systemConfigService.querySystemConfigBean("wx.key");
+				SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.appid");
+				SystemConfigBean mchIdSystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.mchId");
+				SystemConfigBean keySystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.key");
 				CloseOrderRequest request = new CloseOrderRequest();
 				request.setAppid(appidSystemConfigBean.getPropertyValue());
 				request.setMchId(mchIdSystemConfigBean.getPropertyValue());
@@ -235,9 +235,9 @@ public class PayServiceImpl implements PayService {
 		PayMethodEnum payMethodEnum = PayMethodEnum.getPayMethodEnumByCode(payBean.getMethod());
 		switch (payMethodEnum) {
 			case WECHAT:
-				SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.appid");
-				SystemConfigBean mchIdSystemConfigBean = systemConfigService.querySystemConfigBean("wx.mchId");
-				SystemConfigBean keySystemConfigBean = systemConfigService.querySystemConfigBean("wx.key");
+				SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.appid");
+				SystemConfigBean mchIdSystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.mchId");
+				SystemConfigBean keySystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.key");
 				QueryOrderRequest request = new QueryOrderRequest();
 				request.setAppid(appidSystemConfigBean.getPropertyValue());
 				request.setMchId(mchIdSystemConfigBean.getPropertyValue());
@@ -301,9 +301,9 @@ public class PayServiceImpl implements PayService {
 		PayMethodEnum payMethodEnum = PayMethodEnum.getPayMethodEnumByCode(payBean.getMethod());
 		switch (payMethodEnum) {
 			case WECHAT:
-				SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.appid");
-				SystemConfigBean mchIdSystemConfigBean = systemConfigService.querySystemConfigBean("wx.mchId");
-				SystemConfigBean keySystemConfigBean = systemConfigService.querySystemConfigBean("wx.key");
+				SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.appid");
+				SystemConfigBean mchIdSystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.mchId");
+				SystemConfigBean keySystemConfigBean = systemConfigService.querySystemConfigBean("wx.pay.key");
 				QueryRefundRequest request = new QueryRefundRequest();
 				request.setAppid(appidSystemConfigBean.getPropertyValue());
 				request.setMchId(mchIdSystemConfigBean.getPropertyValue());
