@@ -29,6 +29,8 @@ import com.cc.system.log.enums.OperTypeEnum;
 import com.cc.system.log.utils.LogContextUtil;
 import com.cc.system.user.bean.UserBean;
 import com.cc.system.user.bean.UserRoleBean;
+import com.cc.system.user.enums.UserStatusEnum;
+import com.cc.system.user.enums.UserTypeEnum;
 import com.cc.system.user.form.UserQueryForm;
 import com.cc.system.user.service.UserRoleService;
 import com.cc.system.user.service.UserService;
@@ -90,6 +92,8 @@ public class UserController {
 			userBean.setOrgId(Long.valueOf(orgId));
 		}
 		userBean.setCreateTime(DateTools.now());
+		userBean.setStatus(UserStatusEnum.NORMAL.getCode());
+		userBean.setUserType(UserTypeEnum.USER.getCode());
 		try {
 			userService.saveUser(userBean);
 			response.setSuccess(Boolean.TRUE);
