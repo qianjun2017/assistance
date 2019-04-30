@@ -336,7 +336,7 @@ public class UserController {
 		}
 		String phone = userMap.get("phone");
 		if(!StringTools.isNullOrNone(phone)){
-			if(!StringTools.matches(phone, "^1[34578]\\d{9}$")){
+			if(!StringTools.isPhone(phone)){
 	        	response.setMessage("请输入11位有效手机号码");
 	            return response;
 	        }

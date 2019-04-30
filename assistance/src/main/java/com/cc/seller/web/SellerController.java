@@ -101,7 +101,7 @@ public class SellerController {
             response.setMessage("请输入手机号码");
             return response;
         }
-        if(!StringTools.matches(phone, "^1[34578]\\d{9}$")){
+        if(!StringTools.isPhone(phone)){
         	response.setMessage("请输入11位有效手机号码");
             return response;
         }
@@ -254,7 +254,7 @@ public class SellerController {
 		updateSellerBean.setRealName(realName);
 		String phone = sellerMap.get("phone");
 		if(!StringTools.isNullOrNone(phone)){
-			if(!StringTools.matches(phone, "^1[34578]\\d{9}$")){
+			if(!StringTools.isPhone(phone)){
 				response.setMessage("请输入11位有效手机号码");
 	            return response;
 	        }

@@ -14,7 +14,7 @@ public class TenXunSmsSendResponse {
 	/**
 	 * 错误码
 	 */
-	private Integer errcode;
+	private Integer result;
 	
 	/**
 	 * 错误信息
@@ -68,18 +68,12 @@ public class TenXunSmsSendResponse {
 		this.message = message;
 	}
 
-	/**
-	 * @return the errcode
-	 */
-	public Integer getErrcode() {
-		return errcode;
+	public Integer getResult() {
+		return result;
 	}
 
-	/**
-	 * @param errcode the errcode to set
-	 */
-	public void setErrcode(Integer errcode) {
-		this.errcode = errcode;
+	public void setResult(Integer result) {
+		this.result = result;
 	}
 
 	/**

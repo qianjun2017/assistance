@@ -131,6 +131,23 @@ public class StringTools {
 		}
 		return buffer.substring(0);
 	}
+	
+	/**
+	 * 获取指定长度的随机字符串 纯数字字符串
+	 * @param length
+	 * @return
+	 */
+	public static String getRandomNumberCode(int length) {
+		String chars = "0123456789";
+		StringBuffer buffer = new StringBuffer();
+		int _int = 0;
+		while(_int<length){
+			Random random = new Random();
+			buffer.append(chars.charAt(random.nextInt(chars.length())));
+			_int++;
+		}
+		return buffer.substring(0);
+	}
 
 	/**
 	 * 人民币分转换成元
@@ -189,5 +206,14 @@ public class StringTools {
 	 */
 	public static boolean lessThan(String content, int length){
 		return StringTools.isNullOrNone(content) || content.length()<length;
+	}
+	
+	/**
+	 * 判断是否为手机号码
+	 * @param phone
+	 * @return
+	 */
+	public static boolean isPhone(String phone){
+		return StringTools.matches(phone, "^1[34578]\\d{9}$");
 	}
 }
