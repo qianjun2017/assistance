@@ -10,7 +10,8 @@ import com.cc.common.tools.StringTools;
 
 public enum SmsProviderEnum {
 
-	TENXUN("tenxun", "腾讯云短信服务");
+	TENXUN("tenXun", "腾讯云短信服务"),
+	ALIYUN("aLiYun", "阿里云短信服务");
 	
 	/**
 	 * 编码
