@@ -1,4 +1,4 @@
-package com.cc.sms.tx.http.request.model;
+package com.cc.sms.tenxun.http.request.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

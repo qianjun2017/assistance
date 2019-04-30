@@ -1,4 +1,4 @@
-package com.cc.sms.tx.service.impl;
+package com.cc.sms.tenxun.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,10 +12,10 @@ import com.cc.common.tools.JsonTools;
 import com.cc.common.tools.ListTools;
 import com.cc.common.tools.SHA256Tools;
 import com.cc.common.tools.StringTools;
-import com.cc.sms.tx.http.request.TenXunSmsSendRequest;
-import com.cc.sms.tx.http.request.model.Phone;
-import com.cc.sms.tx.http.response.TenXunSmsSendResponse;
-import com.cc.sms.tx.service.TenXunSmsService;
+import com.cc.sms.tenxun.http.request.TenXunSmsSendRequest;
+import com.cc.sms.tenxun.http.request.model.Phone;
+import com.cc.sms.tenxun.http.response.TenXunSmsSendResponse;
+import com.cc.sms.tenxun.service.TenXunSmsService;
 import com.cc.system.config.bean.SystemConfigBean;
 import com.cc.system.config.service.SystemConfigService;
 

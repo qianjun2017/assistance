@@ -1,4 +1,4 @@
-package com.cc.sms.tx.http.response;
+package com.cc.sms.tenxun.http.response;
 
 public class TenXunSmsSendResponse {
 

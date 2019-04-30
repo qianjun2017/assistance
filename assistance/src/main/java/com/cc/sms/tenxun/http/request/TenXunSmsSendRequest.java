@@ -1,6 +1,6 @@
-package com.cc.sms.tx.http.request;
+package com.cc.sms.tenxun.http.request;
 
-import com.cc.sms.tx.http.request.model.Phone;
+import com.cc.sms.tenxun.http.request.model.Phone;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

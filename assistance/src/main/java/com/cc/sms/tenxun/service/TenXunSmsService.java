@@ -1,7 +1,7 @@
-package com.cc.sms.tx.service;
+package com.cc.sms.tenxun.service;
 
-import com.cc.sms.tx.http.request.TenXunSmsSendRequest;
-import com.cc.sms.tx.http.response.TenXunSmsSendResponse;
+import com.cc.sms.tenxun.http.request.TenXunSmsSendRequest;
+import com.cc.sms.tenxun.http.response.TenXunSmsSendResponse;
 
 public interface TenXunSmsService {
 
