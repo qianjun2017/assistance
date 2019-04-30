@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cc.common.exception.LogicException;
+import com.cc.common.tools.ListTools;
 import com.cc.system.auth.bean.AuthBean;
 import com.cc.system.auth.service.AuthService;
 import com.cc.system.role.service.RoleAuthService;
@@ -39,12 +40,16 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
 	public void deleteAuth(Long id) {
+		List<AuthBean> authBeanList = AuthBean.findAllByParams(AuthBean.class, "parentId", id);
+		if(!ListTools.isEmptyOrNull(authBeanList)){
+			throw new LogicException("E001", "请先删除子权限");
+		}
 		roleAuthService.deletRoleAuthByAuthId(id);
 		AuthBean authBean = new AuthBean();
 		authBean.setId(id);
 		int row = authBean.delete();
 		if(row!=1){
-			throw new LogicException("E001", "删除权限失败");
+			throw new LogicException("E002", "删除权限失败");
 		}
 	}
 
