@@ -65,4 +65,11 @@ public interface LeaguerService {
 	 * @param id
 	 */
 	void checkin(Long id);
+
+	/**
+	 * 绑定手机号码
+	 * @param id
+	 * @param phone
+	 */
+	void bindPhone(Long id, String phone);
 }

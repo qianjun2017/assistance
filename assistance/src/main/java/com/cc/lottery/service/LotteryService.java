@@ -5,10 +5,11 @@ package com.cc.lottery.service;
 
 import com.cc.common.web.Page;
 import com.cc.lottery.bean.LotteryBean;
-import com.cc.lottery.bean.LotteryCustomerBean;
-import com.cc.lottery.form.LotteryCustomerQueryForm;
+import com.cc.lottery.bean.LotteryLeaguerBean;
+import com.cc.lottery.bean.LotteryRetailerBean;
+import com.cc.lottery.form.LotteryLeaguerQueryForm;
 import com.cc.lottery.form.LotteryQueryForm;
-import com.cc.lottery.result.LotteryCustomerListResult;
+import com.cc.lottery.result.LotteryLeaguerListResult;
 import com.cc.lottery.result.LotteryListResult;
 
 /**
@@ -41,19 +42,25 @@ public interface LotteryService {
 	 * @param form
 	 * @return
 	 */
-	Page<LotteryCustomerListResult> queryLotteryCustomerPage(LotteryCustomerQueryForm form);
+	Page<LotteryLeaguerListResult> queryLotteryLeaguerPage(LotteryLeaguerQueryForm form);
 	
 	/**
 	 * 查询用户参与抽奖次数
-	 * @param customerId
+	 * @param leaguerId
 	 * @param lotteryId
 	 * @return
 	 */
-	int queryLotteryCustomerCount(Long customerId, Long lotteryId);
+	int queryLotteryLeaguerCount(Long leaguerId, Long lotteryId);
 	
 	/**
 	 * 保存抽奖结果
-	 * @param lotteryCustomerBean
+	 * @param lotteryLeaguerBean
 	 */
-	void saveLotteryCustomer(LotteryCustomerBean lotteryCustomerBean);
+	void saveLotteryLeaguer(LotteryLeaguerBean lotteryLeaguerBean);
+	
+	/**
+	 * 保存会员商家信息
+	 * @param lotteryRetailerBean
+	 */
+	void saveLotteryRetailer(LotteryRetailerBean lotteryRetailerBean);
 }

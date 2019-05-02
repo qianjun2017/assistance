@@ -16,17 +16,17 @@ public class LotteryListResult {
 	private Long id;
 	
 	/**
-	 * 所属客户
+	 * 所属会员
 	 */
-	private Long customerId;
+	private Long leaguerId;
 	
 	/**
-	 * 客户微信opernid
+	 * 会员微信opernid
 	 */
 	private String openid;
 	
 	/**
-	 * 客户微信昵称
+	 * 会员微信昵称
 	 */
 	private String nickName;
 	
@@ -71,17 +71,17 @@ public class LotteryListResult {
 	}
 
 	/**
-	 * @return the customerId
+	 * @return the leaguerId
 	 */
-	public Long getCustomerId() {
-		return customerId;
+	public Long getLeaguerId() {
+		return leaguerId;
 	}
 
 	/**
-	 * @param customerId the customerId to set
+	 * @param leaguerId the leaguerId to set
 	 */
-	public void setCustomerId(Long customerId) {
-		this.customerId = customerId;
+	public void setLeaguerId(Long leaguerId) {
+		this.leaguerId = leaguerId;
 	}
 
 	/**

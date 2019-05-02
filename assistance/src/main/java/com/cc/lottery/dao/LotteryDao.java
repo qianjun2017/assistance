@@ -8,9 +8,9 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.cc.common.orm.dao.CrudDao;
-import com.cc.lottery.form.LotteryCustomerQueryForm;
+import com.cc.lottery.form.LotteryLeaguerQueryForm;
 import com.cc.lottery.form.LotteryQueryForm;
-import com.cc.lottery.result.LotteryCustomerListResult;
+import com.cc.lottery.result.LotteryLeaguerListResult;
 import com.cc.lottery.result.LotteryListResult;
 
 /**
@@ -30,5 +30,5 @@ public interface LotteryDao extends CrudDao {
 	 * @param form
 	 * @return
 	 */
-	List<LotteryCustomerListResult> queryLotteryCustomerList(LotteryCustomerQueryForm form);
+	List<LotteryLeaguerListResult> queryLotteryLeaguerList(LotteryLeaguerQueryForm form);
 }

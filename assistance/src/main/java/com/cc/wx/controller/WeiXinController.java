@@ -9,7 +9,6 @@ import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.utils.UUIDUtils;
 import com.cc.common.web.Response;
-import com.cc.customer.enums.CustomerStatusEnum;
 import com.cc.leaguer.bean.LeaguerBean;
 import com.cc.leaguer.enums.LeaguerStatusEnum;
 import com.cc.leaguer.service.LeaguerService;
@@ -224,7 +223,7 @@ public class WeiXinController {
 				}
 			}
 		}
-		leaguerBean.setStatus(CustomerStatusEnum.NORMAL.getCode());
+		leaguerBean.setStatus(LeaguerStatusEnum.NORMAL.getCode());
 		leaguerBean.setCreateTime(DateTools.now());
 		try {
 			leaguerService.saveLeaguer(leaguerBean);

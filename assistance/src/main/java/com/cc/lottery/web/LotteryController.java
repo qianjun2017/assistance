@@ -25,17 +25,18 @@ import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
 import com.cc.common.web.Page;
 import com.cc.common.web.Response;
-import com.cc.customer.bean.CustomerBean;
+import com.cc.leaguer.bean.LeaguerBean;
 import com.cc.lottery.bean.LotteryBean;
-import com.cc.lottery.bean.LotteryCustomerBean;
+import com.cc.lottery.bean.LotteryLeaguerBean;
 import com.cc.lottery.bean.LotteryPrizeBean;
-import com.cc.lottery.enums.LotteryCustomerStatusEnum;
+import com.cc.lottery.bean.LotteryRetailerBean;
+import com.cc.lottery.enums.LotteryLeaguerStatusEnum;
 import com.cc.lottery.enums.LotteryStatusEnum;
-import com.cc.lottery.form.LotteryCustomerQueryForm;
+import com.cc.lottery.form.LotteryLeaguerQueryForm;
 import com.cc.lottery.form.LotteryForm;
 import com.cc.lottery.form.LotteryPrizeForm;
 import com.cc.lottery.form.LotteryQueryForm;
-import com.cc.lottery.result.LotteryCustomerListResult;
+import com.cc.lottery.result.LotteryLeaguerListResult;
 import com.cc.lottery.result.LotteryListResult;
 import com.cc.lottery.service.LotteryService;
 
@@ -60,25 +61,26 @@ public class LotteryController {
 	public Response<Object> addLottery(@RequestBody Map<String, Object> lotteryMap){
 		Response<Object> response = new Response<Object>();
 		LotteryForm lotteryForm = JsonTools.toObject(JsonTools.toJsonString(lotteryMap), LotteryForm.class);
-		if(lotteryForm.getCustomerId()==null){
+		if(lotteryForm.getLeaguerId()==null){
 			response.setMessage("匿名客户不能发起抽奖");
 			return response;
 		}
-		CustomerBean customerBean = CustomerBean.get(CustomerBean.class, lotteryForm.getCustomerId());
-		if(customerBean==null){
+		LeaguerBean leaguerBean = LeaguerBean.get(LeaguerBean.class, lotteryForm.getLeaguerId());
+		if(leaguerBean==null){
 			response.setMessage("您尚未注册");
 			return response;
 		}
-		if(!customerBean.getRetailer()){
+		List<LotteryRetailerBean> lotteryRetailerBeanList = LotteryRetailerBean.findAllByParams(LotteryRetailerBean.class, "leaguerId", leaguerBean.getId());
+		if(ListTools.isEmptyOrNull(lotteryRetailerBeanList)){
 			response.setMessage("您尚未开通商家服务");
 			return response;
 		}
-		if(!customerBean.getOpenid().equals(lotteryForm.getOpenid())){
+		if(!leaguerBean.getOpenid().equals(lotteryForm.getOpenid())){
 			response.setMessage("您无权为他人发起抽奖");
 			return response;
 		}
 		LotteryBean lotteryBean = new LotteryBean();
-		lotteryBean.setCustomerId(customerBean.getId());
+		lotteryBean.setLeaguerId(leaguerBean.getId());
 		if(lotteryForm.getCount()==null){
 			response.setMessage("请输入每个客户最多抽奖次数");
 			return response;
@@ -95,7 +97,7 @@ public class LotteryController {
 		lotteryBean.setLastExchangeTime(DateTools.getDate(lotteryForm.getLastExchangeTime()+" 23:59:59"));
 		lotteryBean.setShare(lotteryForm.getShare());
 		lotteryBean.setSame(lotteryForm.getSame());
-		List<LotteryBean> lotteryList = LotteryBean.findAllByParams(LotteryBean.class, "customerId", customerBean.getId(), "sort", "createTime", "order", "desc");
+		List<LotteryBean> lotteryList = LotteryBean.findAllByParams(LotteryBean.class, "leaguerId", leaguerBean.getId(), "sort", "createTime", "order", "desc");
 		if(ListTools.isEmptyOrNull(lotteryList)){
 			lotteryBean.setNo(1l);
 		}else{
@@ -171,20 +173,21 @@ public class LotteryController {
 	public Response<Object> updateLottery(@RequestBody Map<String, Object> lotteryMap){
 		Response<Object> response = new Response<Object>();
 		LotteryForm lotteryForm = JsonTools.toObject(JsonTools.toJsonString(lotteryMap), LotteryForm.class);
-		if(lotteryForm.getCustomerId()==null){
+		if(lotteryForm.getLeaguerId()==null){
 			response.setMessage("匿名客户不能发起抽奖");
 			return response;
 		}
-		CustomerBean customerBean = CustomerBean.get(CustomerBean.class, lotteryForm.getCustomerId());
-		if(customerBean==null){
+		LeaguerBean leaguerBean = LeaguerBean.get(LeaguerBean.class, lotteryForm.getLeaguerId());
+		if(leaguerBean==null){
 			response.setMessage("您尚未注册");
 			return response;
 		}
-		if(!customerBean.getRetailer()){
+		List<LotteryRetailerBean> lotteryRetailerBeanList = LotteryRetailerBean.findAllByParams(LotteryRetailerBean.class, "leaguerId", leaguerBean.getId());
+		if(ListTools.isEmptyOrNull(lotteryRetailerBeanList)){
 			response.setMessage("您尚未开通商家服务");
 			return response;
 		}
-		if(!customerBean.getOpenid().equals(lotteryForm.getOpenid())){
+		if(!leaguerBean.getOpenid().equals(lotteryForm.getOpenid())){
 			response.setMessage("您无权修改他人发起的抽奖");
 			return response;
 		}
@@ -302,8 +305,8 @@ public class LotteryController {
 		}
 		lotteryBean.setPrizeList(LotteryPrizeBean.findAllByParams(LotteryPrizeBean.class, "lotteryId", lotteryBean.getId(), "status", LotteryStatusEnum.NORMAL.getCode()));
 		Integer count = lotteryBean.getCount();
-		if(form.getCustomerId()!=null){
-			count -= lotteryService.queryLotteryCustomerCount(form.getCustomerId(), lotteryBean.getId());
+		if(form.getLeaguerId()!=null){
+			count -= lotteryService.queryLotteryLeaguerCount(form.getLeaguerId(), lotteryBean.getId());
 		}
 		lotteryBean.setCount(count);
 		response.setData(lotteryBean);
@@ -361,10 +364,10 @@ public class LotteryController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/customer/page", method = RequestMethod.GET)
-	public Page<LotteryCustomerListResult> queryLotteryCustomerPage(@ModelAttribute LotteryCustomerQueryForm form){
+	@RequestMapping(value = "/leaguer/page", method = RequestMethod.GET)
+	public Page<LotteryLeaguerListResult> queryLotteryLeaguerPage(@ModelAttribute LotteryLeaguerQueryForm form){
 		form.setPrize(Boolean.TRUE);
-		return lotteryService.queryLotteryCustomerPage(form);
+		return lotteryService.queryLotteryLeaguerPage(form);
 	}
 	
 	/**
@@ -373,41 +376,41 @@ public class LotteryController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/customer/get/{id:\\d+}", method = RequestMethod.GET)
-	public Response<LotteryCustomerBean> queryLotteryCustomer(@PathVariable Long id){
-		Response<LotteryCustomerBean> response = new Response<LotteryCustomerBean>();
-		LotteryCustomerBean lotteryCustomerBean = LotteryCustomerBean.get(LotteryCustomerBean.class, id);
-		if (lotteryCustomerBean==null) {
+	@RequestMapping(value = "/leaguer/get/{id:\\d+}", method = RequestMethod.GET)
+	public Response<LotteryLeaguerBean> queryLotteryLeaguer(@PathVariable Long id){
+		Response<LotteryLeaguerBean> response = new Response<LotteryLeaguerBean>();
+		LotteryLeaguerBean lotteryLeaguerBean = LotteryLeaguerBean.get(LotteryLeaguerBean.class, id);
+		if (lotteryLeaguerBean==null) {
 			response.setMessage("中奖不存在");
 			return response;
 		}
-		response.setData(lotteryCustomerBean);
+		response.setData(lotteryLeaguerBean);
 		response.setSuccess(Boolean.TRUE);
 		return response;
 	}
 	
 	/**
 	 * 客户抽奖
-	 * @param customerMap
+	 * @param leaguerMap
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/customer", method = RequestMethod.POST)
-	public Response<Object> customerLottery(@RequestBody Map<String, Long> customerMap){
+	@RequestMapping(value = "/leaguer", method = RequestMethod.POST)
+	public Response<Object> leaguerLottery(@RequestBody Map<String, Long> leaguerMap){
 		Response<Object> response = new Response<Object>();
-		Long customerId = customerMap.get("customerId");
-		if(customerId==null){
+		Long leaguerId = leaguerMap.get("leaguerId");
+		if(leaguerId==null){
 			response.setMessage("匿名客户不能参与抽奖");
 			response.setData(403);
 			return response;
 		}
-		CustomerBean customerBean = CustomerBean.get(CustomerBean.class, customerId);
-		if(customerBean==null){
+		LeaguerBean leaguerBean = LeaguerBean.get(LeaguerBean.class, leaguerId);
+		if(leaguerBean==null){
 			response.setMessage("您尚未注册");
 			response.setData(403);
 			return response;
 		}
-		Long lotteryId = customerMap.get("lotteryId");
+		Long lotteryId = leaguerMap.get("lotteryId");
 		if(lotteryId==null){
 			response.setMessage("请选择抽奖");
 			response.setData(404);
@@ -425,14 +428,14 @@ public class LotteryController {
 			return response;
 		}
 		synchronized (this) {
-			int lotteryCustomerCount = lotteryService.queryLotteryCustomerCount(customerId, lotteryId);
-			if(lotteryBean.getShare() && lotteryCustomerCount==0){
-				Long shareId = customerMap.get("shareId");
+			int lotteryLeaguerCount = lotteryService.queryLotteryLeaguerCount(leaguerId, lotteryId);
+			if(lotteryBean.getShare() && lotteryLeaguerCount==0){
+				Long shareId = leaguerMap.get("shareId");
 				if(shareId!=null){
-					LotteryCustomerBean lotteryCustomerBean = LotteryCustomerBean.get(LotteryCustomerBean.class, shareId);
-					lotteryCustomerBean.setShare(Boolean.TRUE);
+					LotteryLeaguerBean lotteryLeaguerBean = LotteryLeaguerBean.get(LotteryLeaguerBean.class, shareId);
+					lotteryLeaguerBean.setShare(Boolean.TRUE);
 					try {
-						lotteryService.saveLotteryCustomer(lotteryCustomerBean);
+						lotteryService.saveLotteryLeaguer(lotteryLeaguerBean);
 					} catch (LogicException e) {
 						response.setMessage(e.getErrContent());
 						return response;
@@ -443,7 +446,7 @@ public class LotteryController {
 					}
 				}
 			}
-			if(lotteryCustomerCount>=lotteryBean.getCount()){
+			if(lotteryLeaguerCount>=lotteryBean.getCount()){
 				response.setMessage("您的抽奖次数已用完");
 				response.setData(405);
 				return response;
@@ -466,33 +469,33 @@ public class LotteryController {
 			}
 			Random random = new Random();
 			int index = random.nextInt(10000);
-			LotteryCustomerBean lotteryCustomerBean = new LotteryCustomerBean();
-			lotteryCustomerBean.setLotteryId(lotteryId);
+			LotteryLeaguerBean lotteryLeaguerBean = new LotteryLeaguerBean();
+			lotteryLeaguerBean.setLotteryId(lotteryId);
 			if(index>prizeList.size()){
 				response.setMessage("很遗憾，您未中奖");
-				lotteryCustomerBean.setPrize(Boolean.FALSE);
+				lotteryLeaguerBean.setPrize(Boolean.FALSE);
 				response.setData(407);
 			}else{
 				Long lotteryPrizeId = prizeList.get(index);
-				if(!lotteryBean.getSame() && !ListTools.isEmptyOrNull(LotteryCustomerBean.findAllByParams(LotteryCustomerBean.class, "customerId", customerId, "lotteryId", lotteryId, "lotteryPrizeId", lotteryPrizeId))){
+				if(!lotteryBean.getSame() && !ListTools.isEmptyOrNull(LotteryLeaguerBean.findAllByParams(LotteryLeaguerBean.class, "leaguerId", leaguerId, "lotteryId", lotteryId, "lotteryPrizeId", lotteryPrizeId))){
 					response.setMessage("很遗憾，您未中奖");
-					lotteryCustomerBean.setPrize(Boolean.FALSE);
+					lotteryLeaguerBean.setPrize(Boolean.FALSE);
 					response.setData(407);
 				}else{
-					lotteryCustomerBean.setPrize(Boolean.TRUE);
-					lotteryCustomerBean.setLotteryPrizeId(lotteryPrizeId);
-					lotteryCustomerBean.setShare(Boolean.FALSE);
-					lotteryCustomerBean.setStatus(LotteryCustomerStatusEnum.TOBEEXCHANGE.getCode());
+					lotteryLeaguerBean.setPrize(Boolean.TRUE);
+					lotteryLeaguerBean.setLotteryPrizeId(lotteryPrizeId);
+					lotteryLeaguerBean.setShare(Boolean.FALSE);
+					lotteryLeaguerBean.setStatus(LotteryLeaguerStatusEnum.TOBEEXCHANGE.getCode());
 					LotteryPrizeBean lotteryPrizeBean = LotteryPrizeBean.get(LotteryPrizeBean.class, lotteryPrizeId);
 					lotteryPrizeBean.setQuantity(lotteryPrizeBean.getQuantity()+1);
 					lotteryPrizeBean.save();
 					response.setData(lotteryPrizeBean);
 				}
 			}
-			lotteryCustomerBean.setCustomerId(customerId);
-			lotteryCustomerBean.setCreateTime(DateTools.now());
+			lotteryLeaguerBean.setLeaguerId(leaguerId);
+			lotteryLeaguerBean.setCreateTime(DateTools.now());
 			try {
-				lotteryService.saveLotteryCustomer(lotteryCustomerBean);
+				lotteryService.saveLotteryLeaguer(lotteryLeaguerBean);
 				response.setSuccess(Boolean.TRUE);
 			} catch (LogicException e) {
 				response.setMessage(e.getErrContent());
@@ -510,33 +513,33 @@ public class LotteryController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/customer/exchange", method = RequestMethod.POST)
-	public Response<String> customerLotteryExchange(@RequestBody Map<String, Long> exchangeMap){
+	@RequestMapping(value = "/leaguer/exchange", method = RequestMethod.POST)
+	public Response<String> leaguerLotteryExchange(@RequestBody Map<String, Long> exchangeMap){
 		Response<String> response = new Response<String>();
-		Long lotteryCustomerId = exchangeMap.get("lotteryCustomerId");
-		if(lotteryCustomerId==null){
+		Long lotteryLeaguerId = exchangeMap.get("lotteryLeaguerId");
+		if(lotteryLeaguerId==null){
 			response.setMessage("请扫描兑奖码");
 			return response;
 		}
-		LotteryCustomerBean lotteryCustomerBean = LotteryCustomerBean.get(LotteryCustomerBean.class, lotteryCustomerId);
-		if(lotteryCustomerBean==null){
+		LotteryLeaguerBean lotteryLeaguerBean = LotteryLeaguerBean.get(LotteryLeaguerBean.class, lotteryLeaguerId);
+		if(lotteryLeaguerBean==null){
 			response.setMessage("请扫描有效兑奖码");
 			return response;
 		}
-		if(!lotteryCustomerBean.getPrize()){
+		if(!lotteryLeaguerBean.getPrize()){
 			response.setMessage("对不起，您没有中奖");
 			return response;
 		}
-		LotteryCustomerStatusEnum lotteryCustomerStatusEnum = LotteryCustomerStatusEnum.getLotteryCustomerStatusEnumByCode(lotteryCustomerBean.getStatus());
-		if(!LotteryCustomerStatusEnum.TOBEEXCHANGE.equals(lotteryCustomerStatusEnum)){
-			if(LotteryCustomerStatusEnum.EXCHANGED.equals(lotteryCustomerStatusEnum)){
+		LotteryLeaguerStatusEnum lotteryLeaguerStatusEnum = LotteryLeaguerStatusEnum.getLotteryLeaguerStatusEnumByCode(lotteryLeaguerBean.getStatus());
+		if(!LotteryLeaguerStatusEnum.TOBEEXCHANGE.equals(lotteryLeaguerStatusEnum)){
+			if(LotteryLeaguerStatusEnum.EXCHANGED.equals(lotteryLeaguerStatusEnum)){
 				response.setMessage("奖品已被领取");
-			}else if(LotteryCustomerStatusEnum.EXPIRED.equals(lotteryCustomerStatusEnum)){
+			}else if(LotteryLeaguerStatusEnum.EXPIRED.equals(lotteryLeaguerStatusEnum)){
 				response.setMessage("对不起，奖品已过期");
 			}
 			return response;
 		}
-		LotteryPrizeBean lotteryPrizeBean = LotteryPrizeBean.get(LotteryPrizeBean.class, lotteryCustomerBean.getLotteryPrizeId());
+		LotteryPrizeBean lotteryPrizeBean = LotteryPrizeBean.get(LotteryPrizeBean.class, lotteryLeaguerBean.getLotteryPrizeId());
 		if(lotteryPrizeBean==null){
 			response.setMessage("对不起，奖品不存在");
 			return response;
@@ -550,14 +553,14 @@ public class LotteryController {
 			response.setMessage("对不起，奖品已过期");
 			return response;
 		}
-		if(lotteryBean.getShare() && !lotteryCustomerBean.getShare()){
+		if(lotteryBean.getShare() && !lotteryLeaguerBean.getShare()){
 			response.setMessage("奖品尚未分享认证，无法领取");
 			return response;
 		}
-		lotteryCustomerBean.setStatus(LotteryCustomerStatusEnum.EXCHANGED.getCode());
-		lotteryCustomerBean.setExchangeTime(new Date());
+		lotteryLeaguerBean.setStatus(LotteryLeaguerStatusEnum.EXCHANGED.getCode());
+		lotteryLeaguerBean.setExchangeTime(new Date());
 		try {
-			lotteryService.saveLotteryCustomer(lotteryCustomerBean);
+			lotteryService.saveLotteryLeaguer(lotteryLeaguerBean);
 			response.setData(lotteryPrizeBean.getName());
 			response.setSuccess(Boolean.TRUE);
 		} catch (LogicException e) {

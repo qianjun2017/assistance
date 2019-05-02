@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cc.api.form.EmailForm;
 import com.cc.api.form.LeaguerForm;
+import com.cc.api.form.PhoneForm;
 import com.cc.common.exception.LogicException;
+import com.cc.common.tools.AESTools;
 import com.cc.common.tools.JsonTools;
 import com.cc.common.tools.ListTools;
 import com.cc.common.tools.StringTools;
@@ -32,6 +34,10 @@ import com.cc.map.service.MapService;
 import com.cc.system.config.bean.SystemConfigBean;
 import com.cc.system.config.service.SystemConfigService;
 import com.cc.system.location.service.LocationService;
+import com.cc.wx.http.request.MiniOpenidRequest;
+import com.cc.wx.http.request.model.Phone;
+import com.cc.wx.http.response.MiniOpenidResponse;
+import com.cc.wx.service.WeiXinService;
 import com.cc.leaguer.service.CardService;
 
 /**
@@ -56,6 +62,9 @@ public class ApiLeaguerController {
 	
 	@Autowired
 	private LocationService locationService;
+	
+	@Autowired
+    private WeiXinService weiXinService;
 
 	/**
 	 * 查询登录用户信息
@@ -100,7 +109,7 @@ public class ApiLeaguerController {
 			response.setMessage("手机号码不能为空");
 			return response;
 		}
-		if(!StringTools.matches(form.getPhone(), "^1[34578]\\d{9}$")){
+		if(!StringTools.isPhone(form.getPhone())){
 			response.setMessage("请输入11位有效手机号码");
             return response;
 		}
@@ -218,6 +227,60 @@ public class ApiLeaguerController {
 		} catch (Exception e) {
 			response.setMessage("系统内部错误");
 			return response;
+		}
+		return response;
+	}
+	
+	/**
+	 * 绑定手机号码
+	 * @param form
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/phone", method = RequestMethod.POST)
+	public Response<String> bindLeaguerPhone(@RequestBody PhoneForm form){
+		Response<String> response = new Response<String>();
+		if (StringTools.isNullOrNone(form.getCode())) {
+			response.setMessage("请先登录微信获取CODE值");
+			return response;
+		}
+		if (StringTools.isAnyNullOrNone(new String[]{form.getEncryptedData(), form.getIv()})) {
+			response.setMessage("请授权获取您的微信绑定手机号码");
+			return response;
+		}
+		MiniOpenidRequest openidRequest = new MiniOpenidRequest();
+		SystemConfigBean appidSystemConfigBean = systemConfigService.querySystemConfigBean("wx.app.appid");
+		if(appidSystemConfigBean!=null){
+			openidRequest.setAppid(appidSystemConfigBean.getPropertyValue());
+		}
+		SystemConfigBean secretSystemConfigBean = systemConfigService.querySystemConfigBean("wx.app.secret");
+		if(secretSystemConfigBean!=null){
+			openidRequest.setSecret(secretSystemConfigBean.getPropertyValue());
+		}
+		openidRequest.setCode(form.getCode());
+		MiniOpenidResponse openidResponse = weiXinService.queryMiniOpenid(openidRequest);
+		if(!openidResponse.isSuccess()){
+			response.setMessage(openidResponse.getMessage());
+			return response;
+		}
+		try {
+			String decryptedData = AESTools.decrypt(form.getEncryptedData(), openidResponse.getSessionKey(), form.getIv());
+			if(StringTools.isNullOrNone(decryptedData)){
+				response.setMessage("解密微信绑定手机号码错误");
+				return response;
+			}
+			Phone phone = JsonTools.toObject(decryptedData, Phone.class);
+			if(phone==null){
+				response.setMessage("解密微信绑定手机号码错误");
+				return response;
+			}
+			leaguerService.bindPhone(form.getLeaguerId(), phone.getPurePhoneNumber());
+			response.setSuccess(Boolean.TRUE);
+		} catch (LogicException e) {
+			response.setMessage(e.getErrContent());
+		} catch (Exception e) {
+			response.setMessage("系统内部错误");
+			e.printStackTrace();
 		}
 		return response;
 	}

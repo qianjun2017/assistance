@@ -9,7 +9,7 @@ import com.cc.common.tools.StringTools;
  * @author Administrator
  *
  */
-public class LotteryCustomerQueryForm {
+public class LotteryLeaguerQueryForm {
 	
 	/**
 	 * 抽奖
@@ -17,22 +17,22 @@ public class LotteryCustomerQueryForm {
 	private Long lotteryId;
 	
 	/**
-	 * 中奖客户微信opernid
+	 * 中奖会员微信opernid
 	 */
-	private String customerOpenid;
+	private String leaguerOpenid;
 	
 	/**
-	 * 中奖客户
+	 * 中奖会员
 	 */
-	private Long customerId;
+	private Long leaguerId;
 	
 	/**
-	 * 商家微信opernid
+	 * 商家会员微信opernid
 	 */
 	private String retailerOpenid;
 	
 	/**
-	 * 中奖客户微信昵称
+	 * 中奖会员微信昵称
 	 */
 	private String nickName;
 	
@@ -42,7 +42,7 @@ public class LotteryCustomerQueryForm {
 	private String status;
 	
 	/**
-	 * 商家
+	 * 商家会员
 	 */
 	private Long retailerId;
 	
@@ -86,31 +86,31 @@ public class LotteryCustomerQueryForm {
 	}
 
 	/**
-	 * @return the customerOpenid
+	 * @return the leaguerOpenid
 	 */
-	public String getCustomerOpenid() {
-		return customerOpenid;
+	public String getLeaguerOpenid() {
+		return leaguerOpenid;
 	}
 
 	/**
-	 * @param customerOpenid the customerOpenid to set
+	 * @param leaguerOpenid the leaguerOpenid to set
 	 */
-	public void setCustomerOpenid(String customerOpenid) {
-		this.customerOpenid = customerOpenid;
+	public void setLeaguerOpenid(String leaguerOpenid) {
+		this.leaguerOpenid = leaguerOpenid;
 	}
 
 	/**
-	 * @return the customerId
+	 * @return the leaguerId
 	 */
-	public Long getCustomerId() {
-		return customerId;
+	public Long getLeaguerId() {
+		return leaguerId;
 	}
 
 	/**
-	 * @param customerId the customerId to set
+	 * @param leaguerId the leaguerId to set
 	 */
-	public void setCustomerId(Long customerId) {
-		this.customerId = customerId;
+	public void setLeaguerId(Long leaguerId) {
+		this.leaguerId = leaguerId;
 	}
 
 	/**

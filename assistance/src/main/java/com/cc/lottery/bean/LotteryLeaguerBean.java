@@ -18,8 +18,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  * @author Administrator
  *
  */
-@Table(name="t_lottery_customer")
-public class LotteryCustomerBean extends BaseOrm<LotteryCustomerBean> implements BaseEntity {
+@Table(name="t_lottery_leaguer")
+public class LotteryLeaguerBean extends BaseOrm<LotteryLeaguerBean> implements BaseEntity {
 
 	/**
 	 * 
@@ -31,9 +31,9 @@ public class LotteryCustomerBean extends BaseOrm<LotteryCustomerBean> implements
 	private Long id;
 	
 	/**
-	 * 中奖客户
+	 * 中奖会员
 	 */
-	private Long customerId;
+	private Long leaguerId;
 	
 	/**
 	 * 抽奖
@@ -87,17 +87,17 @@ public class LotteryCustomerBean extends BaseOrm<LotteryCustomerBean> implements
 	}
 
 	/**
-	 * @return the customerId
+	 * @return the leaguerId
 	 */
-	public Long getCustomerId() {
-		return customerId;
+	public Long getLeaguerId() {
+		return leaguerId;
 	}
 
 	/**
-	 * @param customerId the customerId to set
+	 * @param leaguerId the leaguerId to set
 	 */
-	public void setCustomerId(Long customerId) {
-		this.customerId = customerId;
+	public void setLeaguerId(Long leaguerId) {
+		this.leaguerId = leaguerId;
 	}
 
 	/**

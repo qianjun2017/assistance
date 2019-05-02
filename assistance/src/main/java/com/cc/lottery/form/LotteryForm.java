@@ -14,9 +14,9 @@ public class LotteryForm {
 	private Long id;
 	
 	/**
-	 * 所属客户
+	 * 所属会员
 	 */
-	private Long customerId;
+	private Long leaguerId;
 	
 	/**
 	 * 所属客户微信openid
@@ -73,17 +73,17 @@ public class LotteryForm {
 	}
 
 	/**
-	 * @return the customerId
+	 * @return the leaguerId
 	 */
-	public Long getCustomerId() {
-		return customerId;
+	public Long getLeaguerId() {
+		return leaguerId;
 	}
 
 	/**
-	 * @param customerId the customerId to set
+	 * @param leaguerId the leaguerId to set
 	 */
-	public void setCustomerId(Long customerId) {
-		this.customerId = customerId;
+	public void setLeaguerId(Long leaguerId) {
+		this.leaguerId = leaguerId;
 	}
 
 	/**

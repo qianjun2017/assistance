@@ -227,4 +227,16 @@ public class LeaguerServiceImpl implements LeaguerService {
 		}
 	}
 
+	@Override
+	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
+	public void bindPhone(Long id, String phone) {
+		LeaguerBean leaguerBean = new LeaguerBean();
+		leaguerBean.setId(id);
+		leaguerBean.setPhone(phone);;
+		int row = leaguerBean.update();
+		if(row!=1){
+			throw new LogicException("E001", "绑定会员手机号码失败");
+		}
+	}
+
 }

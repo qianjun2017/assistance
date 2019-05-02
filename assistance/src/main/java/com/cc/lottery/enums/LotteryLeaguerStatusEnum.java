@@ -15,7 +15,7 @@ import com.cc.common.tools.StringTools;
  * @author Administrator
  *
  */
-public enum LotteryCustomerStatusEnum {
+public enum LotteryLeaguerStatusEnum {
 	
 	TOBEEXCHANGE("toBeExchange", "未兑奖"),
 	EXCHANGED("exchanged", "已兑奖"),
@@ -35,7 +35,7 @@ public enum LotteryCustomerStatusEnum {
 	 * @param code
 	 * @param name
 	 */
-	private LotteryCustomerStatusEnum(String code, String name) {
+	private LotteryLeaguerStatusEnum(String code, String name) {
 		this.code = code;
 		this.name = name;
 	}
@@ -73,19 +73,19 @@ public enum LotteryCustomerStatusEnum {
 	 * @param code
 	 * @return
 	 */
-	public static LotteryCustomerStatusEnum getLotteryCustomerStatusEnumByCode(String code) {
+	public static LotteryLeaguerStatusEnum getLotteryLeaguerStatusEnumByCode(String code) {
 		if (StringTools.isNullOrNone(code)) {
 			return null;
 		}
-		LotteryCustomerStatusEnum[] lotteryCustomerStatusEnums = LotteryCustomerStatusEnum.values();
-		List<LotteryCustomerStatusEnum> lotteryCustomerStatusEnumList = ArrayTools.toList(lotteryCustomerStatusEnums).stream().filter(lotteryCustomerStatusEnum->code.equals(lotteryCustomerStatusEnum.getCode())).collect(Collectors.toList());
-		if(ListTools.isEmptyOrNull(lotteryCustomerStatusEnumList)){
+		LotteryLeaguerStatusEnum[] lotteryLeaguerStatusEnums = LotteryLeaguerStatusEnum.values();
+		List<LotteryLeaguerStatusEnum> lotteryLeaguerStatusEnumList = ArrayTools.toList(lotteryLeaguerStatusEnums).stream().filter(lotteryLeaguerStatusEnum->code.equals(lotteryLeaguerStatusEnum.getCode())).collect(Collectors.toList());
+		if(ListTools.isEmptyOrNull(lotteryLeaguerStatusEnumList)){
 			return null;
 		}
-		if (lotteryCustomerStatusEnumList.size()>1) {
+		if (lotteryLeaguerStatusEnumList.size()>1) {
 			throw new LogicException("E001", "兑奖状态不唯一,兑奖状态编码["+code+"]");
 		}
-		return lotteryCustomerStatusEnumList.get(0);
+		return lotteryLeaguerStatusEnumList.get(0);
 	}
 	
 	/**
@@ -94,10 +94,10 @@ public enum LotteryCustomerStatusEnum {
 	 * @return
 	 */
 	public static String getNameByCode(String code){
-		LotteryCustomerStatusEnum lotteryCustomerStatusEnum = LotteryCustomerStatusEnum.getLotteryCustomerStatusEnumByCode(code);
-		if (lotteryCustomerStatusEnum==null) {
+		LotteryLeaguerStatusEnum lotteryLeaguerStatusEnum = LotteryLeaguerStatusEnum.getLotteryLeaguerStatusEnumByCode(code);
+		if (lotteryLeaguerStatusEnum==null) {
 			return null;
 		}
-		return lotteryCustomerStatusEnum.getName();
+		return lotteryLeaguerStatusEnum.getName();
 	}
 }

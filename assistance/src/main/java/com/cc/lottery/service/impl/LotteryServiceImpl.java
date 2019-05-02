@@ -7,19 +7,21 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cc.common.exception.LogicException;
 import com.cc.common.tools.ListTools;
 import com.cc.common.web.Page;
 import com.cc.lottery.bean.LotteryBean;
-import com.cc.lottery.bean.LotteryCustomerBean;
+import com.cc.lottery.bean.LotteryLeaguerBean;
 import com.cc.lottery.bean.LotteryPrizeBean;
+import com.cc.lottery.bean.LotteryRetailerBean;
 import com.cc.lottery.dao.LotteryDao;
 import com.cc.lottery.enums.LotteryStatusEnum;
-import com.cc.lottery.form.LotteryCustomerQueryForm;
+import com.cc.lottery.form.LotteryLeaguerQueryForm;
 import com.cc.lottery.form.LotteryQueryForm;
-import com.cc.lottery.result.LotteryCustomerListResult;
+import com.cc.lottery.result.LotteryLeaguerListResult;
 import com.cc.lottery.result.LotteryListResult;
 import com.cc.lottery.service.LotteryService;
 import com.github.pagehelper.PageHelper;
@@ -39,7 +41,7 @@ public class LotteryServiceImpl implements LotteryService {
 	private LotteryDao lotteryDao;
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
 	public void saveLottery(LotteryBean lotteryBean) {
 		int row = lotteryBean.save();
 		if (row!=1) {
@@ -77,7 +79,7 @@ public class LotteryServiceImpl implements LotteryService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
 	public void updateLottery(LotteryBean lotteryBean) {
 		LotteryBean updateLotteryBean = LotteryBean.get(LotteryBean.class, lotteryBean.getId());
 		if(updateLotteryBean==null){
@@ -108,13 +110,13 @@ public class LotteryServiceImpl implements LotteryService {
 	}
 
 	@Override
-	public Page<LotteryCustomerListResult> queryLotteryCustomerPage(LotteryCustomerQueryForm form) {
-		Page<LotteryCustomerListResult> page = new Page<LotteryCustomerListResult>();
+	public Page<LotteryLeaguerListResult> queryLotteryLeaguerPage(LotteryLeaguerQueryForm form) {
+		Page<LotteryLeaguerListResult> page = new Page<LotteryLeaguerListResult>();
 		PageHelper.orderBy(String.format("%s %s", form.getSort(), form.getOrder()));
 		PageHelper.startPage(form.getPage(), form.getPageSize());
-		List<LotteryCustomerListResult> lotteryCustomerList = lotteryDao.queryLotteryCustomerList(form);
-		PageInfo<LotteryCustomerListResult> pageInfo = new PageInfo<LotteryCustomerListResult>(lotteryCustomerList);
-		if (ListTools.isEmptyOrNull(lotteryCustomerList)) {
+		List<LotteryLeaguerListResult> lotteryLeaguerList = lotteryDao.queryLotteryLeaguerList(form);
+		PageInfo<LotteryLeaguerListResult> pageInfo = new PageInfo<LotteryLeaguerListResult>(lotteryLeaguerList);
+		if (ListTools.isEmptyOrNull(lotteryLeaguerList)) {
 			page.setMessage("没有查询到相关中奖数据");
 			return page;
 		}
@@ -122,28 +124,38 @@ public class LotteryServiceImpl implements LotteryService {
 		page.setPages(pageInfo.getPages());
 		page.setPageSize(pageInfo.getPageSize());
 		page.setTotal(pageInfo.getTotal());
-		page.setData(lotteryCustomerList);
+		page.setData(lotteryLeaguerList);
 		page.setSuccess(Boolean.TRUE);
 		return page;
 	}
 
 	@Override
-	public int queryLotteryCustomerCount(Long customerId, Long lotteryId) {
-		LotteryCustomerQueryForm form = new LotteryCustomerQueryForm();
-		form.setCustomerId(customerId);
+	public int queryLotteryLeaguerCount(Long leaguerId, Long lotteryId) {
+		LotteryLeaguerQueryForm form = new LotteryLeaguerQueryForm();
+		form.setLeaguerId(leaguerId);
 		form.setLotteryId(lotteryId);
-		List<LotteryCustomerListResult> lotteryCustomerList = lotteryDao.queryLotteryCustomerList(form);
-		if(ListTools.isEmptyOrNull(lotteryCustomerList)){
+		List<LotteryLeaguerListResult> lotteryLeaguerList = lotteryDao.queryLotteryLeaguerList(form);
+		if(ListTools.isEmptyOrNull(lotteryLeaguerList)){
 			return 0;
 		}
-		return lotteryCustomerList.size();
+		return lotteryLeaguerList.size();
 	}
 
 	@Override
-	public void saveLotteryCustomer(LotteryCustomerBean lotteryCustomerBean) {
-		int row = lotteryCustomerBean.save();
+	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
+	public void saveLotteryLeaguer(LotteryLeaguerBean lotteryLeaguerBean) {
+		int row = lotteryLeaguerBean.save();
 		if (row!=1) {
 			throw new LogicException("E001","保存抽奖结果失败");
+		}
+	}
+
+	@Override
+	@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
+	public void saveLotteryRetailer(LotteryRetailerBean lotteryRetailerBean) {
+		int row = lotteryRetailerBean.save();
+		if (row!=1) {
+			throw new LogicException("E001","保存会员商家失败");
 		}
 	}
 

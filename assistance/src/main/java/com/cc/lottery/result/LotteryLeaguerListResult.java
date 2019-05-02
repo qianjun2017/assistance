@@ -11,14 +11,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  * @author Administrator
  *
  */
-public class LotteryCustomerListResult {
+public class LotteryLeaguerListResult {
 
 	private Long id;
 	
 	/**
-	 * 中奖客户
+	 * 中奖会员
 	 */
-	private Long customerId;
+	private Long leaguerId;
 	
 	/**
 	 * 抽奖
@@ -36,12 +36,12 @@ public class LotteryCustomerListResult {
 	private Long no;
 	
 	/**
-	 * 客户微信opernid
+	 * 会员微信opernid
 	 */
 	private String openid;
 	
 	/**
-	 * 客户微信昵称
+	 * 会员微信昵称
 	 */
 	private String nickName;
 	
@@ -112,17 +112,17 @@ public class LotteryCustomerListResult {
 	}
 
 	/**
-	 * @return the customerId
+	 * @return the leaguerId
 	 */
-	public Long getCustomerId() {
-		return customerId;
+	public Long getLeaguerId() {
+		return leaguerId;
 	}
 
 	/**
-	 * @param customerId the customerId to set
+	 * @param leaguerId the leaguerId to set
 	 */
-	public void setCustomerId(Long customerId) {
-		this.customerId = customerId;
+	public void setLeaguerId(Long leaguerId) {
+		this.leaguerId = leaguerId;
 	}
 
 	/**

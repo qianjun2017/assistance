@@ -5,12 +5,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.cc.lottery.dao.LotteryDao">
 
 	<select id="queryLotteryList" resultType="com.cc.lottery.result.LotteryListResult" parameterType="com.cc.lottery.form.LotteryQueryForm" statementType="PREPARED">
-		select l.id, l.customerId,c.openid,c.nickName,l.status,l.no,l.createTime,l.share
+		select l.id, l.leaguerId,c.openid,c.nickName,l.status,l.no,l.createTime,l.share
 		from t_lottery l
-		left join t_customer c on c.id = l.customerId
+		left join t_leaguer c on c.id = l.leaguerId
 		<where>
 			<if test="retailerId!=null">
-				and l.customerId = #{retailerId}
+				and l.leaguerId = #{retailerId}
 			</if>
 			<if test="lotteryId!=null">
 				and l.id = #{lotteryId}
@@ -36,25 +36,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</where>
 	</select>
 	
-	<select id="queryLotteryCustomerList" resultType="com.cc.lottery.result.LotteryCustomerListResult" parameterType="com.cc.lottery.form.LotteryCustomerQueryForm" statementType="PREPARED">
-		select lc.id, lc.customerId,c.openid,c.nickName,lc.status,lp.name,l.no,lc.createTime,lc.lotteryId,lc.lotteryPrizeId,lc.exchangeTime,r.phone,r.store,r.address,lc.prize,lc.share,l.share as needShare
-		from t_lottery_customer lc
-		left join t_customer c on c.id = lc.customerId
+	<select id="queryLotteryLeaguerList" resultType="com.cc.lottery.result.LotteryLeaguerListResult" parameterType="com.cc.lottery.form.LotteryLeaguerQueryForm" statementType="PREPARED">
+		select lc.id, lc.leaguerId,c.openid,c.nickName,lc.status,lp.name,l.no,lc.createTime,lc.lotteryId,lc.lotteryPrizeId,lc.exchangeTime,r.phone,r.store,r.address,lc.prize,lc.share,l.share as needShare
+		from t_lottery_leaguer lc
+		left join t_leaguer c on c.id = lc.leaguerId
 		left join t_lottery_prize lp on lp.id = lc.lotteryPrizeId
 		left join t_lottery l on l.id = lc.lotteryId
-		left join t_customer r on r.id = l.customerId
+		left join t_leaguer r on r.id = l.leaguerId
 		<where>
 		<if test="lotteryId!=null">
 				and lc.lotteryId = #{lotteryId}
 			</if>
-			<if test="customerId!=null">
-				and lc.customerId = #{customerId}
+			<if test="leaguerId!=null">
+				and lc.leaguerId = #{leaguerId}
 			</if>
-			<if test="customerOpenid!=null and customerOpenid!=''">
-				and c.openid = #{customerOpenid}
+			<if test="leaguerOpenid!=null and leaguerOpenid!=''">
+				and c.openid = #{leaguerOpenid}
 			</if>
 			<if test="retailerId!=null">
-				and l.customerId = #{retailerId}
+				and l.leaguerId = #{retailerId}
 			</if>
 			<if test="retailerOpenid!=null and retailerOpenid!=''">
 				and r.openid = #{retailerOpenid}
