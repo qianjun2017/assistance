@@ -47,10 +47,14 @@ public class PushController {
 	@Autowired
 	private PushService pushService;
 	
+	/**
+	 * 查询可推送的会员列表
+	 * @return
+	 */
 	@ResponseBody
 	@RequiresPermissions(value = { "push" })
-	@RequestMapping(value = "/customer", method = RequestMethod.GET)
-	public Response<Object> queryPushCustomer(){
+	@RequestMapping(value = "/leaguer", method = RequestMethod.GET)
+	public Response<Object> queryPushLeaguer(){
 		Response<Object> response = new Response<Object>();
 		try {
 			List<FormResult> userFormList = pushService.queryAllUserFormList();
