@@ -19,11 +19,6 @@ public class LotteryForm {
 	private Long leaguerId;
 	
 	/**
-	 * 所属客户微信openid
-	 */
-	private String openid;
-	
-	/**
 	 * 期数
 	 */
 	private Long no;
@@ -84,20 +79,6 @@ public class LotteryForm {
 	 */
 	public void setLeaguerId(Long leaguerId) {
 		this.leaguerId = leaguerId;
-	}
-
-	/**
-	 * @return the openid
-	 */
-	public String getOpenid() {
-		return openid;
-	}
-
-	/**
-	 * @param openid the openid to set
-	 */
-	public void setOpenid(String openid) {
-		this.openid = openid;
 	}
 
 	/**

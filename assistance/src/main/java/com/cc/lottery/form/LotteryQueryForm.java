@@ -14,16 +14,6 @@ import com.cc.common.tools.StringTools;
  *
  */
 public class LotteryQueryForm {
-
-	/**
-	 * 所属会员
-	 */
-	private Long retailerId;
-	
-	/**
-	 * 所属会员微信openid
-	 */
-	private String retailerOpenid;
 	
 	/**
 	 * 所属会员微信昵称
@@ -31,12 +21,7 @@ public class LotteryQueryForm {
 	private String nickName;
 	
 	/**
-	 * 抽奖会员微信opernid
-	 */
-	private String leaguerOpenid;
-	
-	/**
-	 * 抽奖会员
+	 * 所属会员
 	 */
 	private Long leaguerId;
 	
@@ -102,34 +87,6 @@ public class LotteryQueryForm {
 	}
 
 	/**
-	 * @return the retailerId
-	 */
-	public Long getRetailerId() {
-		return retailerId;
-	}
-
-	/**
-	 * @param retailerId the retailerId to set
-	 */
-	public void setRetailerId(Long retailerId) {
-		this.retailerId = retailerId;
-	}
-
-	/**
-	 * @return the retailerOpenid
-	 */
-	public String getRetailerOpenid() {
-		return retailerOpenid;
-	}
-
-	/**
-	 * @param retailerOpenid the retailerOpenid to set
-	 */
-	public void setRetailerOpenid(String retailerOpenid) {
-		this.retailerOpenid = retailerOpenid;
-	}
-
-	/**
 	 * @return the nickName
 	 */
 	public String getNickName() {
@@ -141,20 +98,6 @@ public class LotteryQueryForm {
 	 */
 	public void setNickName(String nickName) {
 		this.nickName = nickName;
-	}
-
-	/**
-	 * @return the leaguerOpenid
-	 */
-	public String getLeaguerOpenid() {
-		return leaguerOpenid;
-	}
-
-	/**
-	 * @param leaguerOpenid the leaguerOpenid to set
-	 */
-	public void setLeaguerOpenid(String leaguerOpenid) {
-		this.leaguerOpenid = leaguerOpenid;
 	}
 
 	/**
