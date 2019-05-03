@@ -17,7 +17,6 @@ import com.cc.common.tools.StringTools;
  */
 public enum UserTypeEnum {
 
-	LEAGUER("leaguer", "会员"),
 	USER("user", "系统用户"),
 	SELLER("seller", "商家");
 
