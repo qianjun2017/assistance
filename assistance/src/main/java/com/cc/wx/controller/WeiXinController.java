@@ -1,5 +1,8 @@
 package com.cc.wx.controller;
 
+import com.cc.channel.bean.ChannelBean;
+import com.cc.channel.enums.ChannelStatusEnum;
+import com.cc.channel.enums.ChannelTypeEnum;
 import com.cc.common.exception.LogicException;
 import com.cc.common.tools.AESTools;
 import com.cc.common.tools.DateTools;
@@ -11,9 +14,11 @@ import com.cc.common.utils.UUIDUtils;
 import com.cc.common.web.Response;
 import com.cc.leaguer.bean.LeaguerBean;
 import com.cc.leaguer.enums.LeaguerStatusEnum;
+import com.cc.leaguer.service.LeaguerChannelService;
 import com.cc.leaguer.service.LeaguerService;
 import com.cc.system.config.bean.SystemConfigBean;
 import com.cc.system.config.service.SystemConfigService;
+import com.cc.system.location.service.LocationService;
 import com.cc.wx.form.AuthorizeForm;
 import com.cc.wx.form.CodeForm;
 import com.cc.wx.form.WXACodeForm;
@@ -28,6 +33,7 @@ import com.cc.wx.service.WeiXinService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +72,12 @@ public class WeiXinController {
     
     @Autowired
     private AccessTokenService accessTokenService;
+
+    @Autowired
+    private LocationService locationService;
+    
+    @Autowired
+    private LeaguerChannelService leaguerChannelService;
     
     /**
      * 微信公众号签名校验
@@ -223,10 +235,29 @@ public class WeiXinController {
 				}
 			}
 		}
+		leaguerBean.setLocationId(locationService.saveLocation(StringTools.toString(registerMap.get("country")), StringTools.toString(registerMap.get("province")), StringTools.toString(registerMap.get("city"))));
 		leaguerBean.setStatus(LeaguerStatusEnum.NORMAL.getCode());
 		leaguerBean.setCreateTime(DateTools.now());
+		leaguerBean.setCredit(100f);
 		try {
 			leaguerService.saveLeaguer(leaguerBean);
+			List<Long> channelIdList = new ArrayList<Long>();
+			Object channelCode = registerMap.get("channelCode");
+			if(channelCode!=null){
+				List<ChannelBean> channelBeanList = ChannelBean.findAllByParams(ChannelBean.class, "channelCode", StringTools.toString(channelCode), "status", ChannelStatusEnum.NORMAL.getCode());
+				if(!ListTools.isEmptyOrNull(channelBeanList) && channelBeanList.size()==1){
+					channelIdList.add(channelBeanList.get(0).getId());
+				}
+			}
+			List<ChannelBean> channelBeanList = ChannelBean.findAllByParams(ChannelBean.class, "channelType", ChannelTypeEnum.COMPREHENSIVE.getCode(), "status", ChannelStatusEnum.NORMAL.getCode());
+			if(!ListTools.isEmptyOrNull(channelBeanList)){
+				for(ChannelBean channelBean: channelBeanList){
+					channelIdList.add(channelBean.getId());
+				}
+			}
+			if(!ListTools.isEmptyOrNull(channelIdList)){
+				leaguerChannelService.updateLeaguerChannel(leaguerBean.getId(), channelIdList);
+			}
 			Map<String, Object> dataMap = new HashMap<String, Object>();
 			dataMap.put("token", JwtTools.createToken(leaguerBean, JwtTools.JWTTTLMILLIS));
 			response.setData(dataMap);

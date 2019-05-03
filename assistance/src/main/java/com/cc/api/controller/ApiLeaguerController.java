@@ -195,7 +195,7 @@ public class ApiLeaguerController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value="/locate", method = RequestMethod.POST)
+	@RequestMapping(value="/ip/locate", method = RequestMethod.POST)
 	public Response<Object> locate(@RequestParam Long leaguerId){
 		Response<Object> response = new Response<Object>();
 		IpLocationRequest ipLocationRequest = new IpLocationRequest();
