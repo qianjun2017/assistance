@@ -66,7 +66,8 @@ public enum OperTypeEnum {
 	RECEIVEORDER("receiveOrder", "收货"),
 	DELIVERYORDER("deliveryOrder", "发货"),
 	PAYORDER("payOrder", "支付"),
-	LOCATE("locate", "定位");
+	LOCATE("locate", "定位"),
+	OVER("over", "结束");
 	
 	/**
 	 * 编码

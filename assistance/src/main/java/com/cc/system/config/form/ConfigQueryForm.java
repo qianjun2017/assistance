@@ -48,5 +48,14 @@ public class ConfigQueryForm extends QueryForm {
 	public void setPropertyName(String propertyName) {
 		this.propertyName = propertyName;
 	}
+	
+	@Override
+	public String getSort() {
+		if(super.getSort().equals("createTime")){
+			return "id";
+		}else{
+			return super.getSort();
+		}
+	}
 
 }

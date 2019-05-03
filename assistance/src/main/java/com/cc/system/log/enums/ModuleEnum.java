@@ -27,9 +27,6 @@ public enum ModuleEnum {
 	CUSTOMERMANAGEMENT("customer", "会员管理"),
 	CARDMANAGEMENT("card", "会员卡"),
 	CARDLEVELMANAGEMENT("level", "会员卡级别"),
-	FRANCHISERMANAGEMENT("franchiser", "经销商"),
-	CONSULTANTMANAGEMENT("consultant", "汽车顾问"),
-	POINTSMANAGEMENT("points", "积分管理"),
 	CONFIGMANAGEMENT("config", "系统参数"),
 	TEMPLATEMANAGEMENT("template", "我的模板"),
 	PUSHMANAGEMENT("push", "消息推送"),
@@ -44,14 +41,15 @@ public enum ModuleEnum {
 	LOCATIONMANAGEMENT("location", "地区管理"),
 	CAROUSELMANAGEMENT("carousel", "轮播图管理"),
 	NOVELMANAGEMENT("novel", "小说管理"),
-	MESSAGEMANAGEMENT("message", "消息管理"),
+	MESSAGEMANAGEMENT("message", "站内信"),
 	CHANNELSUBJECTMANAGEMENT("subject", "专题管理"),
 	SELLERMANAGEMENT("seller", "卖家管理"),
 	SHOPMANAGEMENT("shop", "店铺管理"),
 	GOODSCATEGORYMANAGEMENT("goodsCategory", "商品品类管理"),
 	GOODSMANAGEMENT("goods", "商品管理"),
 	STOCKMANAGEMENT("stock", "库存管理"),
-	ORDERMANAGEMENT("order", "订单管理");
+	ORDERMANAGEMENT("order", "订单管理"),
+	LOTTERYMANAGEMENT("lottery", "抽奖管理");
 	
 	/**
 	 * 编码
