@@ -86,4 +86,13 @@ public class ChannelQueryForm extends QueryForm {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+	@Override
+	public String getSort() {
+		if(super.getSort().equals("createTime")){
+			return "status";
+		}else{
+			return super.getSort();
+		}
+	}
 }
