@@ -63,7 +63,7 @@ public class MessageController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequiresPermissions(value = { "system.message.release" })
+	@RequiresPermissions(value = { "message.mail.release" })
 	@RequestMapping(value = "/release", method = RequestMethod.POST)
 	@OperationLog(module = ModuleEnum.MESSAGEMANAGEMENT, operType = OperTypeEnum.RELEASE, title = "发布消息")
 	public Response<String> addMessage(@RequestBody Map<String, String> messageMap){

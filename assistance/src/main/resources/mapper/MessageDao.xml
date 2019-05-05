@@ -40,8 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 						t_system_auth sa
 					INNER JOIN t_system_role_auth sra ON sa.id = sra.authId
 					INNER JOIN t_system_user_role sur ON sur.roleId = sra.roleId
-					INNER JOIN t_system_user su ON su.id = sur.userId
-					WHERE su.uid = #{receiverId}
+					WHERE sur.userId = #{receiverId}
 				)
 			)
 		</if>
