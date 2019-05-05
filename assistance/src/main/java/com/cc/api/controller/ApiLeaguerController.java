@@ -80,6 +80,7 @@ public class ApiLeaguerController {
 		if(!ListTools.isEmptyOrNull(integrationBeanList)){
 			IntegrationBean integrationBean = integrationBeanList.get(0);
 			leaguerResult.setCardNo(integrationBean.getCardNo());
+			leaguerResult.setIntegration(integrationBean.getIntegration());
 			CardLevelBean cardLevelBean = cardService.queryCardLevelByGradeIntegration(integrationBean.getGradeIntegration());
 			if(cardLevelBean!=null){
 				leaguerResult.setCardLevel(cardLevelBean.getName());

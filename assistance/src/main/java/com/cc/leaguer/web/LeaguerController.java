@@ -96,6 +96,7 @@ public class LeaguerController {
 		if(!ListTools.isEmptyOrNull(integrationBeanList)){
 			IntegrationBean integrationBean = integrationBeanList.get(0);
 			leaguer.put("cardNo", integrationBean.getCardNo());
+			leaguer.put("integration", integrationBean.getIntegration());
 			CardLevelBean cardLevelBean = cardService.queryCardLevelByGradeIntegration(integrationBean.getGradeIntegration());
 			if(cardLevelBean!=null){
 				leaguer.put("cardLevel", cardLevelBean.getName());
