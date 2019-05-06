@@ -45,7 +45,7 @@ public class PushServiceImpl implements PushService {
 	@Override
 	public List<FormResult> queryAllUserFormList() {
 		FormQueryForm form = new FormQueryForm();
-		SystemConfigBean expriedSystemConfigBean = systemConfigService.querySystemConfigBean("wx.form.expried");
+		SystemConfigBean expriedSystemConfigBean = systemConfigService.querySystemConfigBean("wx.app.form.expried");
 		if(expriedSystemConfigBean==null || StringTools.isNullOrNone(expriedSystemConfigBean.getPropertyValue())){
 			throw new LogicException("E001", "请设置微信formId有效期(天)");
 		}
