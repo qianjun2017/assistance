@@ -7,23 +7,28 @@ import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.cc.common.tools.StringTools;
+import com.cc.common.form.QueryForm;
 
 /**
  * @author Administrator
  *
  */
-public class LotteryQueryForm {
+public class LotteryQueryForm extends QueryForm {
+	
+	/**
+	 * 会员
+	 */
+	private Long leaguerId;
+	
+	/**
+	 * 抽奖
+	 */
+	private Long lotteryId;
 	
 	/**
 	 * 所属会员微信昵称
 	 */
 	private String nickName;
-	
-	/**
-	 * 所属会员
-	 */
-	private Long leaguerId;
 	
 	/**
 	 * 状态
@@ -43,48 +48,9 @@ public class LotteryQueryForm {
 	private Date createTimeEnd;
 	
 	/**
-	 * 抽奖
-	 */
-	private Long lotteryId;
-	
-	/**
 	 * 是否需要分享
 	 */
 	private Boolean share;
-	
-	/**
-	 * 页码
-	 */
-	private String page = "1";
-	
-	/**
-	 * 每页数量
-	 */
-	private String pageSize = "10";
-	
-	/**
-	 * 排序字段
-	 */
-	private String sort;
-	
-	/**
-	 * 排序方向
-	 */
-	private String order;
-
-	/**
-	 * @return the leaguerId
-	 */
-	public Long getLeaguerId() {
-		return leaguerId;
-	}
-
-	/**
-	 * @param leaguerId the leaguerId to set
-	 */
-	public void setLeaguerId(Long leaguerId) {
-		this.leaguerId = leaguerId;
-	}
 
 	/**
 	 * @return the nickName
@@ -143,20 +109,6 @@ public class LotteryQueryForm {
 	}
 
 	/**
-	 * @return the lotteryId
-	 */
-	public Long getLotteryId() {
-		return lotteryId;
-	}
-
-	/**
-	 * @param lotteryId the lotteryId to set
-	 */
-	public void setLotteryId(Long lotteryId) {
-		this.lotteryId = lotteryId;
-	}
-
-	/**
 	 * @return the share
 	 */
 	public Boolean getShare() {
@@ -171,70 +123,31 @@ public class LotteryQueryForm {
 	}
 
 	/**
-	 * @return the page
+	 * @return the leaguerId
 	 */
-	public int getPage() {
-		if(!StringTools.isNullOrNone(this.page) && StringTools.isNumber(this.page)){
-			return Integer.parseInt(this.page);
-		}
-		return 1;
+	public Long getLeaguerId() {
+		return leaguerId;
 	}
 
 	/**
-	 * @param page the page to set
+	 * @param leaguerId the leaguerId to set
 	 */
-	public void setPage(String page) {
-		this.page = page;
+	public void setLeaguerId(Long leaguerId) {
+		this.leaguerId = leaguerId;
 	}
 
 	/**
-	 * @return the pageSize
+	 * @return the lotteryId
 	 */
-	public int getPageSize() {
-		if(!StringTools.isNullOrNone(this.pageSize) && StringTools.isNumber(this.pageSize)){
-			return Integer.parseInt(this.pageSize);
-		}
-		return 10;
+	public Long getLotteryId() {
+		return lotteryId;
 	}
 
 	/**
-	 * @param pageSize the pageSize to set
+	 * @param lotteryId the lotteryId to set
 	 */
-	public void setPageSize(String pageSize) {
-		this.pageSize = pageSize;
+	public void setLotteryId(Long lotteryId) {
+		this.lotteryId = lotteryId;
 	}
 
-	/**
-	 * @return the sort
-	 */
-	public String getSort() {
-		if(StringTools.isNullOrNone(this.sort)){
-			return "createTime";
-		}
-		return sort;
-	}
-
-	/**
-	 * @param sort the sort to set
-	 */
-	public void setSort(String sort) {
-		this.sort = sort;
-	}
-
-	/**
-	 * @return the order
-	 */
-	public String getOrder() {
-		if (StringTools.isNullOrNone(this.order)) {
-			return "desc";
-		}
-		return order;
-	}
-
-	/**
-	 * @param order the order to set
-	 */
-	public void setOrder(String order) {
-		this.order = order;
-	}
 }

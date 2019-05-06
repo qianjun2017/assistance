@@ -120,7 +120,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="queryHotFilmList" resultType="com.cc.film.bean.FilmBean" statementType="PREPARED">
 		select f.id,f.name,f.listImgUrl,f.country,f.language,f.year,f.createTime,f.integration,f.thumbUp,f.thumbDown,f.status
 		from t_film f
-		inner join (select substring_index(substring_index(l.params,':',-1),'}',1) as filmId, count(l.params) as cnt from t_system_operation_log l where l.module = 'film' and l.operType = 'play'
+		inner join (select substring_index(substring_index(l.params,':',-1),'}',1) as filmId, count(l.params) as cnt from t_system_log l where l.module = 'film' and l.operType = 'play'
 			and l.operateTime > date_sub(now(), interval 30 day)
 			group by l.params
 			order by count(l.params) desc) t on f.id = t.filmId
@@ -129,7 +129,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<select id="queryFilmPlayed" resultType="int" parameterType="long" statementType="PREPARED">
 		select count(1) 
-		from t_system_operation_log sol
+		from t_system_log sol
 		where sol.module = 'film' 
 			and sol.operType = 'play' 
 			and sol.params like concat('%:',#{filmId},'}%')
